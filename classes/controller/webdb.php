@@ -24,13 +24,13 @@ class Controller_WebDB extends Controller_Template
 	{
 		parent::before();
 
-		// Action view
-		if (Kohana::find_file('views', $this->request->action))
+		if ($this->request->action == 'resources')
 		{
-			$this->view = View::factory($this->request->action);
+			return;
 		}
 
-		// Template view
+		// Set up views
+		$this->view = View::factory($this->request->action);
 		$this->template->messages = array();
 		$this->template->content = $this->view;
 		$this->template->controller = $this->request->controller;
@@ -40,30 +40,49 @@ class Controller_WebDB extends Controller_Template
 			'view' => 'View &amp; Edit'
 		);
 
-		// Database and table names
-		$this->template->dbname = $this->request->param('dbname', FALSE);
-		if ($this->view) $this->view->dbname = $this->template->dbname;
-		if (!$this->template->dbname)
-		{
-			$this->add_template_message('Please select a database from the tabs above.', 'info');
-		}
-		$this->template->tablename = $this->request->param('tablename', FALSE);
-		if ($this->view) $this->view->tablename = $this->template->tablename;
-		if ($this->template->dbname && !$this->template->tablename)
-		{
-			$this->add_template_message('Please select a table from the menu to the left.', 'info');
-		}
-
 		// Databases
 		$this->dbms = new Webdb_DBMS;
 		$this->template->databases = $this->dbms->list_dbs();
-		$this->db = $this->dbms->get_current_database();
-		if ($this->db)
-		{
-			$this->template->tables = $this->db->list_tables();
-		}
+		$this->_set_database();
+		$this->_set_table();
 
 	} // _before()
+
+	private function _set_database()
+	{
+		$this->db = $this->dbms->get_database();
+		$this->template->database = $this->db;
+		$this->view->database = $this->db;
+		if (!$this->db)
+		{
+			$this->add_template_message(
+				'Please select a database from the tabs above.',
+				'info'
+			);
+		}
+	} // _set_database()
+
+	private function _set_table()
+	{
+		if ($this->db)
+		{
+			$this->table = $this->db->get_table();
+			$this->template->tables = $this->db->list_tables();
+			if (!$this->table)
+			{
+				$this->add_template_message(
+					'Please select a table from the menu to the left.',
+					'info'
+				);
+			}
+		} else
+		{
+			$this->table = FALSE;
+			$this->template->tables = array();
+		}
+		$this->template->table = $this->table;
+		$this->view->table = $this->table;
+	}
 
 	protected function add_template_message($message, $status = 'notice')
 	{
@@ -78,12 +97,28 @@ class Controller_WebDB extends Controller_Template
 	 * @param <type> $dbname
 	 * @param <type> $tablename
 	 */
-	public function action_index($dbname = false, $tablename = false)
+	public function action_index()
 	{
-		$this->view->columns = array();
-		$this->view->rows = array();
-		if ($this->db && $dbname && $tablename)
-		{
+//		$this->view->table = false;
+//		//$this->view->columns = array();
+//		//$this->view->rows = array();
+//		//$this->view->pagination_links = false;
+//		if ($this->table)
+//		{
+//			$pagination = $this->table->get_pagination();
+//
+//			// Rows
+//			$query = DB
+//			$query->from($this->table->get_name());
+//			$
+//			$query->offset($pagination->offset);
+//			$query->limit($pagination->items_per_page);
+//
+//			$this->view->pagination_links = $pagination->render();
+//			$this->view->rows = $query->execute();
+
+
+		/*
 			// Columns
 			$this->view->columns = $this->db->list_columns($tablename);
 
@@ -98,7 +133,8 @@ class Controller_WebDB extends Controller_Template
 			$query->offset($pagination->offset);
 			$query->limit($pagination->items_per_page);
 			$this->view->rows = $query->execute();
-		}
+		*/
+		//}
 	}
 
 	public function action_browse($dbname = false, $tablename = false)

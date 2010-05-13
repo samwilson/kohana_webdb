@@ -1,10 +1,10 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 /**
  * This class represents an instance of the DBMS.  With it, we connect
- * and query, and retrieve @link{Webdb_DBMS_Database} objects.
+ * and query, and retrieve [Webdb_DBMS_Database] objects.
  *
- * @category WebDB
  * @package  WebDB
+ * @category DBMS
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
@@ -19,13 +19,13 @@ class Webdb_DBMS
 	private $_database_names;
 
 	/** @var Database */
-	private $_db;
+	//private $_db;
 
 	/**
 	 */
 	public function __construct()
 	{
-		$this->_db = Database::instance();
+		//$this->_db = Database::instance();
 	}
 
 	/**
@@ -40,18 +40,13 @@ class Webdb_DBMS
 		{
 			$this->_database_names = array();
 			$sql = $this->_get_list_db_statement();
-			$query = $this->_db->query(Database::SELECT, $sql, true);
+			$query = Database::instance()->query(Database::SELECT, $sql, true);
 			foreach ($query as $row)
 			{
 				$this->_database_names[] = current($row);
 			}
 		}
 		return $this->_database_names;
-	}
-
-	public function list_tables($dbname)
-	{
-		return $this->_db->list_tables();
 	}
 
 	/**
@@ -75,47 +70,32 @@ class Webdb_DBMS
 	}
 
 	/**
-	 *
-	 * @return Database
-	 */
-	public function get_current_database()
-	{
-		$dbname = Request::instance()->param('dbname', FALSE);
-		if ($dbname)
-		{
-			return $this->get_database($dbname);
-		} else
-		{
-			return false;
-		}
-	}
-
-	/**
-	 * Get a database.
+	 * Get a database object.  If no name is given, try to determine the current
+	 * database from the 'dbname' route variable.  If that fails, return false.
 	 *
 	 * @param string $dbname The name of the desired database.
-	 * @return Database The database object.
+	 * @return Webdb_DBMS_Database The database object.
+	 * @return false If no database could be found.
 	 * @throws Exception
 	 */
-	public function get_database($dbname = null)
+	public function get_database($dbname = FALSE)
 	{
-		// Get first DB
-		if (empty($dbname))
+		if (!$dbname)
 		{
-			throw new Exception('Database name is empty.');
+			$dbname = Request::instance()->param('dbname', FALSE);
+			if ($dbname)
+			{
+				return $this->get_database($dbname);
+			} else
+			{
+				return false;
+			}
 		}
 		if (!in_array($dbname, $this->list_dbs()))
 		{
 			throw new Exception("The database '$dbname' could not be found.");
 		}
-		//return new Webdb_DBMS_Database($this->_db, $name);
-
-		$config = Kohana::config('database')->default;
-		$config['connection']['database'] = $dbname;
-		//echo '<pre>'.kohana::dump($config).'</pre>';
-		unset(Database::$instances['default']);
-		$this->_db = Database::instance('default', $config);
-		return $this->_db;
+		return new Webdb_DBMS_Database($dbname);
 	}
 
 }

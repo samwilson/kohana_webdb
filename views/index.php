@@ -1,26 +1,49 @@
+<?php /*echo kohana::dump($table->get_rows()) ?></pre>
+	<?php foreach ($table->get_rows() as $row): ?>
+<pre><?php echo kohana::dump($row) ?></pre>
+	<?php endforeach ?>
+<?php exit */ ?>
 
+<?php if ($table): ?>
 
 <table>
 	<caption>
-		<?php echo $pagination_links ?>
+			<?php echo $table->get_pagination()->render() ?>
 	</caption>
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
-			<?php foreach ($columns as $column): ?>
-			<th><?php echo text::titlecase($column['column_name']) ?></th>
-			<?php endforeach ?>
+				<?php foreach ($table->get_columns() as $column): ?>
+			<th><?php echo text::titlecase($column->get_name()) ?></th>
+				<?php endforeach ?>
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ($rows as $row): ?>
+			<?php foreach ($table->get_rows() as $row): ?>
 		<tr>
-			<td><?php echo html::anchor("webdb/edit/$dbname/$tablename/".$row['id'], 'Edit') ?></td>
-				<?php foreach ($columns as $column): ?>
-			<td><?php echo text::titlecase($row[$column['column_name']]) ?></td>
-				<?php endforeach ?>
+			<td><?php echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit') ?></td>
+					<?php foreach ($table->get_columns() as $column): ?>
+			<td class="<?php echo $column->get_type() ?>">
+							<?php
+							$view_file = kohana::find_file('views/fields', $column->get_type());
+							if ($view_file)
+							{
+								$cell_view = View::factory('fields/'.$column->get_type());
+							} else
+							{
+								$cell_view = View::factory('fields/varchar');
+							}
+							$cell_view->column = $column;
+							$cell_view->row = $row;
+							echo $cell_view->render();
+							?>
+			</td>
+					<?php endforeach ?>
 		</tr>
-		<?php endforeach ?>
+			<?php endforeach ?>
 	</tbody>
 </table>
 
+
+
+<?php endif ?>

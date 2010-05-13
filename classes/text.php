@@ -1,7 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
 /**
- * 
+ * A library of text manipulation functions.
+ *
+ * @package  WebDB
+ * @category Base
+ * @author   Sam Wilson
+ * @license  Simplified BSD License
+ * @link     http://github.com/samwilson/kohana_webdb
  */
 class Text extends Kohana_Text
 {
@@ -16,6 +21,7 @@ class Text extends Kohana_Text
 	 *                               titlecased, or an array of such strings.
 	 * @param 'html'|'latex' $format The desired output format.
 	 * @return string                A properly-typeset title.
+	 * @todo Get replacement strings from configuration file.
 	 */
 	public static function titlecase($value, $format='html')
 	{

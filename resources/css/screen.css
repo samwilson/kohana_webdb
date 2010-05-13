@@ -1,16 +1,19 @@
-body { margin:0; font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+body { margin:0; font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+background-color:#EFEFF5 }
 a { color:blue; text-decoration:none }
 a:hover { text-decoration:underline }
 a.current { font-weight:bolder; color:black }
 img { border:0 }
+dfn:hover, abbr:hover { border-bottom:1px dashed #CCD; cursor:help }
+ul { margin:0 }
 
 
 
 .header,
 .footer {padding:0; margin:0; border-width:0; border-style:solid;
-         font-size:smaller; background-color:#EFEFF5; border-color:#ccd }
+         font-size:smaller; border-color:#ccd }
 
-.header { border-bottom-width:0 }
+.header { border-bottom-width:0; padding-top:1.3em }
 .header h1 {margin:0 0 0.2em 0; padding:0 0 0 1em; text-align:left}
 .header .login-info { font-size:smaller; float:right; margin:0 }
 .header a { color: black }
@@ -26,23 +29,27 @@ img { border:0 }
 .tabs { list-style-type:none }
 .tabs li { display:inline }
 
+.not-head-foot { margin:0; padding:0.7em 0; background-color:white; clear:both }
+
 .content { margin-left:250px }
+#kohana_error .content { margin:0 }
 
 
 
 
 
 
-
-
+/* Thanks to http://en.wikipedia.org/wiki/Template:Ambox */
 .message {padding:0.8em 0.8em 0.8em 50px; margin:1em auto; border:2px solid #ddd;
-          list-style-type:none; background-color:#FBFBFB }
+          list-style-type:none; background-color:#FBFBFB; color:black }
 .error { border-color:#B22222 }
 .notice { border-color:#F28500 }
 .info { border-color:#1E90FF }
 .error a { color:#8a1f11 }
 .notice a { color:#514721 }
 .info a { color:#264409 }
+#kohana_error h1 { padding:0.2em ! important }
+#kohana_error .message { background-color:inherit; margin:0; padding:0; border:0; font-weight:bolder; color:white }
 
 
 
@@ -52,7 +59,7 @@ img { border:0 }
 .tabs {
     border-bottom: 1px solid #ccc;
     height: 1%; /* fixing IE 6 */
-    margin: 0 0 .75em 0;
+    margin: 0;
     min-height: auto;
     overflow: auto;
 }

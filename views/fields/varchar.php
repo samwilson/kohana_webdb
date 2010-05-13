@@ -1,0 +1,1 @@
+<?php echo $row->{$column->get_name()} ?>
