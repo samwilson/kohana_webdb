@@ -27,6 +27,9 @@ class Webdb_DBMS_Table
 	 */
 	private $_columns;
 
+	/** @var Pagination */
+	private $_pagination;
+
 	/**
 	 * Create a new database table object.
 	 *
@@ -94,7 +97,8 @@ class Webdb_DBMS_Table
 		if (!isset($this->_pagination))
 		{
 			$total_row_count = $this->count_records();
-			$config = array('total_items' => $total_row_count);
+			//$view = View::factory('pagination/basic');
+			$config = array('total_items' => $total_row_count); //, 'view'=>$view);
 			$this->_pagination = new Pagination($config);
 		}
 		return $this->_pagination;

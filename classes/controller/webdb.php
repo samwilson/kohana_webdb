@@ -37,7 +37,11 @@ class Controller_WebDB extends Controller_Template
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
 			'index' => 'Browse &amp; Search',
-			'view' => 'View &amp; Edit'
+			'view' => 'View &amp; Edit',
+			'import' => 'Import',
+			'export' => 'Export',
+			'calendar' => 'Calendar',
+			'map' => 'Map'
 		);
 
 		// Databases
@@ -99,53 +103,39 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_index()
 	{
-//		$this->view->table = false;
-//		//$this->view->columns = array();
-//		//$this->view->rows = array();
-//		//$this->view->pagination_links = false;
-//		if ($this->table)
-//		{
-//			$pagination = $this->table->get_pagination();
-//
-//			// Rows
-//			$query = DB
-//			$query->from($this->table->get_name());
-//			$
-//			$query->offset($pagination->offset);
-//			$query->limit($pagination->items_per_page);
-//
-//			$this->view->pagination_links = $pagination->render();
-//			$this->view->rows = $query->execute();
-
-
-		/*
-			// Columns
-			$this->view->columns = $this->db->list_columns($tablename);
-
-			// Rows
-			$query = DB::select();
-			$query->from($tablename);
-
-			// Pagination
-			$total_row_count = Database::instance()->count_records($tablename);
-			$pagination = new Pagination(array('total_items' => $total_row_count));
-			$this->view->pagination_links = $pagination->render();
-			$query->offset($pagination->offset);
-			$query->limit($pagination->items_per_page);
-			$this->view->rows = $query->execute();
-		*/
-		//}
 	}
 
-	public function action_browse($dbname = false, $tablename = false)
+	public function action_import($database, $table)
 	{
-		if (!$tablename)
+		$this->view->errors = FALSE;
+		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
+		$this->view->stage = 'choose_file';
+
+		if (arr::get($_POST, 'upload', FALSE))
 		{
-			$this->request->redirect("/webdb/index/$dbname", 300);
-		}
-		if ($dbname)
-		{
-			$this->get_tables($dbname);
+			$validation = Validate::factory($_FILES, 'uploads');
+			$validation->rule('file','upload::not_empty')->rule('file','upload::type',array(array('csv')));
+			if ($validation->check())
+			{
+				$this->view->stage = 'match_fields';
+				// Upload::save($_FILES['file']);
+			} else
+			{
+				foreach ($validation->errors() as $err)
+				{
+					switch($err[0])
+					{
+						case 'upload::not_empty':
+							$this->add_template_message('You did not choose a file to upload!');
+							break;
+						case 'upload::type':
+							$this->add_template_message('The file that you uploaded is not of required type.');
+							break;
+						default:
+							$this->add_template_message('An error occured.<br /><pre>'.kohana::dump($err).'</pre>');
+					}
+				}
+			}
 		}
 	}
 

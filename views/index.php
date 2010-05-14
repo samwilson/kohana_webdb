@@ -8,7 +8,7 @@
 
 <table>
 	<caption>
-			<?php echo $table->get_pagination()->render() ?>
+			<?php echo $table->get_pagination()->render('pagination/truncated') ?>
 	</caption>
 	<thead>
 		<tr>

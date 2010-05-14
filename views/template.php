@@ -94,29 +94,31 @@
 			</ol>
 			<?php endif ?>
 
-			<?php /*if (count($actions) > 0): ?>
-        <ol class="actions tabs">
-				<?php foreach ($actions as $action_name=>$action_title): ?>
-					<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
-            <li><?php echo html::anchor(
-						"$controller/$action_name/$dbname/$tablename/",
-						"$action_title",
-						array('class'=>$selected)
-						) ?></li>
-				<?php endforeach ?>
-        </ol>
-		<?php endif*/ ?>
-
 			<div class="content">
 
-				<h1><?php if ($table)
-					{
-						echo ' &raquo; '.html::anchor(
-							'webdb/index/'.$database->get_name().'/'.$table->get_name(),
-							text::titlecase($table->get_name())
-						);
-					} ?>
+				<?php if ($table): ?>
+				<h1>
+						<?php echo html::anchor(
+						'webdb/index/'.$database->get_name().'/'.$table->get_name(),
+						text::titlecase($table->get_name())
+						) ?>
 				</h1>
+				<?php endif ?>
+
+				<?php if ($database && $table && count($actions) > 0): ?>
+				<ol class="actions small tabs">
+						<?php foreach ($actions as $action_name=>$action_title): ?>
+							<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
+					<li>
+								<?php echo html::anchor(
+								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'/',
+								"$action_title",
+								array('class'=>$selected)
+								) ?>
+					</li>
+						<?php endforeach ?>
+				</ol>
+				<?php endif ?>
 
 				<?php if (count($messages) > 0): ?>
 					<?php // Thanks to http://en.wikipedia.org/wiki/Template:Ambox ?>
