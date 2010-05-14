@@ -9,8 +9,11 @@ class Controller_WebDB extends Controller_Template
 	/** @var Webdb_DBMS */
 	protected $dbms;
 
-	/** @var Database */
-	protected $db;
+	/** @var Webdb_DBMS_Database The current database. */
+	protected $database;
+
+	/** @var Webdb_DBMS_Table The current table. */
+	protected $table;
 
 	/**
 	 * Set up the various views: the template is at the top, defining the overall
@@ -36,12 +39,12 @@ class Controller_WebDB extends Controller_Template
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
-			'index' => 'Browse &amp; Search',
-			'view' => 'View &amp; Edit',
-			'import' => 'Import',
-			'export' => 'Export',
-			'calendar' => 'Calendar',
-			'map' => 'Map'
+				'index' => 'Browse &amp; Search',
+				'edit' => 'View &amp; Edit',
+				'import' => 'Import',
+				'export' => 'Export',
+				'calendar' => 'Calendar',
+				'map' => 'Map'
 		);
 
 		// Databases
@@ -54,29 +57,29 @@ class Controller_WebDB extends Controller_Template
 
 	private function _set_database()
 	{
-		$this->db = $this->dbms->get_database();
-		$this->template->database = $this->db;
-		$this->view->database = $this->db;
-		if (!$this->db)
+		$this->database = $this->dbms->get_database();
+		$this->template->database = $this->database;
+		$this->view->database = $this->database;
+		if (!$this->database)
 		{
 			$this->add_template_message(
-				'Please select a database from the tabs above.',
-				'info'
+					'Please select a database from the tabs above.',
+					'info'
 			);
 		}
 	} // _set_database()
 
 	private function _set_table()
 	{
-		if ($this->db)
+		if ($this->database)
 		{
-			$this->table = $this->db->get_table();
-			$this->template->tables = $this->db->list_tables();
+			$this->table = $this->database->get_table();
+			$this->template->tables = $this->database->list_tables();
 			if (!$this->table)
 			{
 				$this->add_template_message(
-					'Please select a table from the menu to the left.',
-					'info'
+						'Please select a table from the menu to the left.',
+						'info'
 				);
 			}
 		} else
@@ -91,8 +94,8 @@ class Controller_WebDB extends Controller_Template
 	protected function add_template_message($message, $status = 'notice')
 	{
 		$this->template->messages[] = array(
-			'status'=>$status,
-			'message'=>$message
+				'status'=>$status,
+				'message'=>$message
 		);
 	}
 
@@ -103,6 +106,14 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_index()
 	{
+	}
+
+	public function action_edit()
+	{
+		$id = $this->request->param('id');
+		$this->view->columns = $this->table->get_columns();
+		$rows = $this->table->get_rows($id);
+		$this->view->row = $rows[0];
 	}
 
 	public function action_import($database, $table)

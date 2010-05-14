@@ -53,7 +53,7 @@ class Webdb_DBMS_Table
 		}
 	}
 
-	public function get_rows()
+	public function get_rows($id = FALSE)
 	{
 		//return array();
 		//$query = $this->_db->query(Database::SELECT, '', TRUE);
@@ -62,6 +62,9 @@ class Webdb_DBMS_Table
 		$query->from($this->get_name());
 		$query->offset($this->get_pagination()->offset);
 		$query->limit($this->get_pagination()->items_per_page);
+		if ($id) {
+			$query->where('id', '=', $id);
+		}
 		$rows = $query->execute($this->_db);
 		//exit('<pre>'.kohana::dump($rows));
 		return $rows;

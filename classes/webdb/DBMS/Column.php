@@ -105,6 +105,11 @@ class Webdb_DBMS_Column
 
 	}
 
+	public function is_editable()
+	{
+		return true;
+	}
+
 
 	/**
 	 * Find out whether the database user (as opposed to the application user)

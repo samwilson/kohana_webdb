@@ -9,11 +9,11 @@ Route::set('webdb/resources', 'webdb/resources(/<file>)', array('file' => '.+'))
 ));
 
 // Main WebDB URL structure
-Route::set('webdb', 'webdb/(<action>(/<dbname>(/<tablename>(/<rowid>))))')
+Route::set('webdb', 'webdb/(<action>(/<dbname>(/<tablename>(/<id>))))')
 	->defaults(array(
 	'controller' => 'webdb',
 	'action'     => 'index',
 	'dbname'     => NULL,
 	'tablename'  => NULL,
-	'rowid'      => NULL
+	'id'      => NULL
 ));
