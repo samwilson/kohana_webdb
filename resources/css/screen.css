@@ -1,5 +1,5 @@
 body { margin:0; font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
-background-color:#EFEFF5 }
+       background-color:#EFEFF5 }
 a { color:blue; text-decoration:none }
 a:hover { text-decoration:underline }
 a.current { font-weight:bolder; color:black }
@@ -58,55 +58,33 @@ ul { margin:0 }
 
 
 
-.tabs {
-    border-bottom: 1px solid #ccc;
-    height: 1%; /* fixing IE 6 */
-    margin: 0;
-    min-height: auto;
-    overflow: auto;
-}
-.tabs li {
-    border:1px solid #ccc;
-    border-bottom:none;
-    float:left;
-    line-height:1.5;
-    list-style-type:none;
-    margin:0 .25em 0 0;
-    padding:0;
-}
-.tabs li a {
-    background:#ddd;
-    border:1px solid #eee;
-    border-bottom:none;
-    color:#222;
-    cursor:pointer;
-    display:block;
-    float:left;
-    font-weight:bold;
-    padding:.15em .33em .25em .33em;
-}
-.tabs a.selected { background:#666; border:1px solid #666; border-bottom:none;
-                   color: white; cursor:default }
-.tabs a, .tabs a:focus, .tabs a:hover {
-    text-decoration:none;
-}
-.tabs li a:focus, .tabs li a:hover {
-    color:#555; outline:none; background-color: #ccc;
-}
-.tabs li a.selected:focus, .tabs li a.selected:hover {
-    color:#fafafa; background-color:#666;
-}
-.tabs li.label {
-    border:none;
-    font-weight:bold;
-    line-height:1.5;
-    margin-right:.5em;
-    padding:.25em .33em .25em .33em;
-}
+
+/**
+ * CSS Tabs 2.0 from Unraveled: http://unraveled.com/publications/css_tabs
+ * (c) Joshua Kaufman 2007, Creative Commons Attribution 3.0
+*/
+.tabnav { text-align: left; margin: 1em 0 0 0; border-bottom: 1px solid #CCC;
+          list-style-type: none; padding: 3px 10px 3px 10px }
+.tabnav li { display: inline }
+.tabnav li.selected { border-bottom: 1px solid #fff; background-color: #fff }
+.tabnav li.selected:hover { cursor: default }
+.tabnav li.selected a { background-color: #fff; color: #000; position: relative;
+                        top:1px; font-weight: bolder; padding-top: 4px }
+.tabnav li a { padding:3px 4px; border:1px solid #CCC; background-color:#FEFEFE;
+               color:#333; margin-right:0; text-decoration:none;
+               border-bottom:none; -moz-border-radius-topleft:6px;
+               -webkit-border-top-left-radius:6px;
+               -moz-border-radius-topright:6px; -webkit-border-top-right-radius:6px }
+.tabnav a:hover { background: #EEE }
+.tabnav.small { font-size:smaller }
+.tabnav.small li a { -moz-border-radius:0; -webkit-border-radius:0 }
+.tabnav.small li.selected a { font-weight:normal }
+/* end css tabs */
 
 
 
-table, th, td { border:1px solid #CCC; border-collapse:collapse }
+
+table, th, td { border:1px solid #CCC; border-collapse:collapse; vertical-align:top }
 table .pagination { margin:0; padding:0; text-align:left }
 
 
@@ -117,3 +95,8 @@ table .pagination { margin:0; padding:0; text-align:left }
 .import .stages li.completed { border-bottom:2px solid #CCC; background-color:#EEE; text-decoration:line-through }
 .import .stages li.selected { border-bottom:2px solid #CCC; background-color:#CCC }
 .import form {  }
+
+
+.edit table { margin:1em auto auto 0; border:0 }
+.edit table th { text-align:right; border:0 }
+.edit table td { text-align:left; border:0; padding-left:1.3em }

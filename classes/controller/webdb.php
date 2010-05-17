@@ -87,8 +87,7 @@ class Controller_WebDB extends Controller_Template
 			$this->table = FALSE;
 			$this->template->tables = array();
 		}
-		$this->template->table = $this->table;
-		$this->view->table = $this->table;
+		$this->template->set_global('table', $this->table);
 	}
 
 	protected function add_template_message($message, $status = 'notice')

@@ -67,10 +67,10 @@
             </h1-->
 
 			<?php if (count($databases) > 0): ?>
-            <ol class="databases tabs">
+            <ol class="databases tabnav">
 					<?php foreach ($databases as $db): ?>
 						<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
-                <li>
+                <li class="<?php echo $selected ?>">
 							<?php echo html::anchor("webdb/index/$db", text::titlecase($db),
 							array('class'=>$selected)) ?>
                 </li>
@@ -106,10 +106,10 @@
 				<?php endif ?>
 
 				<?php if ($database && $table && count($actions) > 0): ?>
-				<ol class="actions small tabs">
+				<ol class="actions small tabnav">
 						<?php foreach ($actions as $action_name=>$action_title): ?>
 							<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
-					<li>
+					<li class="<?php echo $selected ?>">
 								<?php echo html::anchor(
 								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'/',
 								"$action_title",
