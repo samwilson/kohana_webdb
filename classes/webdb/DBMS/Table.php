@@ -66,7 +66,7 @@ class Webdb_DBMS_Table
 			$query->where('id', '=', $id);
 		}
 		$rows = $query->execute($this->_db);
-		//exit('<pre>'.kohana::dump($rows));
+		//exit('<pre>'.kohana::dump($rows->as_array()));
 		return $rows;
 	}
 

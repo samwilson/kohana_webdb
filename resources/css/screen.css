@@ -89,6 +89,9 @@ table .pagination { margin:0; padding:0; text-align:left }
 
 
 
+.index table { margin:1em auto auto 0; background-color:white }
+
+
 
 .import .stages { width:100%; height:2em }
 .import .stages li { float:left; margin:0; padding:0.2em 1.5em; list-style-position:inside; border-bottom:2px solid #EEE }

@@ -12,7 +12,9 @@
 	</caption>
 	<thead>
 		<tr>
+				<?php if (in_array('id', array_keys($table->get_columns()))): ?>
 			<th>&nbsp;</th>
+				<?php endif ?>
 				<?php foreach ($table->get_columns() as $column): ?>
 			<th><?php echo text::titlecase($column->get_name()) ?></th>
 				<?php endforeach ?>
@@ -21,7 +23,11 @@
 	<tbody>
 			<?php foreach ($table->get_rows() as $row): ?>
 		<tr>
-			<td><?php echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit') ?></td>
+					<?php if (isset($row->id)): ?>
+			<td>
+							<?php echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit') ?>
+			</td>
+					<?php endif ?>
 					<?php foreach ($table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
 							<?php
