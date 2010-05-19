@@ -47,7 +47,7 @@ class Webdb_DBMS_Column
 	 * user has for this column.
 	 * For example: 'select,insert,update,references'
 	 */
-	private $_dbUserPrivileges;
+	private $_db_user_privileges;
 
 	/** @var string The comment attached to this column. */
 	private $_comment;
@@ -73,8 +73,8 @@ class Webdb_DBMS_Column
 		$this->_name = $info['field'];
 		// Type
 		$this->parse_type($info['type']);
-		//echo '<pre>'.kohana::dump($this->_type);
-		//exit();
+		// Default
+		$this->_default = $info['default'];
 		// Primary key
 		if (strtoupper($info['key']) == 'PRI')
 		{
@@ -98,7 +98,7 @@ class Webdb_DBMS_Column
 			$this->_references = $referencedTables[$this->_name];
 		}
 		// DB user privileges
-		$this->_dbUserPrivileges = $info['privileges'];
+		$this->_db_user_privileges = $info['privileges'];
 
 		// App user privileges
 		//$this->_appUserPrivileges = $this->_getAppUserPrivileges();
@@ -118,18 +118,18 @@ class Webdb_DBMS_Column
 	 * @param $privilege string The comma-delimited list of privileges to check.
 	 * @return boolean
 	 */
-	public function dbUserCan($privilege)
+	public function db_user_can($privilege)
 	{
-		$hasPriv = false;
+		$has_priv = false;
 		$privs = explode(',', $privilege);
 		foreach ($privs as $priv)
 		{
-			if (strpos($this->_dbUserPrivileges, $priv) !== false)
+			if (strpos($this->_db_user_privileges, $priv) !== false)
 			{
-				$hasPriv = true;
+				$has_priv = true;
 			}
 		}
-		return $hasPriv;
+		return $has_priv;
 	}
 
 	/**
@@ -150,6 +150,16 @@ class Webdb_DBMS_Column
 	public function get_type()
 	{
 		return $this->_type;
+	}
+
+	/**
+	 * Get the default value for this column.
+	 *
+	 * @return mixed
+	 */
+	public function get_default()
+	{
+		return $this->_default;
 	}
 
 	/**

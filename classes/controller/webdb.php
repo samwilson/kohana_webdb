@@ -39,12 +39,12 @@ class Controller_WebDB extends Controller_Template
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
-				'index' => 'Browse &amp; Search',
-				'edit' => 'View &amp; Edit',
-				'import' => 'Import',
-				'export' => 'Export',
-				'calendar' => 'Calendar',
-				'map' => 'Map'
+			'index' => 'Browse &amp; Search',
+			'edit' => 'View &amp; Edit',
+			'import' => 'Import',
+			'export' => 'Export',
+			'calendar' => 'Calendar',
+			'map' => 'Map'
 		);
 
 		// Databases
@@ -63,8 +63,8 @@ class Controller_WebDB extends Controller_Template
 		if (!$this->database)
 		{
 			$this->add_template_message(
-					'Please select a database from the tabs above.',
-					'info'
+				'Please select a database from the tabs above.',
+				'info'
 			);
 		}
 	} // _set_database()
@@ -78,8 +78,8 @@ class Controller_WebDB extends Controller_Template
 			if (!$this->table)
 			{
 				$this->add_template_message(
-						'Please select a table from the menu to the left.',
-						'info'
+					'Please select a table from the menu to the left.',
+					'info'
 				);
 			}
 		} else
@@ -93,8 +93,8 @@ class Controller_WebDB extends Controller_Template
 	protected function add_template_message($message, $status = 'notice')
 	{
 		$this->template->messages[] = array(
-				'status'=>$status,
-				'message'=>$message
+			'status'=>$status,
+			'message'=>$message
 		);
 	}
 
@@ -111,8 +111,14 @@ class Controller_WebDB extends Controller_Template
 	{
 		$id = $this->request->param('id');
 		$this->view->columns = $this->table->get_columns();
-		$rows = $this->table->get_rows($id);
-		$this->view->row = $rows[0];
+		if ($id)
+		{
+			//$rows = $this->table->get_rows($id);
+			$this->view->row = $this->table->get_row($id);
+		} else
+		{
+			$this->view->row = $this->table->get_default_row();
+		}
 	}
 
 	public function action_import($database, $table)

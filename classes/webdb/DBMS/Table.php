@@ -53,6 +53,11 @@ class Webdb_DBMS_Table
 		}
 	}
 
+	/**
+	 *
+	 * @param <type> $id
+	 * @return <type> 
+	 */
 	public function get_rows($id = FALSE)
 	{
 		//return array();
@@ -71,14 +76,38 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 *
+	 * @param <type> $id
+	 */
+	public function get_row($id)
+	{
+		$query = new Database_Query_Builder_Select();
+		$query->as_object();
+		$query->from($this->get_name());
+		$query->limit(1);
+		$query->where('id', '=', $id);
+		$row = $query->execute($this->_db);
+		return $row;
+	}
+
+	public function get_default_row()
+	{
+		$row = new stdClass();
+		foreach ($this->get_columns() as $col) {
+			$row->{$col->get_name()} = $col->get_default();
+		}
+		return $row;
+	}
+
+	/**
 	 * Get this table's database object.
 	 *
 	 * @return PearScaff_DB_Database The database to which this table belongs.
 	 */
-	public function getDatabase()
+	/*public function getDatabase()
 	{
 		return $this->_db;
-	}
+	}*/
 
 	/**
 	 * Get this table's name.
@@ -119,7 +148,7 @@ class Webdb_DBMS_Table
 	/**
 	 * Get a list of this table's columns.
 	 *
-	 * @return array[PearScaff_DB_Column] This table's columns.
+	 * @return array[Webdb_DBMS_Column] This table's columns.
 	 */
 	public function get_columns()
 	{
@@ -142,7 +171,7 @@ class Webdb_DBMS_Table
 	 *
 	 * @return string The SQL statement used to create this table.
 	 */
-	private function _getDefiningSql()
+	private function _get_defining_sql()
 	{
 		if (!isset($this->_definingSql))
 		{
@@ -180,7 +209,7 @@ class Webdb_DBMS_Table
 	{
 		if (!isset($this->_referencedTables))
 		{
-			$definingSql = $this->_getDefiningSql();
+			$definingSql = $this->_get_defining_sql();
 			$foreignKeyPattern = '|FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)`|';
 			preg_match_all($foreignKeyPattern, $definingSql, $matches);
 			if (isset($matches[1]) && count($matches[1])>0)
@@ -218,16 +247,16 @@ class Webdb_DBMS_Table
 	 *
 	 * @return boolean
 	 */
-	public function canEdit()
+	public function can_edit()
 	{
 
 		// Check that the database user can edit.
-		$dbUserCanEdit = false;
+		$db_user_can_edit = false;
 		foreach ($this->get_columns() as $column)
 		{
 			if ($column->dbUserCan('update,insert'))
 			{
-				$dbUserCanEdit = true;
+				$db_user_can_edit = true;
 				break;
 			}
 		}
@@ -236,7 +265,7 @@ class Webdb_DBMS_Table
 		$appUserCanEdit = $this->_db->getUser()->canEdit($this->_name);
 
 		// Return the conjunction of these.
-		return $dbUserCanEdit && $appUserCanEdit;
+		return $db_user_can_edit && $appUserCanEdit;
 
 	}
 
