@@ -42,7 +42,11 @@ class Webdb_DBMS_Table
 		if (!isset($this->_columns))
 		{
 			$this->_columns = array();
-			$columns_info = $this->_db->query(Database::SELECT, 'SHOW FULL COLUMNS FROM '.$name, FALSE);
+			$columns_info = $this->_db->query(
+				Database::SELECT,
+				'SHOW FULL COLUMNS FROM '.$this->_db->quote_table($name),
+				FALSE
+			);
 			//$columns_info = $this->_db->list_columns($this->_name);
 			//var_dump($columnsInfo);
 			foreach ($columns_info as $column_info)
@@ -56,7 +60,7 @@ class Webdb_DBMS_Table
 	/**
 	 *
 	 * @param <type> $id
-	 * @return <type> 
+	 * @return <type>
 	 */
 	public function get_rows($id = FALSE)
 	{
@@ -67,7 +71,8 @@ class Webdb_DBMS_Table
 		$query->from($this->get_name());
 		$query->offset($this->get_pagination()->offset);
 		$query->limit($this->get_pagination()->items_per_page);
-		if ($id) {
+		if ($id)
+		{
 			$query->where('id', '=', $id);
 		}
 		$rows = $query->execute($this->_db);
@@ -93,7 +98,8 @@ class Webdb_DBMS_Table
 	public function get_default_row()
 	{
 		$row = new stdClass();
-		foreach ($this->get_columns() as $col) {
+		foreach ($this->get_columns() as $col)
+		{
 			$row->{$col->get_name()} = $col->get_default();
 		}
 		return $row;
@@ -254,15 +260,18 @@ class Webdb_DBMS_Table
 		$db_user_can_edit = false;
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->dbUserCan('update,insert'))
+			if ($column->db_user_can('update,insert'))
 			{
 				$db_user_can_edit = true;
+				// As soon as we know the DB user can edit at least one column,
+				// we can say that they can edit the table.
 				break;
 			}
 		}
 
 		// Check that the application user can edit this table.
-		$appUserCanEdit = $this->_db->getUser()->canEdit($this->_name);
+
+		$appUserCanEdit = true; //$this->_db->getUser()->canEdit($this->_name);
 
 		// Return the conjunction of these.
 		return $db_user_can_edit && $appUserCanEdit;

@@ -36,7 +36,7 @@ Access Control
 
 WebDB has a number of different options for user authentication and
 authorisation.  Credentials can be supplied from the Database configuration
-file, HTTP Basic Auth, or user input -- and are generally a combination of
+file, user input, or an LDAP server -- and are generally a combination of
 these.  How they are combined, and what your options are for further refining
 users' permissions, are detailed below.
 
