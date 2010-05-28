@@ -13,8 +13,9 @@ ul { margin:0 }
 .footer {padding:0; margin:0; border-width:0; border-style:solid;
          font-size:smaller; border-color:#ccd }
 
-.header { border-bottom-width:0; padding-top:1.3em }
-.header .login-info { font-size:smaller; float:right; margin:0 }
+.header h1 { margin:0 }
+.header { border-bottom-width:0 }
+.header .auth { float:right; margin:0.3em 0.8em 0 0 }
 .header a { color: black }
 .header .databases { font-size:larger }
 

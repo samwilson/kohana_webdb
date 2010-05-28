@@ -17,7 +17,11 @@ class Webdb_DBMS_Database
 	/** @var Database The [Kohana_Database] object. */
 	private $_db;
 
+	/** @var string The name of the database. */
 	private $_name;
+
+	/** @var array[Webdb_DBMS_Table] Array of [Webdb_DBMS_Table] objects. */
+	private $_tables;
 
 	/**
 	 * Create a new Webdb_DBMS_Database object, getting a [Database] instance
@@ -31,9 +35,9 @@ class Webdb_DBMS_Database
 	public function __construct($dbname)
 	{
 		$this->_name = $dbname;
+		$this->_tables = array();
 		$config = Kohana::config('database')->default;
 		$config['connection']['database'] = $dbname;
-		//echo '<pre>'.kohana::dump($config).'</pre>';
 		unset(Database::$instances[$dbname]);
 		$this->_db = Database::instance($dbname, $config);
 	}
@@ -48,11 +52,29 @@ class Webdb_DBMS_Database
 	}
 
 	/**
-	 * See [Database][list_tables].
+	 * Get all table names, optionally filtered by a given string.
+	 *
+	 * @param string $like The filter string.
+	 * @return array[string] Array of table names.
+	 * @uses Database::list_tables
 	 */
 	public function list_tables($like = NULL)
 	{
-		return $this->_db->list_tables();
+		return $this->_db->list_tables($like);
+	}
+
+	/**
+	 *
+	 * @return <type>
+	 */
+	public function get_tables($like = NULL)
+	{
+		$tablenames = $this->_db->list_tables($like);
+		foreach ($tablenames as $tablename)
+		{
+			$this->get_table($tablename);
+		}
+		return $this->_tables;
 	}
 
 	/**
@@ -73,11 +95,15 @@ class Webdb_DBMS_Database
 				return false;
 			}
 		}
-		if (!in_array($tablename, $this->list_tables()))
+		if (!in_array($tablename, $this->_db->list_tables()))
 		{
 			throw new Exception("The table '$tablename' could not be found.");
 		}
-		return new Webdb_DBMS_Table($this->_db, $tablename);
+		if (!isset($this->_tables[$tablename]))
+		{
+			$this->_tables[$tablename] = new Webdb_DBMS_Table($this->_db, $tablename);
+		}
+		return $this->_tables[$tablename];
 	}
 
 }

@@ -31,6 +31,7 @@
 					<?php foreach ($table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
 							<?php
+							//echo kohana::dump($column);
 							$view_file = kohana::find_file('views/fields', $column->get_type());
 							if ($view_file)
 							{

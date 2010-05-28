@@ -39,6 +39,8 @@
                 $('input.datepicker').mask('9999-99-99');
                 $('input.datepicker').datepicker( {dateFormat: 'yy-mm-dd'} );
 
+				// Set initial focus element
+				$('#focus-me').focus();
             });
         </script>
 
@@ -48,23 +50,31 @@
     <body class="<?php echo $controller.' '.$action ?>">
 
         <div class="header">
-            <!--h1>
-			<?php echo html::anchor('webdb', 'WebDB') ?>
-			<?php if ($database)
-			{
-				echo ' :: '.html::anchor(
-					'webdb/index/'.$database->get_name(),
-					text::titlecase($database->get_name())
-				);
-			}
-			if ($table)
-			{
-				echo ' &raquo; '.html::anchor(
-					'webdb/index/'.$database->get_name().'/'.$table->get_name(),
-					text::titlecase($table->get_name())
-				);
-			} ?>
-            </h1-->
+			<p class="auth">
+				<?php if (auth::instance()->logged_in()): ?>
+				Logged in as <?php echo auth::instance()->get_user() ?>.
+					<?php echo html::anchor('webdb/logout','[Log out]') ?>
+				<?php else: ?>
+					<?php echo html::anchor('webdb/login','[Log in]') ?>
+				<?php endif ?>
+			</p>
+            <h1>
+				<?php echo html::anchor('webdb', 'WebDB') ?>
+				<?php if ($database)
+				{
+					echo ' :: '.html::anchor(
+						'webdb/index/'.$database->get_name(),
+						text::titlecase($database->get_name())
+					);
+				}
+				if ($table)
+				{
+					echo ' &raquo; '.html::anchor(
+						'webdb/index/'.$database->get_name().'/'.$table->get_name(),
+						text::titlecase($table->get_name())
+					);
+				} ?>
+            </h1>
 
 			<?php if (count($databases) > 0): ?>
             <ol class="databases tabnav">
@@ -85,9 +95,9 @@
 			<?php if (count($tables) > 0): ?>
 			<ol class="tables">
 					<?php foreach ($tables as $tab): ?>
-						<?php $selected = ($table && $tab==$table->get_name()) ? 'selected' : '' ?>
+						<?php $selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '' ?>
 				<li>
-							<?php echo html::anchor('webdb/index/'.$database->get_name().'/'.$tab, text::titlecase($tab),
+							<?php echo html::anchor('webdb/index/'.$database->get_name().'/'.$tab->get_name(), text::titlecase($tab->get_name()),
 							array('class'=>$selected)) ?>
 				</li>
 					<?php endforeach ?>
@@ -147,10 +157,12 @@
 
 
 		<ol class="footer">
-			<li>Please report any bugs or feature requests through
+			<li>Thank you for using
+				<?php echo html::anchor('http://github.com/samwilson/kohana_webdb', 'WebDB') ?>
+				.  Please report any bugs or feature requests through
 				<?php echo html::anchor('http://github.com/samwilson/kohana_webdb/issues', 'Github') ?>.
 			</li>
-			<li>
+			<!--li>
 				&copy; <a xmlns:cc="http://creativecommons.org/ns#"
 						  href="http://github.com/samwilson"
 						  property="cc:attributionName" rel="cc:attributionURL">Sam Wilson</a>
@@ -158,7 +170,7 @@
 				Released under the
 				<a rel="license" href="http://opensource.org/licenses/bsd-license.php">
 					Simplified BSD License</a>.
-			</li>
+			</li-->
 			<li>
 					Built on
 				<?php echo html::anchor('/guide', 'Kohana', array('title'=>'View the User Guide')) ?>

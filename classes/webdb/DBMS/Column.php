@@ -116,15 +116,20 @@ class Webdb_DBMS_Column
 
 	}
 
-	public function is_editable()
+	public function can_edit()
 	{
-		return true;
+		return $this->db_user_can('update') && $this->app_user_can_edit();
 	}
 
+	public function app_user_can_edit()
+	{
+		$config = kohana::config('webdb');
+		Auth::instance()->logged_in('admin');
+	}
 
 	/**
 	 * Find out whether the database user (as opposed to the application user)
-	 * has the given privilege or privileges on this column.
+	 * has any of the given privileges on this column.
 	 *
 	 * @param $privilege string The comma-delimited list of privileges to check.
 	 * @return boolean

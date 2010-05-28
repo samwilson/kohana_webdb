@@ -16,10 +16,9 @@ class Controller_WebDB extends Controller_Template
 	protected $table;
 
 	/**
-	 * Set up the various views: the template is at the top, defining the overall
-	 * HTML page; then the controllerView is put within that (for layout that is
-	 * common to all of a controller's actions); and lastly comes the action's view
-	 * object.
+	 * Set up the various views: a site-wide template; and a per-action view.
+	 * Also deal with selecting (or issuing messages to the user) the current
+	 * database and table.
 	 *
 	 * @return void
 	 */
@@ -39,27 +38,47 @@ class Controller_WebDB extends Controller_Template
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
-			'index'  => 'Browse &amp; Search',
-			'edit'   => 'View &amp; Edit',
+			'index' => 'Browse &amp; Search',
+			'edit' => 'View/Edit',
 			'import' => 'Import',
 			//'export' => 'Export',
 			//'calendar' => 'Calendar',
 			//'map' => 'Map',
 		);
 
-		// Databases
-		$this->dbms = new Webdb_DBMS;
-		$this->template->databases = $this->dbms->list_dbs();
-		$this->_set_database();
-		$this->_set_table();
+		/*
+		 * Database & table.
+		 * Do not instantiate database for resources, login, or logout actions.
+		*/
+		if ($this->request->action !== 'dblogin' AND $this->request->action !== 'dblogout')
+		{
+			try
+			{
+				$this->dbms = new Webdb_DBMS;
+			} catch (Webdb_DBMS_ConnectionException $e)
+			{
+				$this->add_flash_message($e->getMessage());
+				$this->request->redirect('webdb/dblogin');
+			}
+			$this->template->databases = $this->dbms->list_dbs();
+			$this->_set_database();
+			$this->_set_table();
+		}
+
+		/*
+		 * Add flash messages to the template, then clear them from the session.
+		*/
+		foreach (session::instance()->get('flash_messages', array()) as $msg)
+		{
+			$this->add_template_message($msg['message'], $msg['status']);
+		}
+		session::instance()->set('flash_messages', array());
 
 	} // _before()
 
 	private function _set_database()
 	{
 		$this->database = $this->dbms->get_database();
-		$this->template->database = $this->database;
-		$this->view->database = $this->database;
 		if (!$this->database)
 		{
 			$this->add_template_message(
@@ -67,6 +86,7 @@ class Controller_WebDB extends Controller_Template
 				'info'
 			);
 		}
+		$this->template->set_global('database', $this->database);
 	} // _set_database()
 
 	private function _set_table()
@@ -74,7 +94,7 @@ class Controller_WebDB extends Controller_Template
 		if ($this->database)
 		{
 			$this->table = $this->database->get_table();
-			$this->template->tables = $this->database->list_tables();
+			$this->template->tables = $this->database->get_tables();
 			if (!$this->table)
 			{
 				$this->add_template_message(
@@ -93,9 +113,19 @@ class Controller_WebDB extends Controller_Template
 	protected function add_template_message($message, $status = 'notice')
 	{
 		$this->template->messages[] = array(
+			'status'  => $status,
+			'message' => $message
+		);
+	}
+
+	protected function add_flash_message($message, $status = 'notice')
+	{
+		$flash_messages = session::instance()->get('flash_messages', array());
+		$flash_messages[] = array(
 			'status'=>$status,
 			'message'=>$message
 		);
+		session::instance()->set('flash_messages', $flash_messages);
 	}
 
 	/**
@@ -105,6 +135,10 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_index()
 	{
+		//auth::instance()->logged_in();
+		//echo '<pre>';
+		//print_r(auth::instance()->get_user());
+		//exit();
 	}
 
 	public function action_edit()
@@ -193,6 +227,50 @@ class Controller_WebDB extends Controller_Template
 			$this->template->messages[] = array('message'=>'Not Found','status'=>'error');
 		}
 
+	}
+
+	public function action_login()
+	{
+		$this->template->set_global('database', FALSE);
+		$this->template->set_global('table', FALSE);
+		$this->template->set_global('databases', array('login'));
+		$this->template->set_global('tables', array());
+		if (isset($_POST['login']))
+		{
+			$post = Validate::factory($_POST)
+				->filter(TRUE,'trim')
+				->rule('username', 'not_empty')
+				->rule('username', 'min_length', array(1))
+				->rule('password', 'not_empty');
+			if($post->check())
+			{
+				$username = $post['username'];
+				$password = arr::get($post, 'password', '');
+				try
+				{
+					if (Auth::instance()->login($username, $password))
+					{
+						$this->request->redirect('webdb');
+					} else
+					{
+						$this->add_template_message('Login failed.');
+					}
+				} catch (adLDAPException $e)
+				{
+					$this->add_template_message($e->getMessage());
+				}
+			} else
+			{
+				$this->add_template_message('You must enter both your username and password.');
+			}
+		}
+	}
+
+	public function action_logout()
+	{
+		auth::instance()->logout();
+		$this->add_template_message('You are now logged out.', 'info');
+		//$this->request->redirect('webdb');
 	}
 
 }
