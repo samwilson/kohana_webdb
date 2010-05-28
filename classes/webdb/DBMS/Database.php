@@ -37,6 +37,10 @@ class Webdb_DBMS_Database
 		$this->_name = $dbname;
 		$this->_tables = array();
 		$config = Kohana::config('database')->default;
+		$username = auth::instance()->get_user();
+		$config['connection']['username'] = $username;
+		$password = auth::instance()->password($username);
+		$config['connection']['password'] = $password;
 		$config['connection']['database'] = $dbname;
 		unset(Database::$instances[$dbname]);
 		$this->_db = Database::instance($dbname, $config);

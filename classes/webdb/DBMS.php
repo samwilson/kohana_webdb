@@ -28,41 +28,29 @@ class Webdb_DBMS
 	 */
 	public function __construct()
 	{
-		$this-> _db = Database::instance();
+		$this->_db = Database::instance();
 		try
 		{
-			$this-> _db->connect();
-			
+			$this->_db->connect();
 		} catch (Exception $e)
 		{
-			/*
-			 * First connection failure: try to use credentials from the session.
-			*/
+			// First connection failure: try to use credentials from Auth.
 			$config = kohana::config('database')->default;
-			$username = session::instance()->get('username', FALSE);
-			if ($username)
-			{
-				$config['connection']['username'] = $username;
-			}
-			$password = session::instance()->get('password', FALSE);
-			if ($password)
-			{
-				$config['connection']['password'] = $password;
-			}
-
+			$username = auth::instance()->get_user();
+			$config['connection']['username'] = $username;
+			$password = auth::instance()->password($username);
+			$config['connection']['password'] = $password;
+			//exit(kohana::debug($config));
 			unset(Database::$instances['default']);
 			$this-> _db = Database::instance('default', $config);
 
 			try
 			{
 				$this-> _db->connect();
-				$this->logged_in = TRUE;
 
 			} catch (Exception $e)
 			{
-				/*
-				* Second connection failure: give up.
-				*/
+				// Second connection failure: give up.
 				throw new Webdb_DBMS_ConnectionException('Unable to connect to DBMS.');
 			}
 		}

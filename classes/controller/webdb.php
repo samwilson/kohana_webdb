@@ -47,10 +47,15 @@ class Controller_WebDB extends Controller_Template
 		);
 
 		/*
+		 * User authentication
+		 */
+		//auth::instance()->logged_in();
+
+		/*
 		 * Database & table.
 		 * Do not instantiate database for resources, login, or logout actions.
 		*/
-		if ($this->request->action !== 'dblogin' AND $this->request->action !== 'dblogout')
+		if ($this->request->action !== 'login')
 		{
 			try
 			{
@@ -58,7 +63,7 @@ class Controller_WebDB extends Controller_Template
 			} catch (Webdb_DBMS_ConnectionException $e)
 			{
 				$this->add_flash_message($e->getMessage());
-				$this->request->redirect('webdb/dblogin');
+				$this->request->redirect('webdb/login');
 			}
 			$this->template->databases = $this->dbms->list_dbs();
 			$this->_set_database();
@@ -233,7 +238,7 @@ class Controller_WebDB extends Controller_Template
 	{
 		$this->template->set_global('database', FALSE);
 		$this->template->set_global('table', FALSE);
-		$this->template->set_global('databases', array('login'));
+		$this->template->set_global('databases', array('Login'));
 		$this->template->set_global('tables', array());
 		if (isset($_POST['login']))
 		{
@@ -245,7 +250,7 @@ class Controller_WebDB extends Controller_Template
 			if($post->check())
 			{
 				$username = $post['username'];
-				$password = arr::get($post, 'password', '');
+				$password = $post['password'];
 				try
 				{
 					if (Auth::instance()->login($username, $password))
@@ -253,9 +258,9 @@ class Controller_WebDB extends Controller_Template
 						$this->request->redirect('webdb');
 					} else
 					{
-						$this->add_template_message('Login failed.');
+						$this->add_template_message('Login failed.  Please try again.');
 					}
-				} catch (adLDAPException $e)
+				} catch (Exception $e)
 				{
 					$this->add_template_message($e->getMessage());
 				}
@@ -269,8 +274,8 @@ class Controller_WebDB extends Controller_Template
 	public function action_logout()
 	{
 		auth::instance()->logout();
-		$this->add_template_message('You are now logged out.', 'info');
-		//$this->request->redirect('webdb');
+		$this->add_flash_message('You are now logged out.', 'info');
+		$this->request->redirect('webdb');
 	}
 
 }
