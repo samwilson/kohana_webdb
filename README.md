@@ -63,3 +63,8 @@ users' permissions, are detailed below.
    unauthenticated user will see nothing by default (unless the special user
    `anonymous` is granted some privileges), and the site administrator must
    explicitly grant all privileges.
+
+Sources of user credentials:
+Database config file
+HTTP Basic Auth
+Auth Module

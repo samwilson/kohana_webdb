@@ -65,16 +65,20 @@ class Webdb_DBMS_Column
 	public function __construct(Webdb_DBMS_Table $table, $info)
 	{
 		$info = array_combine(array_map('strtolower', array_keys($info)), array_values($info));
-		//echo '<pre>'.kohana::dump($info).'</pre>';
+		//exit('<pre>'.kohana::dump($info).'</pre>');
 
+		// Table object
 		$this->_table = $table;
 
 		// Name
 		$this->_name = $info['field'];
+
 		// Type
 		$this->parse_type($info['type']);
+
 		// Default
 		$this->_default = $info['default'];
+
 		// Primary key
 		if (strtoupper($info['key']) == 'PRI')
 		{
@@ -84,19 +88,26 @@ class Webdb_DBMS_Column
 				$this->_isAutoIncrement = true;
 			}
 		}
+
 		// Comment
 		$this->_comment = $info['comment'];
+
+		// Collation
+		$this->_collation = $info['collation'];
+
 		// NULL?
 		if ($info['null'] == 'NO')
 		{
 			$this->required = TRUE;
 		}
+
 		// Is this a foreign key?
 		if (in_array($this->_name, $table->get_foreign_key_names()))
 		{
 			$referencedTables = $table->getReferencedTables();
 			$this->_references = $referencedTables[$this->_name];
 		}
+
 		// DB user privileges
 		$this->_db_user_privileges = $info['privileges'];
 

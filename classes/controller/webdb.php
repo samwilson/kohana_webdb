@@ -39,12 +39,12 @@ class Controller_WebDB extends Controller_Template
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
-			'index' => 'Browse &amp; Search',
-			'edit' => 'View &amp; Edit',
+			'index'  => 'Browse &amp; Search',
+			'edit'   => 'View &amp; Edit',
 			'import' => 'Import',
-			'export' => 'Export',
-			'calendar' => 'Calendar',
-			'map' => 'Map'
+			//'export' => 'Export',
+			//'calendar' => 'Calendar',
+			//'map' => 'Map',
 		);
 
 		// Databases
