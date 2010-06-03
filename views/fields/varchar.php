@@ -1,4 +1,4 @@
-<?php if ($column->is_editable()): ?>
+<?php if ($edit): ?>
 	
 	<?php echo form::input($column->get_name(), $row->{$column->get_name()}) ?>
 

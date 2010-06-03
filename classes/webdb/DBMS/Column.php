@@ -11,7 +11,7 @@ class Webdb_DBMS_Column
 {
 
 	/**
-	 * @var PearScaff_DB_Table The table to which this column belongs.
+	 * @var Webdb_DBMS_Table The table to which this column belongs.
 	 */
 	private $_table;
 
@@ -53,7 +53,7 @@ class Webdb_DBMS_Column
 	private $_comment;
 
 	/**
-	 * @var PearScaff_DB_Table|false The table that this column refers to, or
+	 * @var Webdb_DBMS_Table|false The table that this column refers to, or
 	 * false if it is not a foreign key.
 	 */
 	private $_references = false;
@@ -116,15 +116,57 @@ class Webdb_DBMS_Column
 
 	}
 
-	public function can_edit()
+	public function is_editable()
 	{
-		return $this->db_user_can('update') && $this->app_user_can_edit();
+		return $this->can_update() || $this->can_insert();
 	}
 
-	public function app_user_can_edit()
+	public function can_update()
 	{
-		$config = kohana::config('webdb');
-		Auth::instance()->logged_in('admin');
+		return $this->_db_user_can('update') && $this->_app_user_can(Database::UPDATE);
+	}
+
+	public function can_insert()
+	{
+		return $this->_db_user_can('insert') && $this->_app_user_can(Database::INSERT);
+	}
+
+	/**
+	 * Check that the current user can edit this column.  This uses the
+	 * permissions table to lookup which roles have edit permission, and then
+	 * asks Auth whether the current user has any of these roles.
+	 *
+	 * @return boolean
+	 */
+	private function _app_user_can($priv_type)
+	{
+		$config = kohana::config('webdb')->permissions;
+		if (empty($config['table']))
+		{
+			return TRUE; // If no permissions table, assume all permissions.
+		}
+		$db = $this->_table->get_database();
+		$query = DB::select('role_name')
+			->from($config['database'].'.'.$config['table'])
+			->where('priv_type', '=', $priv_type)
+			->and_where('database_name', '=', $db->get_name())
+			->and_where_open()
+			->where('table_name', '=', $this->_table->get_name())
+			->or_where('table_name', '=', '*')
+			->and_where_close();
+		$sql = $query->compile($this->_table->get_database()->get_db());
+		//exit(kohana::debug($sql));
+		$roles = $query->execute($db->get_db())->as_array('role_name');
+		$roles = array_keys($roles);
+		//exit(kohana::debug($roles));
+		foreach ($roles as $role)
+		{
+			if (Auth::instance()->logged_in($role))
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
@@ -134,7 +176,7 @@ class Webdb_DBMS_Column
 	 * @param $privilege string The comma-delimited list of privileges to check.
 	 * @return boolean
 	 */
-	public function db_user_can($privilege)
+	public function _db_user_can($privilege)
 	{
 		$has_priv = false;
 		$privs = explode(',', $privilege);
@@ -222,26 +264,27 @@ class Webdb_DBMS_Column
 	 * Get the table object of the referenced table, if this column is a foreign
 	 * key.
 	 *
-	 * @return PearScaff_DB_Table The referenced table.
+	 * @return WebDB_DBMS_Table The referenced table.
 	 */
 	public function get_referenced_table()
 	{
-		return $this->_table->getDatabase()->getTable($this->_references);
+		//exit(kohana::debug($this->_table));
+		return $this->_table->get_database()->get_table($this->_references);
 	}
 
 	/**
 	 * @return string|false The name of the referenced table or false if this is
 	 * not a foreign key.
 	 */
-	public function getReferencedTableName()
+	/*public function get_referenced_table_name()
 	{
 		return $this->_references;
-	}
+	}*/
 
 	/**
 	 * Get the table that this column belongs to.
 	 *
-	 * @return PearScaff_DB_Table The table object.
+	 * @return Webdb_DBMS_Table The table object.
 	 */
 	public function getTable()
 	{

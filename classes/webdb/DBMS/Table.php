@@ -17,12 +17,12 @@ class Webdb_DBMS_Table
 	/** @var string The SQL statement used to create this table. */
 	private $_definingSql;
 	/**
-	 * @var array[string => PearScaff_DB_Table] Array of tables referred to by
+	 * @var array[string => Webdb_DBMS_Table] Array of tables referred to by
 	 * columns in this one.
 	 */
 	private $_referencedTables;
 	/**
-	 * @var array[string => PearScaff_DB_Column] Array of column names and
+	 * @var array[string => Webdb_DBMS_Column] Array of column names and
 	 * objects for all of the columns in this table.
 	 */
 	private $_columns;
@@ -33,11 +33,13 @@ class Webdb_DBMS_Table
 	/**
 	 * Create a new database table object.
 	 *
+	 * @param Webdb_DBMS_Database The database to which this table belongs.
 	 * @param string $name The name of the table.
 	 */
 	public function __construct($db, $name)
 	{
-		$this->_db = $db;
+		$this->_database = $db;
+		$this->_db = $db->get_db();
 		$this->_name = $name;
 		if (!isset($this->_columns))
 		{
@@ -91,7 +93,7 @@ class Webdb_DBMS_Table
 		$query->from($this->get_name());
 		$query->limit(1);
 		$query->where('id', '=', $id);
-		$row = $query->execute($this->_db);
+		$row = $query->execute($this->_db)->current();
 		return $row;
 	}
 
@@ -108,7 +110,7 @@ class Webdb_DBMS_Table
 	/**
 	 * Get this table's database object.
 	 *
-	 * @return PearScaff_DB_Database The database to which this table belongs.
+	 * @return Webdb_DBMS_Database The database to which this table belongs.
 	 */
 	/*public function getDatabase()
 	{
@@ -162,9 +164,21 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get the title text for a given row.
 	 *
+	 * @param integer $id
 	 */
-	public function getTitleColumn()
+	public function get_title($id)
+	{
+		$row = $this->get_row($id);
+		$title_column = $this->get_title_column()->get_name();
+		return $row->$title_column;
+	}
+
+	/**
+	 * @return Webdb_DBMS_Column
+	 */
+	public function get_title_column()
 	{
 		$columnIndices = array_keys($this->_columns);
 		$titleColName = $columnIndices[1];
@@ -311,6 +325,16 @@ class Webdb_DBMS_Table
 		return $dbUserCanView && $appUserCanView;
 	}
 
+	/**
+	 * Get the database to which this table belongs.
+	 *
+	 * @return Webdb_DBMS_Database The database object.
+	 */
+	public function get_database()
+	{
+		return $this->_database;
+	}
+
 	public function getOneLineSummary()
 	{
 		$colCount = count($this->get_columns());
@@ -382,98 +406,117 @@ class Webdb_DBMS_Table
 	 * @param array  $data  The data to insert; if 'id' is set, update.
 	 * @return int          The ID of the updated or inserted row.
 	 */
-	public function save($data)
+	public function save_row($data)
 	{
-		$blobs = array();
+		//exit(kohana::debug($data));
 
-		$columnsInfo = $this->get_columns($table);
+		$columns = $this->get_columns();
 
-		// Check permissions
-		foreach ($data as $field=>$value)
+		/*
+		 * Check permissions on each column.
+		*/
+		foreach ($columns as $column_name=>$column)
 		{
-			if (!isset($columnsInfo[$field]))
+			if (!isset($data[$column_name]))
 			{
 				continue;
 			}
-			$canUpdate = strpos($columnsInfo[$field]['privileges'],'update');
-			$canInsert = strpos($columnsInfo[$field]['privileges'],'insert');
-			if ($field != 'id'
-				&& (
-				(!$canUpdate && isset($data['id']))
-					|| (!$canInsert && !isset($data['id']))
+			$can_update = $column->can_update();
+			$can_insert = $column->can_insert();
+			if ($column_name != 'id' && (
+				(!$can_update && isset($data['id'])) || (!$can_insert && !isset($data['id']))
 			))
 			{
-				unset($data[$field]);
+				unset($data[$column_name]);
 			}
 		}
 
-		// Go through all data and clean it up before saving.
-		foreach ($data as $name=>$value)
+		/*
+		 * Go through all data and clean it up before saving.
+		*/
+		foreach ($data as $field=>$value)
 		{
 
 			// Make sure this column exists in the DB.
-			if (!isset($columnsInfo[$name]))
+			if (!isset($columns[$field]))
 			{
-				unset($data[$name]);
+				unset($data[$field]);
 				continue;
 			}
 
-			$colInfo = $columnsInfo[$name];
+			$column = $columns[$field];
 
-			// Booleans
-			if ($colInfo['type']=='tinyint')
+			/*
+			 * Booleans
+			*/
+			if ($column->get_type() == 'tinyint')
 			{
-				if ($value==null || $value=='')
+				if ($value == NULL || $value == '')
 				{
-					$data[$name] = null;
-				} elseif ($value==='0'
-					|| $value===0
-					|| strcasecmp($value,'false')===0
-					|| strcasecmp($value,'off')===0
-					|| strcasecmp($value,'no')===0)
+					$data[$field] = NULL;
+				} elseif ($value === '0'
+					|| $value === 0
+					|| strcasecmp($value,'false') === 0
+					|| strcasecmp($value,'off') === 0
+					|| strcasecmp($value,'no') === 0)
 				{
-					$data[$name] = 0;
+					$data[$field] = 0;
 				} else
 				{
-					$data[$name] = 1;
+					$data[$field] = 1;
 				}
 			}
 
-			// Foreign keys
-			elseif ($colInfo['references'] && ($value<=0||$value==''))
+			/*
+			 * Foreign keys
+			*/
+			elseif ( $column->is_foreign_key() && ($value <= 0 || $value == '') )
 			{
-				$data[$name] = null;
+				$data[$field] = NULL;
 			}
 
-			// Numbers
+			/*
+			 * Numbers
+			*/
 			elseif (!is_numeric($value)
-				&& (substr($colInfo['type'],0,3)=='int'
-					||substr($colInfo['type'],0,7)=='decimal'
-					||substr($colInfo['type'],0,5)=='float')
+				&& (substr($column->get_type(),0,3)=='int'
+					||substr($column->get_type(),0,7)=='decimal'
+					||substr($column->get_type(),0,5)=='float')
 			)
 			{
-				$data[$name] = null; // Stops empty strings being turned into 0s.
+				$data[$field] = NULL; // Stops empty strings being turned into 0s.
 			}
 
-			// Dates & times
-			elseif ( ($colInfo['type']=='date' || $colInfo['type']=='datetime' || $colInfo['type']=='time') && $value=='')
+			/*
+			 * Dates & times
+			*/
+			elseif ( ($column->get_type()=='date' || $column->get_type()=='datetime' || $column->get_type()=='time') && $value=='')
 			{
-				$data[$name] = null;
+				$data[$field] = null;
 			}
 		}
+
+		//exit(kohana::debug($data));
 
 		// Update?
 		if (isset($data['id']) && is_numeric($data['id']))
 		{
 			$id = $data['id'];
 			unset($data['id']);
-			$this->dbAdapter->update($table, $data, "id = $id");
+			DB::update($this->get_name())
+				->set($data)
+				->where('id', '=', $id)
+				->execute($this->_db);
+			//$this->dbAdapter->update($table, $data, "id = $id");
 		}
 		// Or insert?
 		else
 		{
-			$this->dbAdapter->insert($table, $data);
-			$id = $this->dbAdapter->lastInsertId();
+			$id = DB::insert($this->get_name())
+				->columns(array_keys($data))
+				->values($data)
+				->execute($this->_db);
+			$id = $id[0]; // Database::query() returns array (insert id, row count) for INSERT queries.
 		}
 		return $id;
 	}

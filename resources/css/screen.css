@@ -90,6 +90,7 @@ ul { margin:0 }
 
 table, th, td { border:1px solid #CCC; border-collapse:collapse; vertical-align:top }
 table .pagination { margin:0; padding:0; text-align:left }
+table .pagination .disabled { color:#ccc }
 
 
 

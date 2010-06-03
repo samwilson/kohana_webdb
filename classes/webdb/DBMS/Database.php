@@ -37,13 +37,34 @@ class Webdb_DBMS_Database
 		$this->_name = $dbname;
 		$this->_tables = array();
 		$config = Kohana::config('database')->default;
-		$username = auth::instance()->get_user();
-		$config['connection']['username'] = $username;
-		$password = auth::instance()->password($username);
-		$config['connection']['password'] = $password;
 		$config['connection']['database'] = $dbname;
 		unset(Database::$instances[$dbname]);
-		$this->_db = Database::instance($dbname, $config);
+		try
+		{
+			$this->_db = Database::instance($dbname, $config);
+		} catch (Exception $e)
+		{
+			// If unable to connect with credentials from config, try with those
+			// from Auth.
+			if (Auth::instance()->logged_in())
+			{
+				$username = auth::instance()->get_user();
+				$config['connection']['username'] = $username;
+				$password = auth::instance()->password($username);
+				$config['connection']['password'] = $password;
+				$this->_db = Database::instance($dbname, $config);
+			}
+		}
+	}
+
+	/**
+	 * Get this database's database (if you see what I mean?).
+	 *
+	 * @return Database The database instance currently in use.
+	 */
+	public function get_db()
+	{
+		return $this->_db;
 	}
 
 	/**
@@ -82,8 +103,9 @@ class Webdb_DBMS_Database
 	}
 
 	/**
-	 *
-	 * @param <type> $tablename
+	 * Get a table object.
+	 * 
+	 * @param string $tablename
 	 * @return Webdb_DBMS_Database
 	 */
 	public function get_table($tablename = FALSE)
@@ -105,7 +127,7 @@ class Webdb_DBMS_Database
 		}
 		if (!isset($this->_tables[$tablename]))
 		{
-			$this->_tables[$tablename] = new Webdb_DBMS_Table($this->_db, $tablename);
+			$this->_tables[$tablename] = new Webdb_DBMS_Table($this, $tablename);
 		}
 		return $this->_tables[$tablename];
 	}

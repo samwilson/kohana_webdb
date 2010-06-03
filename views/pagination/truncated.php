@@ -2,7 +2,7 @@
 /**
  * This view creates paginator with limited amount of links in following way:
  * First Previous · 1 2 3 ... 22 23 24 25 26 [27] 28 29 30 31 32 ... 48 49 50 · Next Last
- * 
+ *
  * @author Alexey Khrulev
  * @link http://dev.kohanaframework.org/issues/2812
  */
@@ -51,15 +51,15 @@ for ($i = $n7; $i <= $n8; $i++)
 <p class="pagination"><em>Page:</em>
 
 	<?php if ($first_page !== FALSE): ?>
-	<a href="<?php echo $page->url($first_page) ?>"><?php echo __('First') ?></a>
+	<a href="<?php echo $page->url($first_page) ?>" class="first"><?php echo __('First') ?></a>
 	<?php else: ?>
-		<?php echo __('First') ?>
+	<span class="first disabled"><?php echo __('First') ?></span>
 	<?php endif ?>
 
 	<?php if ($previous_page !== FALSE): ?>
-	<a href="<?php echo $page->url($previous_page) ?>"><?php echo __('Previous') ?></a>
+	<a href="<?php echo $page->url($previous_page) ?>" class="previous"><?php echo __('Previous') ?></a>
 	<?php else: ?>
-		<?php echo __('Previous') ?>
+	<span class="previous disabled"><?php echo __('Previous') ?></span>
 	<?php endif ?>
 
 	&#183
@@ -77,15 +77,15 @@ for ($i = $n7; $i <= $n8; $i++)
 	&#183
 
 	<?php if ($next_page !== FALSE): ?>
-	<a href="<?php echo $page->url($next_page) ?>"><?php echo __('Next') ?></a>
+	<a href="<?php echo $page->url($next_page) ?>" class="next"><?php echo __('Next') ?></a>
 	<?php else: ?>
-		<?php echo __('Next') ?>
+	<span class="next disabled"><?php echo __('Next') ?></span>
 	<?php endif ?>
 
 	<?php if ($last_page !== FALSE): ?>
-	<a href="<?php echo $page->url($last_page) ?>"><?php echo __('Last') ?></a>
+	<a href="<?php echo $page->url($last_page) ?>" class="last"><?php echo __('Last') ?></a>
 	<?php else: ?>
-		<?php echo __('Last') ?>
+		<span class="last disabled"><?php echo __('Last') ?></span>
 	<?php endif ?>
 
 </p><!-- .pagination -->

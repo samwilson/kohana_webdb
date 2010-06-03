@@ -38,8 +38,8 @@ class Controller_WebDB extends Controller_Template
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
-			'index' => 'Browse &amp; Search',
-			'edit' => 'View/Edit',
+			'index'  => 'Browse &amp; Search',
+			'edit'   => 'New',
 			'import' => 'Import',
 			//'export' => 'Export',
 			//'calendar' => 'Calendar',
@@ -48,7 +48,7 @@ class Controller_WebDB extends Controller_Template
 
 		/*
 		 * User authentication
-		 */
+		*/
 		//auth::instance()->logged_in();
 
 		/*
@@ -150,9 +150,22 @@ class Controller_WebDB extends Controller_Template
 	{
 		$id = $this->request->param('id');
 		$this->view->columns = $this->table->get_columns();
+
+		/*
+		 * Save submitted data.
+		*/
+		if (isset($_POST['save']))
+		{
+			$id = $this->table->save_row($_POST);
+			$this->add_template_message('Record saved.', 'info');
+		}
+
+		/*
+		 * Get data to populate edit form.
+		*/
 		if ($id)
 		{
-			//$rows = $this->table->get_rows($id);
+			$this->template->actions['edit'] = "Edit";
 			$this->view->row = $this->table->get_row($id);
 		} else
 		{

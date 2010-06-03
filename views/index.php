@@ -42,6 +42,7 @@
 							}
 							$cell_view->column = $column;
 							$cell_view->row = $row;
+							$cell_view->edit = FALSE;
 							echo $cell_view->render();
 							?>
 			</td>
