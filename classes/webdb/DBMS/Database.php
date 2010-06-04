@@ -24,37 +24,17 @@ class Webdb_DBMS_Database
 	private $_tables;
 
 	/**
-	 * Create a new Webdb_DBMS_Database object, getting a [Database] instance
-	 * (i.e. creating on if neccessary) using the application config file and
-	 * the provided database name.
+	 * Create a new Webdb_DBMS_Database object
 	 *
-	 * @todo If the config file doesn't contain a username & password, prompt for same.
+	 * @param Database The database driver.
 	 * @param string $dbname The database's name.
 	 * @return void
 	 */
-	public function __construct($dbname)
+	public function __construct($db, $dbname)
 	{
 		$this->_name = $dbname;
 		$this->_tables = array();
-		$config = Kohana::config('database')->default;
-		$config['connection']['database'] = $dbname;
-		unset(Database::$instances[$dbname]);
-		try
-		{
-			$this->_db = Database::instance($dbname, $config);
-		} catch (Exception $e)
-		{
-			// If unable to connect with credentials from config, try with those
-			// from Auth.
-			if (Auth::instance()->logged_in())
-			{
-				$username = auth::instance()->get_user();
-				$config['connection']['username'] = $username;
-				$password = auth::instance()->password($username);
-				$config['connection']['password'] = $password;
-				$this->_db = Database::instance($dbname, $config);
-			}
-		}
+		$this->_db = $db;
 	}
 
 	/**

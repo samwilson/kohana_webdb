@@ -21,6 +21,9 @@ class Webdb_DBMS
 	/** @var Database */
 	private $_db;
 
+	/** @var Config */
+	private $_config;
+
 	/** @var boolean */
 	public $logged_in = FALSE;
 
@@ -28,33 +31,75 @@ class Webdb_DBMS
 	 */
 	public function __construct()
 	{
-		$this->_db = Database::instance();
+		$this->connect();
+	}
+
+	/**
+	 * Connect to the DBMS.
+	 *
+	 *  1. If no `$dbname` is specified, try to connect to the database named in
+	 *     the [Database] config file with the credentials from the same.  If this
+	 *     doesn't work, try connecting to the same database with credentials
+	 *     garnered from the [Auth] instance.  If this doesn't work (or,
+	 *     obviously, if there is no Auth) throw an exception.
+	 *  2. When a `$dbname` is provided, repeat the above, but ignore any
+	 *     database name given in the config file.
+	 *
+	 * Also, if a database name is provided, then a group of the same name is
+	 * used if found in the Database config file.
+	 *
+	 * @param string $dbname The name of the database to which to connect.
+	 * @return void
+	 * @throws Webdb_DBMS_ConnectionException if unable to connect.
+	 */
+	public function connect($dbname = NULL)
+	{
+		$this->_config = kohana::config('database');
+		// Use DB-specific config if it's there.
+		if ($dbname != NULL && isset($this->_config->$dbname))
+		{
+			$this->_config = $this->_config->$dbname;
+			$config_group_name = $dbname;
+		} else // Otherwise go with the default.
+
+		{
+			$this->_config = $this->_config->default;
+			$config_group_name = 'default';
+		}
+		if ($dbname != NULL)
+		{
+			$this->_config['connection']['database'] = $dbname;
+		}
+		//$config_group_name = ($dbname != NULL) ? $dbname : 'default';
+		//exit(kohana::debug($config));
 		try
 		{
+			// Try to connect with the Database config credentials.
+			unset(Database::$instances[$config_group_name]);
+			$this->_db = Database::instance($config_group_name, $this->_config);
 			$this->_db->connect();
+
 		} catch (Exception $e)
 		{
-			// First connection failure: try to use credentials from Auth.
-			$config = kohana::config('database')->default;
+			// If that fails, try with those from Auth config.
 			$username = auth::instance()->get_user();
-			$config['connection']['username'] = $username;
+			$this->_config['connection']['username'] = $username;
 			$password = auth::instance()->password($username);
-			$config['connection']['password'] = $password;
-			//exit(kohana::debug($config));
-			unset(Database::$instances['default']);
-			$this-> _db = Database::instance('default', $config);
-
+			$this->_config['connection']['password'] = $password;
+			unset(Database::$instances[$config_group_name]);
 			try
 			{
-				$this-> _db->connect();
-
+				$this->_db = Database::instance($config_group_name, $this->_config);
+				$this->_db->connect();
 			} catch (Exception $e)
 			{
 				// Second connection failure: give up.
-				throw new Webdb_DBMS_ConnectionException('Unable to connect to DBMS.');
+				$msg = "Unable to connect to DBMS as '$username'";
+				$msg .= (Kohana::$environment==Kohana::DEVELOPMENT) ? "(with password '$password')" : "";
+				$msg .= ".";
+				throw new Webdb_DBMS_ConnectionException($msg);
 			}
 		}
-
 	}
 
 	/**
@@ -69,7 +114,7 @@ class Webdb_DBMS
 		{
 			$this->_database_names = array();
 			$sql = $this->_get_list_db_statement();
-			$query = Database::instance()->query(Database::SELECT, $sql, true);
+			$query = $this->_db->query(Database::SELECT, $sql, true);
 			foreach ($query as $row)
 			{
 				$this->_database_names[] = current($row);
@@ -124,8 +169,8 @@ class Webdb_DBMS
 		{
 			throw new Exception("The database '$dbname' could not be found.");
 		}
-
-		return new Webdb_DBMS_Database($dbname);
+		$this->connect($dbname);
+		return new Webdb_DBMS_Database($this->_db, $dbname);
 	}
 
 }

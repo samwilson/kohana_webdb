@@ -251,7 +251,7 @@ class Controller_WebDB extends Controller_Template
 	{
 		$this->template->set_global('database', FALSE);
 		$this->template->set_global('table', FALSE);
-		$this->template->set_global('databases', array('Login'));
+		$this->template->set_global('databases', array('Log in'));
 		$this->template->set_global('tables', array());
 		if (isset($_POST['login']))
 		{
@@ -268,6 +268,7 @@ class Controller_WebDB extends Controller_Template
 				{
 					if (Auth::instance()->login($username, $password))
 					{
+						//exit(__FILE__.__LINE__);
 						$this->request->redirect('webdb');
 					} else
 					{
@@ -275,7 +276,8 @@ class Controller_WebDB extends Controller_Template
 					}
 				} catch (Exception $e)
 				{
-					$this->add_template_message($e->getMessage());
+						//exit(__FILE__.__LINE__);
+						$this->add_template_message($e->getMessage());
 				}
 			} else
 			{

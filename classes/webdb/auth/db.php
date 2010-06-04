@@ -21,6 +21,19 @@ class Webdb_Auth_Db extends Webdb_Auth
 	 */
 	protected function _login($username, $password, $remember = NULL)
 	{
+		try
+		{
+			$this->_session->set($this->_config['session_key'], $username);
+			$this->_session->set($this->_config['session_key'].$this->_db_password_session_suffix, $password);
+			$db = new Webdb_DBMS;
+			return $this->complete_login($username);
+		} catch (Webdb_DBMS_ConnectionException $e)
+		{
+			$this->_session->delete($this->_config['session_key']);
+			$this->_session->delete($this->_config['session_key'].$this->_db_password_session_suffix);
+			throw $e;
+		}
+		/*
 		$config = kohana::config('database')->default;
 		$config['connection']['password'] = $password;
 		$config['connection']['username'] = $username;
@@ -37,6 +50,8 @@ class Webdb_Auth_Db extends Webdb_Auth
 			throw new Kohana_Exception('Unable to connect to DBMS.');
 			//return FALSE;
 		}
+		 *
+		*/
 
 	}
 
