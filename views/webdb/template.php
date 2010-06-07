@@ -10,9 +10,9 @@
 
         <title>
             WebDB
-			<?php if ($database) echo ': '.text::titlecase($database->get_name()) ?>
-			<?php if ($table) echo ' &raquo; '.text::titlecase($table->get_name()) ?>
-			<?php if ($action) echo ' &raquo; '.text::titlecase($action) ?>
+			<?php if ($database) echo ': '.Webdb_Text::titlecase($database->get_name()) ?>
+			<?php if ($table) echo ' &raquo; '.Webdb_Text::titlecase($table->get_name()) ?>
+			<?php if ($action) echo ' &raquo; '.Webdb_Text::titlecase($action) ?>
         </title>
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -64,14 +64,14 @@
 				{
 					echo ' :: '.html::anchor(
 						'webdb/index/'.$database->get_name(),
-						text::titlecase($database->get_name())
+						Webdb_Text::titlecase($database->get_name())
 					);
 				}
 				if ($table)
 				{
 					echo ' &raquo; '.html::anchor(
 						'webdb/index/'.$database->get_name().'/'.$table->get_name(),
-						text::titlecase($table->get_name())
+						Webdb_Text::titlecase($table->get_name())
 					);
 				} ?>
             </h1>
@@ -81,7 +81,7 @@
 					<?php foreach ($databases as $db): ?>
 						<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
                 <li class="<?php echo $selected ?>">
-							<?php echo html::anchor("webdb/index/$db", text::titlecase($db),
+							<?php echo html::anchor("webdb/index/$db", Webdb_Text::titlecase($db),
 							array('class'=>$selected)) ?>
                 </li>
 					<?php endforeach ?>
@@ -97,7 +97,7 @@
 					<?php foreach ($tables as $tab): ?>
 						<?php $selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '' ?>
 				<li>
-							<?php echo html::anchor('webdb/index/'.$database->get_name().'/'.$tab->get_name(), text::titlecase($tab->get_name()),
+							<?php echo html::anchor('webdb/index/'.$database->get_name().'/'.$tab->get_name(), Webdb_Text::titlecase($tab->get_name()),
 							array('class'=>$selected)) ?>
 				</li>
 					<?php endforeach ?>
@@ -110,7 +110,7 @@
 				<h1>
 						<?php echo html::anchor(
 						'webdb/index/'.$database->get_name().'/'.$table->get_name(),
-						text::titlecase($table->get_name())
+						Webdb_Text::titlecase($table->get_name())
 						) ?>
 				</h1>
 				<?php endif ?>

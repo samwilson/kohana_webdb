@@ -8,7 +8,7 @@
 
 <table>
 	<caption>
-			<?php echo $table->get_pagination()->render('pagination/truncated') ?>
+			<?php echo $table->get_pagination()->render('webdb/pagination/truncated') ?>
 	</caption>
 	<thead>
 		<tr>
@@ -16,7 +16,7 @@
 			<th>&nbsp;</th>
 				<?php endif ?>
 				<?php foreach ($table->get_columns() as $column): ?>
-			<th><?php echo text::titlecase($column->get_name()) ?></th>
+			<th><?php echo Webdb_Text::titlecase($column->get_name()) ?></th>
 				<?php endforeach ?>
 		</tr>
 	</thead>
@@ -32,13 +32,13 @@
 			<td class="<?php echo $column->get_type() ?>">
 							<?php
 							//echo kohana::dump($column);
-							$view_file = kohana::find_file('views/fields', $column->get_type());
+							$view_file = kohana::find_file('views/webdb/fields', $column->get_type());
 							if ($view_file)
 							{
-								$cell_view = View::factory('fields/'.$column->get_type());
+								$cell_view = View::factory('webdb/fields/'.$column->get_type());
 							} else
 							{
-								$cell_view = View::factory('fields/varchar');
+								$cell_view = View::factory('webdb/fields/varchar');
 							}
 							$cell_view->column = $column;
 							$cell_view->row = $row;

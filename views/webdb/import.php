@@ -6,10 +6,10 @@
 		<?php if ($stage==$s_name): ?>
 	<li class="selected">
 				<?php $class = '' ?>
-		<strong><?php echo text::titlecase($s_name) ?></strong>
+		<strong><?php echo Webdb_Text::titlecase($s_name) ?></strong>
 			<?php else: ?>
 	<li class="<?php echo $class ?>">
-				<?php echo text::titlecase($s_name) ?>
+				<?php echo Webdb_Text::titlecase($s_name) ?>
 			<?php endif ?>
 	</li>
 	<?php endforeach ?>

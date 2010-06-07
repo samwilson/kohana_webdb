@@ -9,18 +9,18 @@
 	<tr>
 		<th>
 			<label for="<?php echo $column->get_name() ?>">
-					<?php echo text::titlecase($column->get_name()) ?>:
+					<?php echo Webdb_Text::titlecase($column->get_name()) ?>:
 			</label>
 		</th>
 		<td><?php //echo kohana::debug($row) ?>
 				<?php
-				$view_file = kohana::find_file('views/fields', $column->get_type());
+				$view_file = kohana::find_file('views/webdb/fields', $column->get_type());
 				if ($view_file)
 				{
-					$cell_view = View::factory('fields/'.$column->get_type());
+					$cell_view = View::factory('webdb/fields/'.$column->get_type());
 				} else
 				{
-					$cell_view = View::factory('fields/varchar');
+					$cell_view = View::factory('webdb/fields/varchar');
 				}
 				$cell_view->column = $column;
 				$cell_view->row = $row;

@@ -8,7 +8,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Text extends Kohana_Text
+class Webdb_Text extends Text
 {
 
 	/**
