@@ -15,6 +15,9 @@ class Controller_WebDB extends Controller_Template
 	/** @var Webdb_DBMS_Table The current table. */
 	protected $table;
 
+	/** @var string|View */
+	public $template = 'webdb/template';
+
 	/**
 	 * Set up the various views: a site-wide template; and a per-action view.
 	 * Also deal with selecting (or issuing messages to the user) the current
@@ -32,7 +35,7 @@ class Controller_WebDB extends Controller_Template
 		}
 
 		// Set up views
-		$this->view = View::factory($this->request->action);
+		$this->view = View::factory('webdb/'.$this->request->action);
 		$this->template->messages = array();
 		$this->template->content = $this->view;
 		$this->template->controller = $this->request->controller;
