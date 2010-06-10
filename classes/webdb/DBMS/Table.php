@@ -10,8 +10,10 @@
 class Webdb_DBMS_Table
 {
 
-	/** @var Database The database to which this table belongs. */
+	/** @var Database The Database instance in use. */
 	private $_db;
+	/** @var Webdb_DBMS_Database The database to which this table belongs. */
+	private $_database;
 	/** @var string The name of this table. */
 	private $_name;
 	/** @var string The SQL statement used to create this table. */
@@ -20,7 +22,7 @@ class Webdb_DBMS_Table
 	 * @var array[string => Webdb_DBMS_Table] Array of tables referred to by
 	 * columns in this one.
 	 */
-	private $_referencedTables;
+	private $_referenced_tables;
 	/**
 	 * @var array[string => Webdb_DBMS_Column] Array of column names and
 	 * objects for all of the columns in this table.
@@ -60,23 +62,23 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get rows, with pagination.
 	 *
-	 * @param <type> $id
 	 * @return <type>
 	 */
-	public function get_rows($id = FALSE)
+	public function get_rows()
 	{
 		//return array();
 		//$query = $this->_db->query(Database::SELECT, '', TRUE);
 		$query = new Database_Query_Builder_Select();
 		$query->as_object();
 		$query->from($this->get_name());
+		if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
+		{
+			$query->where($this->where[0], $this->where[1], $this->where[2]);
+		}
 		$query->offset($this->get_pagination()->offset);
 		$query->limit($this->get_pagination()->items_per_page);
-		if ($id)
-		{
-			$query->where('id', '=', $id);
-		}
 		$rows = $query->execute($this->_db);
 		//exit('<pre>'.kohana::dump($rows->as_array()));
 		return $rows;
@@ -225,22 +227,44 @@ class Webdb_DBMS_Table
 	 *
 	 * @return array[string => string] The list of <code>column_name => table_name</code> pairs.
 	 */
-	public function getReferencedTables()
+	public function get_referenced_tables()
 	{
-		if (!isset($this->_referencedTables))
+		if (!isset($this->_referenced_tables))
 		{
 			$definingSql = $this->_get_defining_sql();
 			$foreignKeyPattern = '|FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)`|';
 			preg_match_all($foreignKeyPattern, $definingSql, $matches);
 			if (isset($matches[1]) && count($matches[1])>0)
 			{
-				$this->_referencedTables = array_combine($matches[1], $matches[2]);
+				$this->_referenced_tables = array_combine($matches[1], $matches[2]);
 			} else
 			{
-				$this->_referencedTables = array();
+				$this->_referenced_tables = array();
 			}
 		}
-		return $this->_referencedTables;
+		return $this->_referenced_tables;
+	}
+
+	/**
+	 * Get tables with foreign keys referring here.
+	 *
+	 * @return array
+	 */
+	public function get_referencing_tables()
+	{
+		$out = array();
+		foreach ($this->_database->get_tables() as $table)
+		{
+			$foreign_tables = $table->get_referenced_tables();
+			foreach ($foreign_tables as $foreign_column => $foreign_table)
+			{
+				if ($foreign_table == $this->_name)
+				{
+					$out[$foreign_column] = $table;
+				}
+			}
+		}
+		return $out;
 	}
 
 	/**
@@ -250,79 +274,61 @@ class Webdb_DBMS_Table
 	 */
 	public function get_foreign_key_names()
 	{
-		return array_keys($this->getReferencedTables());
+		return array_keys($this->get_referenced_tables());
 	}
 
 	/**
-	 * Find out whether or not the current user can edit any of the records in
+	 * Find out whether or not the current user can update any of the records in
 	 * this table.
-	 *
-	 * First check that the MySQL user itself has permission to
-	 * edit the table; if it doesn't, then any application-level privileges will
-	 * fail also.  To count as having edit privileges, the MySQL user must have
-	 * insert or update privileges on at least one column in the table.
-	 *
-	 * Next, see if the database has the required user access
-	 * tables.  If it does, query those to see whether the user can edit or not.
 	 *
 	 * @return boolean
 	 */
-	public function can_edit()
+	public function can_update()
 	{
-
-		// Check that the database user can edit.
-		$db_user_can_edit = false;
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->db_user_can('update,insert'))
+			if ($column->can_update())
 			{
-				$db_user_can_edit = true;
-				// As soon as we know the DB user can edit at least one column,
-				// we can say that they can edit the table.
-				break;
+				return TRUE;
 			}
 		}
-
-		// Check that the application user can edit this table.
-
-		$appUserCanEdit = true; //$this->_db->getUser()->canEdit($this->_name);
-
-		// Return the conjunction of these.
-		return $db_user_can_edit && $appUserCanEdit;
-
+		return FALSE;
 	}
 
 	/**
-	 * Find out whether or not the current user can view any of the records in
-	 * this table.
-	 *
-	 * First check that the MySQL user itself has SELECT permission on the
-	 * table; if it doesn't, then any application-level privileges will fail
-	 * also.
-	 *
-	 * Next, see if the database has the required user access tables.  If it
-	 * does, query those to see whether the user can edit or not.
+	 * Find out whether or not the current user can insert new records into this
+	 * table.
 	 *
 	 * @return boolean
 	 */
-	public function canView()
+	public function can_insert()
 	{
-
-		// Check that the database user can edit.
-		$dbUserCanView = false;
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->dbUserCan('select'))
+			if ($column->can_insert())
 			{
-				$dbUserCanView = true;
-				break;
+				return TRUE;
 			}
 		}
+		return FALSE;
+	}
 
-		// Check that the application user can view this table.
-		$appUserCanView = $this->_db->getUser()->canView($this->_name);
-
-		return $dbUserCanView && $appUserCanView;
+	/**
+	 * Find out whether or not the current user can select any of the records in
+	 * this table.
+	 *
+	 * @return boolean
+	 */
+	public function can_select()
+	{
+		foreach ($this->get_columns() as $column)
+		{
+			if ($column->can_select())
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**

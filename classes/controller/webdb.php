@@ -103,11 +103,16 @@ class Controller_WebDB extends Controller_Template
 		{
 			$this->table = $this->database->get_table();
 			$this->template->tables = $this->database->get_tables();
-			if (!$this->table)
+			if (!$this->table && count($this->template->tables) > 0)
 			{
 				$this->add_template_message(
 					'Please select a table from the menu to the left.',
 					'info'
+				);
+			} elseif (!$this->table && count($this->template->tables) == 0) {
+				$this->add_template_message(
+					'You do not have permission to view any tables in this database.',
+					'notice'
 				);
 			}
 		} else
@@ -152,7 +157,8 @@ class Controller_WebDB extends Controller_Template
 	public function action_edit()
 	{
 		$id = $this->request->param('id');
-		$this->view->columns = $this->table->get_columns();
+		$this->view->table = $this->table;
+		//$this->view->columns = $this->table->get_columns();
 
 		/*
 		 * Save submitted data.
@@ -164,7 +170,7 @@ class Controller_WebDB extends Controller_Template
 		}
 
 		/*
-		 * Get data to populate edit form.
+		 * Get data to populate edit form (or give message why not).
 		*/
 		if ($id)
 		{
@@ -173,6 +179,11 @@ class Controller_WebDB extends Controller_Template
 		} else
 		{
 			$this->view->row = $this->table->get_default_row();
+			if (!$this->table->can_insert())
+			{
+				$this->add_template_message('You do not have permission to add a new record to this table.');
+				return;
+			}
 		}
 	}
 
@@ -279,8 +290,8 @@ class Controller_WebDB extends Controller_Template
 					}
 				} catch (Exception $e)
 				{
-						//exit(__FILE__.__LINE__);
-						$this->add_template_message($e->getMessage());
+					//exit(__FILE__.__LINE__);
+					$this->add_template_message($e->getMessage());
 				}
 			} else
 			{

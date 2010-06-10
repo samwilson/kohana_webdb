@@ -84,7 +84,7 @@ class Webdb_DBMS_Database
 
 	/**
 	 * Get a table object.
-	 * 
+	 *
 	 * @param string $tablename
 	 * @return Webdb_DBMS_Database
 	 */
@@ -107,7 +107,14 @@ class Webdb_DBMS_Database
 		}
 		if (!isset($this->_tables[$tablename]))
 		{
-			$this->_tables[$tablename] = new Webdb_DBMS_Table($this, $tablename);
+			$table = new Webdb_DBMS_Table($this, $tablename);
+			if ($table->can_select())
+			{
+				$this->_tables[$tablename] = $table;
+			} else
+			{
+				return FALSE;
+			}
 		}
 		return $this->_tables[$tablename];
 	}

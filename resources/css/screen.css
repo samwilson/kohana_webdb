@@ -24,6 +24,7 @@ ul { margin:0 }
 .tables { float:left; width: 240px; list-style-type:none; margin:0; padding:0 }
 .tables a { display:block; padding:3px 10px; text-decoration: none;
             color: #3333AA; border-bottom: 1px solid #CCD }
+.tables .selected { font-weight:bolder }
 .tables a:hover { color: #111166; background-color: #EFEFF5 }
 .tables ul li  { font-size: 13px; margin: 10px 0px 0px 0px; border-bottom: 3px double #ccd }
 

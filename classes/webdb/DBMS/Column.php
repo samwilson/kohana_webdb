@@ -104,7 +104,7 @@ class Webdb_DBMS_Column
 		// Is this a foreign key?
 		if (in_array($this->_name, $table->get_foreign_key_names()))
 		{
-			$referencedTables = $table->getReferencedTables();
+			$referencedTables = $table->get_referenced_tables();
 			$this->_references = $referencedTables[$this->_name];
 		}
 
@@ -116,25 +116,27 @@ class Webdb_DBMS_Column
 
 	}
 
-	public function is_editable()
+	public function can_select()
 	{
-		return $this->can_update() || $this->can_insert();
+		return $this->_db_user_can('select') && $this->_app_user_can('select');
 	}
 
 	public function can_update()
 	{
-		return $this->_db_user_can('update') && $this->_app_user_can(Database::UPDATE);
+		return $this->_db_user_can('update') && $this->_app_user_can('update');
 	}
 
 	public function can_insert()
 	{
-		return $this->_db_user_can('insert') && $this->_app_user_can(Database::INSERT);
+		return $this->_db_user_can('insert') && $this->_app_user_can('insert');
 	}
 
 	/**
 	 * Check that the current user can edit this column.  This uses the
 	 * permissions table to lookup which roles have edit permission, and then
-	 * asks Auth whether the current user has any of these roles.
+	 * asks [Auth] whether the current user has any of these roles.
+	 *
+	 * If the config permissions table is empty, assume all permissions.
 	 *
 	 * @return boolean
 	 */
@@ -146,22 +148,25 @@ class Webdb_DBMS_Column
 			return TRUE; // If no permissions table, assume all permissions.
 		}
 		$db = $this->_table->get_database();
-		$query = DB::select('role_name')
+		$query = DB::select('identifier')
 			->from($config['database'].'.'.$config['table'])
-			->where('priv_type', '=', $priv_type)
-			->and_where('database_name', '=', $db->get_name())
-			->and_where_open()
-			->where('table_name', '=', $this->_table->get_name())
-			->or_where('table_name', '=', '*')
-			->and_where_close();
-		$sql = $query->compile($this->_table->get_database()->get_db());
+			->where('priv_type', 'IN', array($priv_type, '*'))
+			->and_where('database_name', 'IN', array($db->get_name(), '*'))
+			->and_where('table_name', 'IN', array($this->_table->get_name(), '*'));
+		//$sql = $query->compile($this->_table->get_database()->get_db());
 		//exit(kohana::debug($sql));
-		$roles = $query->execute($db->get_db())->as_array('role_name');
-		$roles = array_keys($roles);
+		$identifiers = $query->execute($db->get_db())->as_array('identifier');
+		$identifiers = array_keys($identifiers);
 		//exit(kohana::debug($roles));
-		foreach ($roles as $role)
+		// Check for the wildcard, or username.
+		if (in_array('*', $identifiers) || in_array(Auth::instance()->get_user(), $identifiers))
 		{
-			if (Auth::instance()->logged_in($role))
+			return TRUE;
+		}
+		// Check for any of this user's roles.
+		foreach ($identifiers as $identifier)
+		{
+			if (Auth::instance()->logged_in($identifier))
 			{
 				return TRUE;
 			}

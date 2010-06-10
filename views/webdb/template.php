@@ -94,11 +94,16 @@
 
 			<?php if (count($tables) > 0): ?>
 			<ol class="tables">
-					<?php foreach ($tables as $tab): ?>
-						<?php $selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '' ?>
+					<?php $table_names = array_keys($tables);
+					asort($table_names);
+					foreach ($table_names as $tab): ?>
+						<?php $selected = ($table && $tab==$table->get_name()) ? 'selected' : '' ?>
 				<li>
-							<?php echo html::anchor('webdb/index/'.$database->get_name().'/'.$tab->get_name(), Webdb_Text::titlecase($tab->get_name()),
-							array('class'=>$selected)) ?>
+							<?php echo html::anchor(
+							'webdb/index/'.$database->get_name().'/'.$tab,
+							Webdb_Text::titlecase($tab),
+							array('class'=>$selected)
+							) ?>
 				</li>
 					<?php endforeach ?>
 			</ol>

@@ -1,10 +1,13 @@
+<?php if (!isset($row->id) && !$table->can_insert()) return ?>
+
 
 <?php echo form::open() ?>
 
+<?php $num_cols = 3 ?>
 
 <table>
 
-	<?php foreach ($columns as $column): ?>
+	<?php foreach ($table->get_columns() as $column): ?>
 
 	<tr>
 		<th>
@@ -12,7 +15,7 @@
 					<?php echo Webdb_Text::titlecase($column->get_name()) ?>:
 			</label>
 		</th>
-		<td><?php //echo kohana::debug($row) ?>
+		<td>
 				<?php
 				$view_file = kohana::find_file('views/webdb/fields', $column->get_type());
 				if ($view_file)
@@ -24,7 +27,7 @@
 				}
 				$cell_view->column = $column;
 				$cell_view->row = $row;
-				$cell_view->edit = $column->is_editable();
+				$cell_view->edit = $column->can_update() || $column->can_insert();
 				echo $cell_view->render();
 				?>
 		</td>
@@ -32,7 +35,7 @@
 
 	<?php endforeach ?>
 
-	<?php if ($column->is_editable()): ?>
+	<?php if ($table->can_update() || $table->can_insert()): ?>
 	<tfoot>
 		<tr>
 			<td colspan="2">
@@ -46,4 +49,14 @@
 
 <?php echo form::close() ?>
 
+
+<ol class="related-tables">
+	<?php foreach ($table->get_referencing_tables() as $foreign_column => $foreign_table): ?>
+	<li>
+		<h3><?php echo Webdb_Text::titlecase($foreign_table->get_name()) ?></h3>
+			<?php $foreign_table->where = array($foreign_column, '=', $row->id) ?>
+			<?php echo View::factory('webdb/index', array('table'=>$foreign_table)) ?>
+	</li>
+	<?php endforeach ?>
+</ol>
 

@@ -25,7 +25,13 @@
 		<tr>
 					<?php if (isset($row->id)): ?>
 			<td>
-							<?php echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit') ?>
+							<?php
+							if ($table->can_update() || $table->can_insert()):
+								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit');
+							else:
+								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'View');
+							endif
+							?>
 			</td>
 					<?php endif ?>
 					<?php foreach ($table->get_columns() as $column): ?>
