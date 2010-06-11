@@ -35,9 +35,12 @@ class Controller_WebDB extends Controller_Template
 		}
 
 		// Set up views
-		$this->view = View::factory('webdb/'.$this->request->action);
+		if (Kohana::find_file('views/webdb', $this->request->action))
+		{
+			$this->view = View::factory('webdb/'.$this->request->action);
+			$this->template->content = $this->view;
+		}
 		$this->template->messages = array();
-		$this->template->content = $this->view;
 		$this->template->controller = $this->request->controller;
 		$this->template->action = $this->request->action;
 		$this->template->actions = array(
@@ -109,7 +112,8 @@ class Controller_WebDB extends Controller_Template
 					'Please select a table from the menu to the left.',
 					'info'
 				);
-			} elseif (!$this->table && count($this->template->tables) == 0) {
+			} elseif (!$this->table && count($this->template->tables) == 0)
+			{
 				$this->add_template_message(
 					'You do not have permission to view any tables in this database.',
 					'notice'
@@ -185,6 +189,25 @@ class Controller_WebDB extends Controller_Template
 				return;
 			}
 		}
+	}
+
+	/**
+	 * Output JSON data for the current table, for use in autocomplete inputs.
+	 */
+	public function action_autocomplete()
+	{
+		$title_column_name = $this->table->get_title_column()->get_name();
+		if (isset($_GET['term']))
+		{
+			$this->table->where = array($title_column_name, 'like', '%'.$_GET['term'].'%');
+		}
+		$json_data = array();
+		foreach ($this->table->get_rows(FALSE) as $row)
+		{
+			$row['label'] = $row[$title_column_name];
+			$json_data[] = $row;
+		}
+		exit(json_encode($json_data));
 	}
 
 	public function action_import($database, $table)

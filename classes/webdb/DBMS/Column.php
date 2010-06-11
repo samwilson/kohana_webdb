@@ -206,6 +206,16 @@ class Webdb_DBMS_Column
 	}
 
 	/**
+	 * Get the valid options for this column; only applies to ENUM and SET.
+	 *
+	 * @return array The available options.
+	 */
+	public function get_options()
+	{
+		return $this->_options;
+	}
+
+	/**
 	 * Get this column's type.
 	 *
 	 * @return string The type of this column.
@@ -314,6 +324,7 @@ class Webdb_DBMS_Column
 		$float_pattern   = '/^float\((\d+),(\d+)\)/';
 		$integer_pattern = '/^((?:big|medium|small|tiny)?int)\(?(\d+)\)?/';
 		$integer_pattern = '/.*?(int)\(+(\d+)\)/';
+		$enum_pattern = '/^(enum|set)\(\'(.*?)\'\)/';
 
 		if (preg_match($varchar_pattern, $type_string, $matches))
 		{
@@ -333,6 +344,11 @@ class Webdb_DBMS_Column
 		{
 			$this->_type = $matches[1];
 			$this->_size = $matches[2];
+		} elseif (preg_match($enum_pattern, $type_string, $matches))
+		{
+			$this->_type = $matches[1];
+			$values = explode("','",$matches[2]);
+			$this->_options = array_combine($values, $values);
 		} else
 		{
 			$this->_type = $type_string;

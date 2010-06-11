@@ -1,16 +1,75 @@
-<?php $colname = $column->get_name();
-$value = $row->{$colname}; ?>
+<?php
+$colname = $column->get_name();
+$value = $row[$colname];
+$column_id = $colname.'-column';
 
-<?php /**
+/**
  * Edit
- */ if ($edit): ?>
+ */
+if ($edit):
 
-	<?php if ($colname == 'id'): ?>
-		<?php echo form::input('id', $value, array('readonly'=>TRUE)) ?>
 
-	<?php else: ?>
-		<?php echo form::input($colname, $value) ?>
+	/**
+	 * ID column
+	 */
+	if ($colname == 'id'):
+		echo form::input('id', $value, array('readonly'=>TRUE, 'id'=>$column_id));
+
+	/**
+	 * Booleans
+	 */
+	elseif ($column->get_size() == 1):
+		echo form::checkbox($colname, $value, $value==1, array('id'=>$column_id));
+
+	/**
+	 * Foreign keys
+	 */
+	elseif($column->is_foreign_key()):
+		$referenced_table = $column->get_referenced_table();
+		?>
+
+<script type="text/javascript">
+	$(function() {
+		$("[name='<?php echo $colname ?>_label']").autocomplete({
+			source: "<?php echo url::site('webdb/autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
+			select: function(event, ui) {
+				$(this).parent().children("[name='<?php echo $colname ?>']").val(ui.item.id);
+				return false;
+			}
+		});
+	});
+</script>
+<input type="text"
+	   name="<?php echo $colname ?>_label"
+	   id="<?php echo $column_id ?>"
+	   value="<?php echo $referenced_table->get_title($value) ?>"
+	   size="<?php echo min(35, $referenced_table->get_title_column()->get_size()) ?>" />
+<input type="hidden" name="<?php echo $colname ?>" value="<?php echo $value ?>" />
+<ul class="notes">
+			<?php
+		$url = "webdb/edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value; ?>
+	<li>
+		This is a cross-reference to
+		<?php echo html::anchor($url, Webdb_Text::titlecase($referenced_table->get_name())) ?>.
+	</li>
+		<?php if($value): ?>
+	<li>
+		View <?php echo html::anchor($url, $referenced_table->get_title($value)) ?>
+		(<?php echo Webdb_Text::titlecase($referenced_table->get_name()) ?>
+		record #<?php echo $value ?>).
+	</li>
+		<?php endif ?>
+</ul>
+
+
+	<?php
+	/**
+	 * Everything else
+	 */
+	else: ?>
+		<?php echo form::input($colname, $value,  array('id'=>$column_id, 'size'=>min(35, $column->get_size()))) ?>
 	<?php endif ?>
+
 
 
 
@@ -26,7 +85,7 @@ $value = $row->{$colname}; ?>
 		?>
 
 	<?php elseif ($column->get_size() == 1): ?>
-		<?php if ($value===1) echo 'Yes'; elseif ($value===0) echo 'No'; else echo ''; ?>
+		<?php if ($value==1) echo 'Yes'; elseif ($value==0) echo 'No'; else echo ''; ?>
 
 	<?php else: ?>
 		<?php echo $value ?>

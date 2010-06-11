@@ -64,23 +64,40 @@ class Webdb_DBMS_Table
 	/**
 	 * Get rows, with pagination.
 	 *
-	 * @return <type>
+	 * Note that rows are returned as arrays and not objects, because MySQL
+	 * allows column names to begin with a number, but PHP does not.
+	 *
+	 * @return array[array[string=>string]] The row data
 	 */
-	public function get_rows()
+	public function get_rows($with_pagination = TRUE)
 	{
-		//return array();
-		//$query = $this->_db->query(Database::SELECT, '', TRUE);
 		$query = new Database_Query_Builder_Select();
-		$query->as_object();
+
+		// First get all rows
 		$query->from($this->get_name());
 		if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
 		{
 			$query->where($this->where[0], $this->where[1], $this->where[2]);
 		}
-		$query->offset($this->get_pagination()->offset);
-		$query->limit($this->get_pagination()->items_per_page);
 		$rows = $query->execute($this->_db);
-		//exit('<pre>'.kohana::dump($rows->as_array()));
+		$row_count = count($rows->as_array());
+
+		// Then limit to paged ones (yes, there is duplication here, and things
+		// need to be improved.
+		if ($with_pagination)
+		{
+			$query->reset();
+			$query->from($this->get_name());
+			$config = array('total_items' => $row_count);
+			$this->_pagination = new Pagination($config);
+			$query->offset($this->_pagination->offset);
+			$query->limit($this->_pagination->items_per_page);
+			if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
+			{
+				$query->where($this->where[0], $this->where[1], $this->where[2]);
+			}
+			$rows = $query->execute($this->_db);
+		}
 		return $rows;
 	}
 
@@ -91,7 +108,6 @@ class Webdb_DBMS_Table
 	public function get_row($id)
 	{
 		$query = new Database_Query_Builder_Select();
-		$query->as_object();
 		$query->from($this->get_name());
 		$query->limit(1);
 		$query->where('id', '=', $id);
@@ -130,7 +146,7 @@ class Webdb_DBMS_Table
 	}
 
 	/**
-	 * Get a pagination object for this table.
+	 * Get the pagination object for this table.
 	 *
 	 * @return Pagination
 	 */
@@ -152,7 +168,15 @@ class Webdb_DBMS_Table
 	 */
 	public function count_records()
 	{
-		return $this->_db->count_records($this->_name);
+		$query = new Database_Query_Builder_Select();
+		$query->select(DB::expr('COUNT(*) AS row_count'));
+		$query->from($this->get_name());
+		if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
+		{
+			$query->where($this->where[0], $this->where[1], $this->where[2]);
+		}
+		$rows = $query->execute($this->_db)->get('row_count');
+		return $rows;
 	}
 
 	/**
@@ -169,12 +193,19 @@ class Webdb_DBMS_Table
 	 * Get the title text for a given row.
 	 *
 	 * @param integer $id
+	 * @return string
 	 */
 	public function get_title($id)
 	{
 		$row = $this->get_row($id);
 		$title_column = $this->get_title_column()->get_name();
-		return $row->$title_column;
+		if (isset($row->$title_column))
+		{
+			return $row[$title_column];
+		} else
+		{
+			return '';
+		}
 	}
 
 	/**
@@ -248,7 +279,7 @@ class Webdb_DBMS_Table
 	/**
 	 * Get tables with foreign keys referring here.
 	 *
-	 * @return array
+	 * @return array Of the format: `array('table' => Webdb_DBMS_Table, 'column' => string)`
 	 */
 	public function get_referencing_tables()
 	{
@@ -260,7 +291,7 @@ class Webdb_DBMS_Table
 			{
 				if ($foreign_table == $this->_name)
 				{
-					$out[$foreign_column] = $table;
+					$out[] = array('table'  => $table, 'column' => $foreign_column);
 				}
 			}
 		}
@@ -455,7 +486,7 @@ class Webdb_DBMS_Table
 			/*
 			 * Booleans
 			*/
-			if ($column->get_type() == 'tinyint')
+			if ($column->get_type() == 'int' && $column->get_size() == 1)
 			{
 				if ($value == NULL || $value == '')
 				{
@@ -471,6 +502,7 @@ class Webdb_DBMS_Table
 				{
 					$data[$field] = 1;
 				}
+				//exit(kohana::debug($data[$field]));
 			}
 
 			/*

@@ -1,20 +1,31 @@
-<?php /**
+<?php
+$value = $row[$column->get_name()];
+/**
  * Edit
- */ if ($edit): ?>
+ */
+if ($edit):
+	$column_id = $column->get_name().'-column';
+	?>
 
 	<?php if ($column->get_size() > 0): ?>
-		<?php if($column->get_size() < 150): ?>
-			<?php echo form::input($column->get_name(), $row->{$column->get_name()}, array('size'=>$column->get_size())) ?>
+		<?php if($column->get_size() < 150):
+			echo form::input(
+			$column->get_name(),
+			$value,
+			array('size'=>min($column->get_size(),35), 'id'=>$column_id)
+			)
+			?>
 
 		<?php else: ?>
-<textarea name="<?php echo $column->get_name() ?>" cols="80" rows="4"><?php echo $row->{$column->get_name()} ?></textarea>
-		<?php endif ?>
+<textarea name="<?php echo $column->get_name() ?>" cols="35" rows="4"
+		  id="<?php echo $column_id?>"><?php echo $value ?></textarea>
+				  <?php endif ?>
 
 <ul class="notes">
 	<li>Maximum length: <?php echo $column->get_size() ?> characters.</li>
 </ul>
 	<?php else: ?>
-		<?php echo form::input($column->get_name(), $row->{$column->get_name()}) ?>
+		<?php echo form::input($column->get_name(), $value, array('id'=>$column_id)) ?>
 	<?php endif ?>
 
 
@@ -22,6 +33,6 @@
  * Don't edit
  */ else: ?>
 
-	<?php echo $row->{$column->get_name()} ?>
+	<?php echo $value ?>
 
 <?php endif ?>

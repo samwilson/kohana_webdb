@@ -6,9 +6,12 @@
 
 <?php if ($table): ?>
 
+<?php $rows = $table->get_rows() ?>
+
 <table>
 	<caption>
 			<?php echo $table->get_pagination()->render('webdb/pagination/truncated') ?>
+		<!--p>Showing records x&ndash;x of <?php echo $table->count_records() ?></p-->
 	</caption>
 	<thead>
 		<tr>
@@ -21,15 +24,15 @@
 		</tr>
 	</thead>
 	<tbody>
-			<?php foreach ($table->get_rows() as $row): ?>
+			<?php foreach ($rows as $row): ?>
 		<tr>
-					<?php if (isset($row->id)): ?>
+					<?php if (isset($row['id'])): ?>
 			<td>
 							<?php
 							if ($table->can_update() || $table->can_insert()):
-								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'Edit');
+								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row['id'], 'Edit');
 							else:
-								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row->id, 'View');
+								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$table->get_name().'/'.$row['id'], 'View');
 							endif
 							?>
 			</td>
