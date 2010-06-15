@@ -1,4 +1,4 @@
-<?php if (!isset($row->id) && !$table->can_insert()) return ?>
+<?php if (!isset($row['id']) && !$table->can_insert()) return ?>
 
 <?php $num_cols = 3 ?>
 
@@ -74,7 +74,7 @@
 
 
 <?php $related_tables = $table->get_referencing_tables();
-if (count($related_tables) > 0): ?>
+if (isset($row['id']) && count($related_tables) > 0): ?>
 <script type="text/javascript">
 	$().ready(function(){
 		$('.related-tables h3').click(function() {

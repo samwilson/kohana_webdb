@@ -46,15 +46,20 @@ if ($edit):
 	   size="<?php echo min(35, $referenced_table->get_title_column()->get_size()) ?>" />
 <input type="hidden" name="<?php echo $colname ?>" value="<?php echo $value ?>" />
 <ul class="notes">
-			<?php
-		$url = "webdb/edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value; ?>
 	<li>
 		This is a cross-reference to
-		<?php echo html::anchor($url, Webdb_Text::titlecase($referenced_table->get_name())) ?>.
+		<?php 
+		$url = "webdb/index/".$database->get_name().'/'.$referenced_table->get_name();
+		$title = Webdb_Text::titlecase($referenced_table->get_name());
+		echo html::anchor($url, $title) ?>.
 	</li>
 		<?php if($value): ?>
 	<li>
-		View <?php echo html::anchor($url, $referenced_table->get_title($value)) ?>
+		View
+		<?php
+		$url = "webdb/edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
+		$title = $referenced_table->get_title($value);
+		echo html::anchor($url, $title) ?>
 		(<?php echo Webdb_Text::titlecase($referenced_table->get_name()) ?>
 		record #<?php echo $value ?>).
 	</li>

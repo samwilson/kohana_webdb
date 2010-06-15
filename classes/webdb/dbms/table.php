@@ -117,10 +117,10 @@ class Webdb_DBMS_Table
 
 	public function get_default_row()
 	{
-		$row = new stdClass();
+		$row = array();
 		foreach ($this->get_columns() as $col)
 		{
-			$row->{$col->get_name()} = $col->get_default();
+			$row[$col->get_name()] = $col->get_default();
 		}
 		return $row;
 	}
