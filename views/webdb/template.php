@@ -183,6 +183,11 @@
 				<dfn title="Kohana codename"><?php echo Kohana::CODENAME ?></dfn>.
 					Currently in <?php echo Kohana::$environment ?> mode.
 			</li>
+			<?php if (Kohana::$environment == Kohana::DEVELOPMENT): ?>
+			<li id="kohana-profiler">
+					<?php echo View::factory('profiler/stats') ?>
+			</li>
+			<?php endif ?>
 		</ol>
 
 	</body>

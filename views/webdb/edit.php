@@ -96,11 +96,11 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 				?>
 		<li>
 			<h3 title="Show or hide these related records" class="anchor <?php echo $class ?>">
-						<?php echo Webdb_Text::titlecase($foreign_table->get_name()) ?>
+				<?php echo Webdb_Text::titlecase($foreign_table->get_name()) ?>
 				<span class="smaller">(as &lsquo;<?php echo Webdb_Text::titlecase($foreign_column) ?>&rsquo;).</span>
 				<?php echo $num_foreign_records ?> record<?php echo ($num_foreign_records!=1) ? 's' : '' ?>.
 			</h3>
-					<?php echo View::factory('webdb/index', array('table'=>$foreign_table)) ?>
+			<?php echo View::factory('webdb/datatable', array('the_table' => $foreign_table))->render() ?>
 		</li>
 			<?php endforeach ?>
 	</ol>

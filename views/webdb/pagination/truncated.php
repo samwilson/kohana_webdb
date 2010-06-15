@@ -48,8 +48,9 @@ for ($i = $n7; $i <= $n8; $i++)
 	$links[$i] = $i;
 
 ?>
-<p class="pagination"><em>Page:</em>
-
+<p class="pagination">
+	Found <?php echo number_format($total_items) ?> records.
+	View page: 
 	<?php if ($first_page !== FALSE): ?>
 	<a href="<?php echo $page->url($first_page) ?>" class="first"><?php echo __('First') ?></a>
 	<?php else: ?>

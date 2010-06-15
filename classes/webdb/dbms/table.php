@@ -86,7 +86,7 @@ class Webdb_DBMS_Table
 		// need to be improved.
 		if ($with_pagination)
 		{
-			$query->reset();
+			$query = new Database_Query_Builder_Select();
 			$query->from($this->get_name());
 			$config = array('total_items' => $row_count);
 			$this->_pagination = new Pagination($config);
