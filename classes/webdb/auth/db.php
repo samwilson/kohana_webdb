@@ -19,7 +19,8 @@ class Webdb_Auth_Db extends Webdb_Auth
 	 * @param string $password
 	 * @param void   $remember NOT USED
 	 */
-	protected function _login($username, $password, $remember = NULL)
+
+	protected function _login($username, $password, $remember)
 	{
 		try
 		{
