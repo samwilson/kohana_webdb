@@ -70,11 +70,12 @@ class Webdb_DBMS
 		{
 			$this->_config['connection']['database'] = $dbname;
 		}
-		//$config_group_name = ($dbname != NULL) ? $dbname : 'default';
-		//exit(kohana::debug($config));
 		try
 		{
 			// Try to connect with the Database config credentials.
+			Kohana::$log->add(Kohana::DEBUG, "Connecting with database config group $config_group_name:");
+			Kohana::$log->add(Kohana::DEBUG, "    database = ".$this->_config['connection']['database']);
+			Kohana::$log->add(Kohana::DEBUG, "    username = ".$this->_config['connection']['username']);
 			unset(Database::$instances[$config_group_name]);
 			$this->_db = Database::instance($config_group_name, $this->_config);
 			$this->_db->connect();
@@ -82,6 +83,7 @@ class Webdb_DBMS
 		} catch (Exception $e)
 		{
 			// If that fails, try with those from Auth config.
+			Kohana::$log->add(Kohana::INFO, "Unable to connect; trying Auth.");
 			$username = auth::instance()->get_user();
 			$this->_config['connection']['username'] = $username;
 			$password = auth::instance()->password($username);
@@ -89,17 +91,22 @@ class Webdb_DBMS
 			unset(Database::$instances[$config_group_name]);
 			try
 			{
+				Kohana::$log->add(Kohana::DEBUG, "Connecting with database config group $config_group_name:");
+				Kohana::$log->add(Kohana::DEBUG, "    database = ".$this->_config['connection']['database']);
+				Kohana::$log->add(Kohana::DEBUG, "    username = ".$this->_config['connection']['username']);
 				$this->_db = Database::instance($config_group_name, $this->_config);
 				$this->_db->connect();
 			} catch (Exception $e)
 			{
 				// Second connection failure: give up.
-				$msg = "Unable to connect to DBMS as '$username'";
-				$msg .= (Kohana::$environment==Kohana::DEVELOPMENT) ? "(with password '$password')" : "";
-				$msg .= ".";
-				throw new Webdb_DBMS_ConnectionException($msg);
+				Kohana::$log->add(Kohana::DEBUG, "Unable to connect; giving up.");
+				throw new Webdb_DBMS_ConnectionException('Unable to connect to DBMS.');
 			}
+			Kohana::$log->add(Kohana::INFO, 'Connecting with Auth credentials successful.');
+			return;
 		}
+		Kohana::$log->add(Kohana::INFO, 'Connecting with database config file credentials successful.');
+		return;
 	}
 
 	/**

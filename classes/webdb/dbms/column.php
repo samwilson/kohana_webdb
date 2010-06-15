@@ -153,14 +153,14 @@ class Webdb_DBMS_Column
 			->where('priv_type', 'IN', array($priv_type, '*'))
 			->and_where('database_name', 'IN', array($db->get_name(), '*'))
 			->and_where('table_name', 'IN', array($this->_table->get_name(), '*'));
-		//$sql = $query->compile($this->_table->get_database()->get_db());
-		//exit(kohana::debug($sql));
+		$sql = $query->compile($this->_table->get_database()->get_db());
+		Kohana::$log->add(Kohana::DEBUG, $sql);
 		$identifiers = $query->execute($db->get_db())->as_array('identifier');
 		$identifiers = array_keys($identifiers);
-		//exit(kohana::debug($roles));
 		// Check for the wildcard, or username.
 		if (in_array('*', $identifiers) || in_array(Auth::instance()->get_user(), $identifiers))
 		{
+			Kohana::$log->add(Kohana::INFO, 'User (or wildcard) is listed in identifiers.');
 			return TRUE;
 		}
 		// Check for any of this user's roles.
@@ -168,9 +168,11 @@ class Webdb_DBMS_Column
 		{
 			if (Auth::instance()->logged_in($identifier))
 			{
+				Kohana::$log->add(Kohana::INFO, "One of user's groups is listed in identifiers.");
 				return TRUE;
 			}
 		}
+		Kohana::$log->add(Kohana::INFO, 'User does not have privilege.');
 		return FALSE;
 	}
 
