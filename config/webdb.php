@@ -8,7 +8,7 @@ return array(
 	 * using WebDB's 'DB' Auth driver).
 	 */
 	'permissions' => array(
-		'database' => 'auth',
-		'table' => 'permissions',
+		'database' => NULL,
+		'table' => NULL,
 	),
 );

@@ -1,2 +1,2 @@
 1. **WebDB**
-   - [Getting Started](webdb.about)
+   - [About WebDB](webdb.about)

@@ -145,14 +145,19 @@ class Webdb_DBMS_Column
 		$config = kohana::config('webdb')->permissions;
 		if (empty($config['table']))
 		{
-			return TRUE; // If no permissions table, assume all permissions.
+			Kohana::$log->add(Kohana::INFO, 'No permissions table specified, assuming all permissions.');
+			return TRUE;
 		}
 		$db = $this->_table->get_database();
 		$query = DB::select('identifier')
 			->from($config['database'].'.'.$config['table'])
-			->where('priv_type', 'IN', array($priv_type, '*'))
-			->and_where('database_name', 'IN', array($db->get_name(), '*'))
-			->and_where('table_name', 'IN', array($this->_table->get_name(), '*'));
+			->where('database_name', 'IN', array($db->get_name(), '*'))
+			->and_where('table_name', 'IN', array($this->_table->get_name(), '*'))
+			->and_where_open()
+			->where(DB::expr("LOCATE('$this->_name', column_names)"), '!=', 0)
+			->or_where('column_names', 'IS', NULL)
+			->and_where_close()
+			->and_where('permission', 'IN', array($priv_type, '*'));
 		$sql = $query->compile($this->_table->get_database()->get_db());
 		Kohana::$log->add(Kohana::DEBUG, $sql);
 		$identifiers = $query->execute($db->get_db())->as_array('identifier');
