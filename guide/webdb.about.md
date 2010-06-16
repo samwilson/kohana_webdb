@@ -64,7 +64,7 @@ The `permissions` table schema:
         `table_name`    varchar(65)  NOT NULL DEFAULT '*' COMMENT 'A single table name, or an asterisk to denote all tables.',
         `column_names`  text  COMMENT 'A comma-delimited list of table columns, or an asterisk to denote all columns.',
         `where_clause`  varchar(200) DEFAULT NULL COMMENT 'The SQL WHERE clause to use to determine row-level access.',
-        `permission`    enum('*','Select','Insert','Update','Delete','Import','Export') NOT NULL DEFAULT '*' COMMENT 'The permission that is being assigned (the asterisk denotes all).',
+        `permission`    enum('*','select','insert','update','delete','import','export') NOT NULL DEFAULT '*' COMMENT 'The permission that is being assigned (the asterisk denotes all).',
         `identifier`    varchar(65)  NOT NULL DEFAULT '*' COMMENT 'A single database name, or asterisk to denote ALL databases.'
     ) COMMENT 'User permissions on databases, tables, and/or rows.';
 

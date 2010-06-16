@@ -103,7 +103,7 @@ class Webdb_DBMS_Table
 
 	/**
 	 *
-	 * @param <type> $id
+	 * @param integer $id
 	 */
 	public function get_row($id)
 	{
@@ -213,7 +213,7 @@ class Webdb_DBMS_Table
 	{
 		$row = $this->get_row($id);
 		$title_column = $this->get_title_column()->get_name();
-		if (isset($row->$title_column))
+		if (isset($row[$title_column]))
 		{
 			return $row[$title_column];
 		} else
