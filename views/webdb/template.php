@@ -92,22 +92,27 @@
 
 		<div class="not-head-foot">
 
-			<?php if (count($tables) > 0): ?>
 			<ol class="tables">
-					<?php $table_names = array_keys($tables);
-					asort($table_names);
-					foreach ($table_names as $tab): ?>
-						<?php $selected = ($table && $tab==$table->get_name()) ? 'selected' : '' ?>
-				<li>
+			<?php foreach ($tables as $section => $tables): ?>
+				<?php if (count($tables) > 0): ?>
+				<li><em class="section-head"><?php echo Webdb_Text::titlecase($section) ?></em>
+				<ol>
+						<?php $table_names = array_keys($tables);
+						asort($table_names);
+						foreach ($table_names as $tab): ?>
+							<?php $selected = ($table && $tab==$table->get_name()) ? 'selected' : '' ?>
+							<li>
 							<?php echo html::anchor(
 							'webdb/index/'.$database->get_name().'/'.$tab,
 							Webdb_Text::titlecase($tab),
 							array('class'=>$selected)
 							) ?>
-				</li>
-					<?php endforeach ?>
+							</li>
+						<?php endforeach ?>
+				</ol></li>
+				<?php endif ?>
+			<?php endforeach ?>
 			</ol>
-			<?php endif ?>
 
 			<div class="content">
 

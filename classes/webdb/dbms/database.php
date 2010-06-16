@@ -69,8 +69,9 @@ class Webdb_DBMS_Database
 	}
 
 	/**
+	 * Get a list of tables of this database.
 	 *
-	 * @return <type>
+	 * @return array[Webdb_DBMS_Table] Array of [Webdb_DBMS_Table] objects.
 	 */
 	public function get_tables($like = NULL)
 	{

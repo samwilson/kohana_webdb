@@ -520,6 +520,14 @@ class Webdb_DBMS_Table
 			}
 
 			/*
+			 * Nullable empty fields should be NULL.
+			 */
+			elseif (!$column->is_required() && empty($value))
+			{
+				$data[$field] = NULL;
+			}
+
+			/*
 			 * Foreign keys
 			*/
 			elseif ( $column->is_foreign_key() && ($value <= 0 || $value == '') )

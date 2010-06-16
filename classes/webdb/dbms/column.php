@@ -31,7 +31,7 @@ class Webdb_DBMS_Column
 	 * @var boolean Whether or not this column is required, i.e. is NULL = not
 	 * required = false; and NOT NULL = required = true.
 	 */
-	private $_required = false;
+	private $_required = FALSE;
 
 	/** @var boolean Whether or not this column is the Primary Key. */
 	private $_isPK = false;
@@ -98,7 +98,7 @@ class Webdb_DBMS_Column
 		// NULL?
 		if ($info['null'] == 'NO')
 		{
-			$this->required = TRUE;
+			$this->_required = TRUE;
 		}
 
 		// Is this a foreign key?
@@ -267,7 +267,7 @@ class Webdb_DBMS_Column
 	 *
 	 * @return boolean True if this column is NOT NULL, false otherwise.
 	 */
-	public function isRequired()
+	public function is_required()
 	{
 		return $this->_required;
 	}

@@ -22,18 +22,11 @@ ul { margin:0 }
 .header .auth { float:right; margin:0.3em 0.8em 0 0 }
 .header a { color: black }
 .header .databases { font-size:larger }
-
 .footer { border-width:1px 0 0 0; padding-bottom:2em; text-align:center; clear:both; list-style-type:none }
-
-.tables { float:left; width: 240px; list-style-type:none; margin:0; padding:0 }
-.tables a { display:block; padding:3px 10px; text-decoration: none;
-            color: #3333AA; border-bottom: 1px solid #CCD }
-.tables .selected { font-weight:bolder }
-.tables a:hover { color: #111166; background-color: #EFEFF5 }
-.tables ul li  { font-size: 13px; margin: 10px 0px 0px 0px; border-bottom: 3px double #ccd }
 
 
 .not-head-foot { margin:0; padding:0.7em 0; background-color:white; clear:both }
+
 
 .title { height:3em; margin:0; padding:0 }
 .title h1 {margin:0 0.4em 0 0; padding:0; text-align:left; float:left }
@@ -41,6 +34,18 @@ ul { margin:0 }
 .title h1 a { color:#444 }
 .title h1 a:hover { text-decoration:none; color:#33A }
 .title p { margin:0; padding:0; line-height:3em }
+
+
+.tables { float:left; width: 240px; list-style-type:none; margin:0; padding:0 }
+.tables ol { list-style-type:none; margin:0; padding:0 }
+.tables .section-head  { display:block; 
+                margin: 10px 0px 0px 0px; padding-left:0.3em;
+                border-bottom: 3px double #ccd }
+.tables ol a { display:block; padding:3px 10px; text-decoration: none;
+            color: #3333AA; border-bottom: 1px solid #CCD; font-size:smaller }
+.tables .selected { font-weight:bolder; background-color:#DFDFE4 }
+.tables a:hover { color: #111166; background-color: #EFEFF5 }
+
 
 .content { margin:0 0 0 250px }
 .content .tabs.actions { font-size:smaller; margin-bottom:1em }

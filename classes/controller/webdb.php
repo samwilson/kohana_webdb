@@ -105,14 +105,23 @@ class Controller_WebDB extends Controller_Template
 		if ($this->database)
 		{
 			$this->table = $this->database->get_table();
-			$this->template->tables = $this->database->get_tables();
-			if (!$this->table && count($this->template->tables) > 0)
+			// Divide tables by editability
+			$this->template->tables = array('data_entry'=>array(),'reference'=>array());
+			foreach ($this->database->get_tables() as $table) {
+				if ($table->can_update() || $table->can_insert()) {
+					$this->template->tables['data_entry'][$table->get_name()] = $table;
+				} else {
+					$this->template->tables['reference'][$table->get_name()] = $table;
+				}
+			}
+			//$this->template->tables = $this->database->get_tables();
+			if (!$this->table && count($this->database->get_tables()) > 0)
 			{
 				$this->add_template_message(
 					'Please select a table from the menu to the left.',
 					'info'
 				);
-			} elseif (!$this->table && count($this->template->tables) == 0)
+			} elseif (!$this->table && count($this->database->get_tables()) == 0)
 			{
 				$this->add_template_message(
 					'You do not have permission to view any tables in this database.',
