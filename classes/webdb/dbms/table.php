@@ -190,6 +190,20 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get the table comment text.
+	 *
+	 * @return string
+	 */
+	public function get_comment()
+	{
+		$sql = $this->_get_defining_sql();
+		$comment_pattern = '/.*\)(?:.*COMMENT.*\'(.*)\')?/si';
+		preg_match($comment_pattern, $sql, $matches);
+		//exit(Kohana::debug($sql).Kohana::debug($matches));
+		return (isset($matches[1])) ? $matches[1] : '';
+	}
+
+	/**
 	 * Get the title text for a given row.
 	 *
 	 * @param integer $id
@@ -244,11 +258,11 @@ class Webdb_DBMS_Table
 				}
 			} else
 			{
-				throw new Exception('Table not found: '.$this->_name);
+				throw new Kohana_Exception('Table not found: '.$this->_name);
 			}
+			$this->_definingSql = $defining_sql;
 		}
-		$this->_definingSql = $defining_sql;
-		return $defining_sql;
+		return $this->_definingSql;
 	}
 
 	/**

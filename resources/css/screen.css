@@ -35,10 +35,14 @@ ul { margin:0 }
 
 .not-head-foot { margin:0; padding:0.7em 0; background-color:white; clear:both }
 
-.content { margin-left:250px }
-.content h1 {margin:0; padding:0; text-align:left}
-.content h1 a, .content h2 { color:#444 }
-.content h1 a:hover { text-decoration:none; color:blue }
+.title { height:3em; margin:0; padding:0 }
+.title h1 {margin:0 0.4em 0 0; padding:0; text-align:left; float:left }
+.title,
+.title h1 a { color:#444 }
+.title h1 a:hover { text-decoration:none; color:#33A }
+.title p { margin:0; padding:0; line-height:3em }
+
+.content { margin:0 0 0 250px }
 .content .tabs.actions { font-size:smaller; margin-bottom:1em }
 .content .tabs.actions li a { padding:0 0.5em }
 .content .tabs.actions, .content h1 { padding-left:20px }

@@ -233,6 +233,16 @@ class Webdb_DBMS_Column
 	}
 
 	/**
+	 * Get the column's comment.
+	 *
+	 * @return string
+	 */
+	public function get_comment()
+	{
+		return $this->_comment;
+	}
+
+	/**
 	 * Get the default value for this column.
 	 *
 	 * @return mixed

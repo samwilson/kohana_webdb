@@ -73,8 +73,16 @@ if ($edit):
 	 */
 	else: ?>
 		<?php echo form::input($colname, $value,  array('id'=>$column_id, 'size'=>min(35, $column->get_size()))) ?>
-	<?php endif ?>
 
+	<?php endif /* end ifs choosing type of input. */ ?>
+
+	<?php
+	if ($column->get_comment()) {
+	echo '<ul class="notes">'
+		.'<li><strong>'.$column->get_comment().'</strong></li>'
+		.'</ul>';
+	}
+	?>
 
 
 

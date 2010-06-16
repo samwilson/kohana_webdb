@@ -112,12 +112,14 @@
 			<div class="content">
 
 				<?php if ($table): ?>
-				<h1>
-						<?php echo html::anchor(
+				<div class="title">
+					<h1><?php echo html::anchor(
 						'webdb/index/'.$database->get_name().'/'.$table->get_name(),
 						Webdb_Text::titlecase($table->get_name())
 						) ?>
-				</h1>
+					</h1>
+					<?php if ($table->get_comment()) echo '<p>'.$table->get_comment().'</p>' ?>
+				</div>
 				<?php endif ?>
 
 				<?php if ($database && $table && count($actions) > 0): ?>
@@ -178,7 +180,7 @@
 			</li-->
 			<li>
 					Built on
-				<?php echo html::anchor('/guide', 'Kohana', array('title'=>'View the User Guide')) ?>
+				<?php echo html::anchor('/guide/webdb.about', 'Kohana', array('title'=>'View the WebDB user guide')) ?>
 				<?php echo Kohana::VERSION ?>
 				<dfn title="Kohana codename"><?php echo Kohana::CODENAME ?></dfn>.
 					Currently in <?php echo Kohana::$environment ?> mode.
