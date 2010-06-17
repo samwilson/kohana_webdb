@@ -53,11 +53,6 @@ class Controller_WebDB extends Controller_Template
 		);
 
 		/*
-		 * User authentication
-		*/
-		//auth::instance()->logged_in();
-
-		/*
 		 * Database & table.
 		 * Do not instantiate database for resources, login, or logout actions.
 		*/
@@ -161,10 +156,37 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_index()
 	{
-		//auth::instance()->logged_in();
-		//echo '<pre>';
-		//print_r(auth::instance()->get_user());
-		//exit();
+		$this->view->columns = array();
+		$this->view->filters = array();
+		if (!$this->table) {
+			return;
+		}
+		// The permitted filter operators.
+		$this->view->operators = $this->table->get_operators();
+		foreach ($this->table->get_columns() as $col) {
+			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
+		}
+		
+		// Get filters from GET and SESSION, then delete those in SESSION (we'll
+		// recreate them in a moment).
+		//$session = Session::instance();
+		$filters = Arr::get($_GET, 'filters', array()); // + $session->get('webdb_filters', array());
+		//$session->set('webdb_filters', array());
+		foreach ($filters as $filter) {
+			$column = arr::get($filter, 'column', FALSE);
+			$operator = arr::get($filter, 'operator', FALSE);
+			$value = arr::get($filter, 'value', FALSE);
+			$this->table->add_filter($column, $operator, $value);
+		}
+		$this->view->filters = $this->table->get_filters();
+		//$session->set('webdb_filters', $this->view->filters);
+
+		// Add new filter
+		$this->view->filters[] = array(
+			'column' => $this->table->get_title_column()->get_name(),
+			'operator' => 'like',
+			'value' => ''
+		);
 	}
 
 	public function action_edit()

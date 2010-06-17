@@ -75,6 +75,9 @@ The `permissions` table schema:
   characters.
 * **Foreign keys** are show as links to their foreign rows, or (when being edited)
   as autocomplete drop-down lists.
+* Users can **filter** by any column and a range of operations ('contains',
+  'is empty', 'equals', etc.).  This includes searching foreign keys for values
+  found in the 'title column' of the foreign table.
 
 ## Simplified BSD License
 
