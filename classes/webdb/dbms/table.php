@@ -32,6 +32,23 @@ class Webdb_DBMS_Table
 	/** @var Pagination */
 	private $_pagination;
 
+	/** @var array */
+	private $_filters = array();
+
+	/** @var array Permitted operators. */
+	private $_operators = array(
+		'like'        => 'contains',
+		'not like'    => 'does not contain',
+		'='           => 'is',
+		'!='          => 'is not',
+		'empty'       => 'is empty',
+		'not empty'   => 'is not empty',
+		'>='          => 'is greater than or equal to',
+		'>'           => 'is greater than',
+		'<='          => 'is less than or equal to',
+		'<'           => 'is less than'
+	);
+
 	/**
 	 * Create a new database table object.
 	 *
@@ -61,6 +78,70 @@ class Webdb_DBMS_Table
 		}
 	}
 
+	public function add_filter($column, $operator, $value)
+	{
+		$valid_columm = in_array($column, array_keys($this->_columns));
+		$valid_operator = in_array($operator, array_keys($this->_operators));
+		$valid_value = (strpos($operator, 'empty') !== false)
+			|| (strpos($operator, 'empty') === false && !empty($value));
+		if ($valid_columm && $valid_operator && $valid_value) {
+			$this->_filters[] = array(
+				'column'    => $column,
+				'operator' => $operator,
+				'value'     => trim($value)
+			);
+		}
+	}
+
+	public function apply_filters(&$query)
+	{
+		$alias = '';
+		foreach ($this->_filters as $filter)
+		{
+
+			// FOREIGN KEYS
+			$column = $this->_columns[$filter['column']];
+			if ($column->is_foreign_key())
+			{
+				$foreign_table = $column->get_referenced_table();
+				$foreign_title_column = $foreign_table->get_title_column()->get_name();
+				$alias .= 'r';
+				$query->join(array($foreign_table->get_name(), $alias))
+					  ->on($this->_name.'.'.$column->get_name(), '=', $alias.'.id');
+				$filter['column'] = $alias.'.'.$foreign_title_column;
+			}
+
+			// LIKE or NOT LIKE
+			if ($filter['operator']=='like' || $filter['operator']=='not like')
+			{
+				$filter['value'] = '%'.$filter['value'].'%';
+				$filter['column'] = DB::expr('CONVERT('.$filter['column'].', CHAR)');
+			}
+
+			// IS EMPTY
+			if ($filter['operator'] == 'empty')
+			{
+				$query->where($filter['column'], 'IS', NULL);
+				$query->or_where($filter['column'], '=', '');
+				$filter['column'] = '';
+			}
+
+			// IS NOT EMPTY
+			if ($filter['operator'] == 'not empty')
+			{
+				$query->where($filter['column'], 'IS NOT', NULL);
+				$query->and_where($filter['column'], '!=', '');
+				$filter['column'] = '';
+			}
+
+			if (!empty($filter['column']))
+			{
+				$query->where($filter['column'], $filter['operator'], $filter['value']);
+			}
+			
+		} // end foreach filter
+	}
+
 	/**
 	 * Get rows, with pagination.
 	 *
@@ -73,12 +154,15 @@ class Webdb_DBMS_Table
 	{
 		$query = new Database_Query_Builder_Select();
 
-		// First get all rows
-		$query->from($this->get_name());
-		if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
+		// First get all columns and rows
+		$columns = array();
+		foreach (array_keys($this->_columns) as $col)
 		{
-			$query->where($this->where[0], $this->where[1], $this->where[2]);
+			$columns[] = $this->_name.'.'.$col;
 		}
+		$query->select_array($columns);
+		$query->from($this->get_name());
+		$this->apply_filters(&$query);
 		$rows = $query->execute($this->_db);
 		$row_count = count($rows->as_array());
 
@@ -87,15 +171,13 @@ class Webdb_DBMS_Table
 		if ($with_pagination)
 		{
 			$query = new Database_Query_Builder_Select();
+			$query->select_array($columns);
 			$query->from($this->get_name());
 			$config = array('total_items' => $row_count);
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
-			if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
-			{
-				$query->where($this->where[0], $this->where[1], $this->where[2]);
-			}
+			$this->apply_filters(&$query);
 			$rows = $query->execute($this->_db);
 		}
 		return $rows;
@@ -146,6 +228,16 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get a list of permitted operators.
+	 *
+	 * @return array[string]=>string List of operators.
+	 */
+	public function get_operators()
+	{
+		return $this->_operators;
+	}
+
+	/**
 	 * Get the pagination object for this table.
 	 *
 	 * @return Pagination
@@ -171,10 +263,7 @@ class Webdb_DBMS_Table
 		$query = new Database_Query_Builder_Select();
 		$query->select(DB::expr('COUNT(*) AS row_count'));
 		$query->from($this->get_name());
-		if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
-		{
-			$query->where($this->where[0], $this->where[1], $this->where[2]);
-		}
+		$this->apply_filters($query);
 		$rows = $query->execute($this->_db)->get('row_count');
 		return $rows;
 	}
@@ -312,6 +401,11 @@ class Webdb_DBMS_Table
 		return $out;
 	}
 
+	public function get_filters()
+	{
+		return $this->_filters;
+	}
+
 	/**
 	 * Get a list of the names of the foreign keys in this table.
 	 *
@@ -447,6 +541,16 @@ class Webdb_DBMS_Table
 			);
 		}
 		return $json->encode($metadata);
+	}
+
+	/**
+	 * Remove all filters.
+	 *
+	 * @return void
+	 */
+	public function reset_filters()
+	{
+		$this->_filters = array();
 	}
 
 	/**
