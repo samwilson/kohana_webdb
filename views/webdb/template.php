@@ -93,9 +93,13 @@
 		<div class="not-head-foot">
 
 			<ol class="tables">
+				<?php $multiple_heads = count($tables['data_entry'])>0 && count($tables['reference'])>0 ?>
 			<?php foreach ($tables as $section => $tables): ?>
 				<?php if (count($tables) > 0): ?>
-				<li><em class="section-head"><?php echo Webdb_Text::titlecase($section) ?></em>
+				<li>
+					<?php if ($multiple_heads): ?>
+					<em class="section-head"><?php echo Webdb_Text::titlecase($section) ?></em>
+					<?php endif ?>
 				<ol>
 						<?php $table_names = array_keys($tables);
 						asort($table_names);
