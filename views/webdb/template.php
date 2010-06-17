@@ -93,7 +93,7 @@
 		<div class="not-head-foot">
 
 			<ol class="tables">
-				<?php $multiple_heads = count($tables['data_entry'])>0 && count($tables['reference'])>0 ?>
+			<?php $multiple_heads = count($tables)>0 && count($tables['data_entry'])>0 && count($tables['reference'])>0 ?>
 			<?php foreach ($tables as $section => $tables): ?>
 				<?php if (count($tables) > 0): ?>
 				<li>
