@@ -95,6 +95,7 @@ class Webdb_DBMS_Table
 
 	public function apply_filters(&$query)
 	{
+		$alias = '';
 		foreach ($this->_filters as $filter)
 		{
 
@@ -104,9 +105,10 @@ class Webdb_DBMS_Table
 			{
 				$foreign_table = $column->get_referenced_table();
 				$foreign_title_column = $foreign_table->get_title_column()->get_name();
-				$query->join($foreign_table->get_name())
-					  ->on($this->_name.'.'.$column->get_name(), '=', $foreign_table->get_name().'.id');
-				$filter['column'] = $foreign_title_column;
+				$alias .= 'r';
+				$query->join(array($foreign_table->get_name(), $alias))
+					  ->on($this->_name.'.'.$column->get_name(), '=', $alias.'.id');
+				$filter['column'] = $alias.'.'.$foreign_title_column;
 			}
 
 			// LIKE or NOT LIKE
@@ -152,9 +154,14 @@ class Webdb_DBMS_Table
 	{
 		$query = new Database_Query_Builder_Select();
 
-		// First get all rows
+		// First get all columns and rows
+		$columns = array();
+		foreach (array_keys($this->_columns) as $col)
+		{
+			$columns[] = $this->_name.'.'.$col;
+		}
+		$query->select_array($columns);
 		$query->from($this->get_name());
-		//if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
 		$this->apply_filters(&$query);
 		$rows = $query->execute($this->_db);
 		$row_count = count($rows->as_array());
@@ -164,15 +171,12 @@ class Webdb_DBMS_Table
 		if ($with_pagination)
 		{
 			$query = new Database_Query_Builder_Select();
+			$query->select_array($columns);
 			$query->from($this->get_name());
 			$config = array('total_items' => $row_count);
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
-			//if (isset($this->where[0]) && isset($this->where[1]) && isset($this->where[2]))
-			//{
-			//	$query->where($this->where[0], $this->where[1], $this->where[2]);
-			//}
 			$this->apply_filters(&$query);
 			$rows = $query->execute($this->_db);
 		}
@@ -537,6 +541,16 @@ class Webdb_DBMS_Table
 			);
 		}
 		return $json->encode($metadata);
+	}
+
+	/**
+	 * Remove all filters.
+	 *
+	 * @return void
+	 */
+	public function reset_filters()
+	{
+		$this->_filters = array();
 	}
 
 	/**

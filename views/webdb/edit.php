@@ -90,7 +90,8 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 			<?php foreach ($related_tables as $foreign):
 				$foreign_column = $foreign['column'];
 				$foreign_table = $foreign['table'];
-				$foreign_table->add_filter($foreign_column, '=', $row['id']);
+				$foreign_table->reset_filters();
+				$foreign_table->add_filter($foreign_column, '=', $row[$table->get_title_column()->get_name()]);
 				$num_foreign_records = $foreign_table->count_records();
 				$class = ($num_foreign_records > 0) ? '' : 'no-records';
 				?>
