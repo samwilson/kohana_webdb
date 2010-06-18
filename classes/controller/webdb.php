@@ -230,7 +230,8 @@ class Controller_WebDB extends Controller_Template
 		$title_column_name = $this->table->get_title_column()->get_name();
 		if (isset($_GET['term']))
 		{
-			$this->table->where = array($title_column_name, 'like', '%'.$_GET['term'].'%');
+			$this->table->reset_filters();
+			$this->table->add_filter($title_column_name, 'like', $_GET['term']);
 		}
 		$json_data = array();
 		foreach ($this->table->get_rows(FALSE) as $row)
