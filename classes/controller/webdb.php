@@ -213,12 +213,13 @@ class Controller_WebDB extends Controller_Template
 			$this->view->row = $this->table->get_row($id);
 		} else
 		{
-			$this->view->row = $this->table->get_default_row();
 			if (!$this->table->can_insert())
 			{
 				$this->add_template_message('You do not have permission to add a new record to this table.');
 				return;
 			}
+			// Get default data from the database and HTTP request.
+			$this->view->row = array_merge($this->table->get_default_row(), $_GET);
 		}
 	}
 

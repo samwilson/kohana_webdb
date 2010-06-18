@@ -101,7 +101,13 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 				<span class="smaller">(as &lsquo;<?php echo Webdb_Text::titlecase($foreign_column) ?>&rsquo;).</span>
 				<?php echo $num_foreign_records ?> record<?php echo ($num_foreign_records!=1) ? 's' : '' ?>.
 			</h3>
-			<?php echo View::factory('webdb/datatable', array('the_table' => $foreign_table))->render() ?>
+			<div>
+				<p class="new-record">
+				<?php $url = 'webdb/edit/'.$database->get_name().'/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row['id'];
+				echo HTML::anchor($url, 'Add a new record here.') ?>
+				</p>
+				<?php echo View::factory('webdb/datatable', array('the_table' => $foreign_table))->render() ?>
+			</div>
 		</li>
 			<?php endforeach ?>
 	</ol>
