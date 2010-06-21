@@ -140,6 +140,14 @@ class Webdb_DBMS_Table
 			}
 			
 		} // end foreach filter
+
+		// Get WHERE permissions
+		foreach ($this->get_permissions() as $perm) {
+			if (!empty($perm['where_clause']))
+			{
+				$query->and_where(DB::expr($perm['where_clause'].' AND 1'), '=', 1);
+			}
+		}
 	}
 
 	/**
@@ -152,24 +160,24 @@ class Webdb_DBMS_Table
 	 */
 	public function get_rows($with_pagination = TRUE)
 	{
-		$query = new Database_Query_Builder_Select();
-
-		// First get all columns and rows
 		$columns = array();
 		foreach (array_keys($this->_columns) as $col)
 		{
 			$columns[] = $this->_name.'.'.$col;
 		}
+
+		// First get all columns and rows,
+		$query = new Database_Query_Builder_Select();
 		$query->select_array($columns);
 		$query->from($this->get_name());
 		$this->apply_filters(&$query);
 		$rows = $query->execute($this->_db);
-		$row_count = count($rows->as_array());
 
 		// Then limit to paged ones (yes, there is duplication here, and things
 		// need to be improved.
 		if ($with_pagination)
 		{
+			$row_count = count($rows->as_array());
 			$query = new Database_Query_Builder_Select();
 			$query->select_array($columns);
 			$query->from($this->get_name());
@@ -260,12 +268,13 @@ class Webdb_DBMS_Table
 	 */
 	public function count_records()
 	{
-		$query = new Database_Query_Builder_Select();
+		return count($this->get_rows(FALSE));
+		/*$query = new Database_Query_Builder_Select();
 		$query->select(DB::expr('COUNT(*) AS row_count'));
 		$query->from($this->get_name());
 		$this->apply_filters($query);
 		$rows = $query->execute($this->_db)->get('row_count');
-		return $rows;
+		return $rows;*/
 	}
 
 	/**
@@ -352,6 +361,20 @@ class Webdb_DBMS_Table
 			$this->_definingSql = $defining_sql;
 		}
 		return $this->_definingSql;
+	}
+
+	/**
+	 *
+	 */
+	public function get_permissions()
+	{
+		$out = array();
+		foreach ($this->_database->get_permissions() as $perm) {
+			if ($perm['table_name']=='*' OR $perm['table_name']==$this->_name) {
+				$out[] = $perm;
+			}
+		}
+		return $out;
 	}
 
 	/**

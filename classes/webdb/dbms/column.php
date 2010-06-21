@@ -142,6 +142,22 @@ class Webdb_DBMS_Column
 	 */
 	private function _app_user_can($priv_type)
 	{
+		foreach ($this->_table->get_permissions() as $perm) {
+			$can_column = $perm['column_names']==NULL OR strpos($this->_name, $perm['column_names'])!==FALSE;
+			$can_permission = $perm['permission']==$priv_type OR $perm['permission']=='*';
+			$can_identifier = $perm['identifier']=='*'
+				|| $perm['identifier']==Auth::instance()->get_user()
+				|| Auth::instance()->logged_in($perm['identifier']);
+			//echo '$perm[identifier]==* = '.kohana::debug($perm['identifier']=='*');
+			//echo '$perm[identifier]==Auth::instance()->get_user() = '.kohana::debug($perm['identifier']==Auth::instance()->get_user());
+			//echo 'Auth::instance()->logged_in($perm[identifier] = '.kohana::debug(Auth::instance()->logged_in($perm['identifier']));
+			//exit('$can_identifier = '.kohana::debug($can_identifier));
+			if ($can_column && $can_permission && $can_identifier) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+		/*
 		$config = kohana::config('webdb')->permissions;
 		if (empty($config['table']))
 		{
@@ -179,6 +195,8 @@ class Webdb_DBMS_Column
 		}
 		Kohana::$log->add(Kohana::INFO, 'User does not have privilege.');
 		return FALSE;
+		 *
+		 */
 	}
 
 	/**
