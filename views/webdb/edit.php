@@ -1,4 +1,4 @@
-<?php if (!isset($row['id']) && !$table->can_insert()) return ?>
+<?php if (!isset($row['id']) && !$table->can('insert')) return ?>
 
 <?php $num_cols = 3 ?>
 
@@ -48,7 +48,7 @@
 			}
 			$cell_view->column = $column;
 			$cell_view->row = $row;
-			$cell_view->edit = $column->can_update() || $column->can_insert();
+			$cell_view->edit = $column->can('update') || $column->can('insert');
 			echo $cell_view->render();
 			?>
 		</td>
@@ -57,7 +57,7 @@
 
 	<?php endfor // rows ?>
 
-	<?php if ($table->can_update() || $table->can_insert()): ?>
+	<?php if ($table->can('update') || $table->can('insert')): ?>
 	<tfoot>
 		<tr>
 			<td colspan="<?php echo $num_cols * 2 ?>">
@@ -101,7 +101,13 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 				<span class="smaller">(as &lsquo;<?php echo Webdb_Text::titlecase($foreign_column) ?>&rsquo;).</span>
 				<?php echo $num_foreign_records ?> record<?php echo ($num_foreign_records!=1) ? 's' : '' ?>.
 			</h3>
-			<?php echo View::factory('webdb/datatable', array('the_table' => $foreign_table))->render() ?>
+			<div>
+				<p class="new-record">
+				<?php $url = 'webdb/edit/'.$database->get_name().'/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row['id'];
+				echo HTML::anchor($url, 'Add a new record here.') ?>
+				</p>
+				<?php echo View::factory('webdb/datatable', array('the_table' => $foreign_table))->render() ?>
+			</div>
 		</li>
 			<?php endforeach ?>
 	</ol>

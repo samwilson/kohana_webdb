@@ -140,6 +140,14 @@ class Webdb_DBMS_Table
 			}
 			
 		} // end foreach filter
+
+		// Get WHERE permissions
+		foreach ($this->get_permissions() as $perm) {
+			if (!empty($perm['where_clause']))
+			{
+				$query->and_where(DB::expr($perm['where_clause'].' AND 1'), '=', 1);
+			}
+		}
 	}
 
 	/**
@@ -152,24 +160,24 @@ class Webdb_DBMS_Table
 	 */
 	public function get_rows($with_pagination = TRUE)
 	{
-		$query = new Database_Query_Builder_Select();
-
-		// First get all columns and rows
 		$columns = array();
 		foreach (array_keys($this->_columns) as $col)
 		{
 			$columns[] = $this->_name.'.'.$col;
 		}
+
+		// First get all columns and rows,
+		$query = new Database_Query_Builder_Select();
 		$query->select_array($columns);
 		$query->from($this->get_name());
 		$this->apply_filters(&$query);
 		$rows = $query->execute($this->_db);
-		$row_count = count($rows->as_array());
 
 		// Then limit to paged ones (yes, there is duplication here, and things
 		// need to be improved.
 		if ($with_pagination)
 		{
+			$row_count = count($rows->as_array());
 			$query = new Database_Query_Builder_Select();
 			$query->select_array($columns);
 			$query->from($this->get_name());
@@ -260,12 +268,13 @@ class Webdb_DBMS_Table
 	 */
 	public function count_records()
 	{
-		$query = new Database_Query_Builder_Select();
+		return count($this->get_rows(FALSE));
+		/*$query = new Database_Query_Builder_Select();
 		$query->select(DB::expr('COUNT(*) AS row_count'));
 		$query->from($this->get_name());
 		$this->apply_filters($query);
 		$rows = $query->execute($this->_db)->get('row_count');
-		return $rows;
+		return $rows;*/
 	}
 
 	/**
@@ -355,6 +364,20 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 *
+	 */
+	public function get_permissions()
+	{
+		$out = array();
+		foreach ($this->_database->get_permissions() as $perm) {
+			if ($perm['table_name']=='*' OR $perm['table_name']==$this->_name) {
+				$out[] = $perm;
+			}
+		}
+		return $out;
+	}
+
+	/**
 	 * Get a list of a table's foreign keys and the tables to which they refer.
 	 * This does <em>not</em> take into account a user's permissions (i.e. the
 	 * name of a table which the user is not allowed to read may be returned).
@@ -417,52 +440,16 @@ class Webdb_DBMS_Table
 	}
 
 	/**
-	 * Find out whether or not the current user can update any of the records in
-	 * this table.
+	 * Find out whether or not the current user has the given permission for any
+	 * of the records in this table.
 	 *
 	 * @return boolean
 	 */
-	public function can_update()
+	public function can($perm)
 	{
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->can_update())
-			{
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Find out whether or not the current user can insert new records into this
-	 * table.
-	 *
-	 * @return boolean
-	 */
-	public function can_insert()
-	{
-		foreach ($this->get_columns() as $column)
-		{
-			if ($column->can_insert())
-			{
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Find out whether or not the current user can select any of the records in
-	 * this table.
-	 *
-	 * @return boolean
-	 */
-	public function can_select()
-	{
-		foreach ($this->get_columns() as $column)
-		{
-			if ($column->can_select())
+			if ($column->can($perm))
 			{
 				return TRUE;
 			}
@@ -576,8 +563,8 @@ class Webdb_DBMS_Table
 			{
 				continue;
 			}
-			$can_update = $column->can_update();
-			$can_insert = $column->can_insert();
+			$can_update = $column->can('update');
+			$can_insert = $column->can('insert');
 			if ($column_name != 'id' && (
 				(!$can_update && isset($data['id'])) || (!$can_insert && !isset($data['id']))
 			))

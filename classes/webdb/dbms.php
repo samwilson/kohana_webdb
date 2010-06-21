@@ -177,7 +177,38 @@ class Webdb_DBMS
 			throw new Exception("The database '$dbname' could not be found.");
 		}
 		$this->connect($dbname);
-		return new Webdb_DBMS_Database($this->_db, $dbname);
+		return new Webdb_DBMS_Database($this, $dbname);
+	}
+
+	public function get_database_driver()
+	{
+		return $this->_db;
+	}
+
+	/**
+	 * Get an array of permissions for the current user.
+	 *
+	 * @return array
+	 */
+	public function get_permissions()
+	{
+		$config = kohana::config('webdb')->permissions;
+		if (empty($config['table']))
+		{
+			return array(array(
+				'database_name' => '*',
+				'table_name'    => '*',
+				'column_names'  => NULL,
+				'where_clause'  => NULL,
+				'permission'    => '*',
+				'identifier'    => '*',
+			));
+		}
+		$query = new Database_Query_Builder_Select();
+		$query->from($config['database'].'.'.$config['table']);
+		$query->where('identifier', 'IN', array(Auth::instance()->get_user(), '*'));
+		$rows = $query->execute($this->_db)->as_array();
+		return $rows;
 	}
 
 }

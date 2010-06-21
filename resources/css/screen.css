@@ -137,4 +137,5 @@ table .pagination .disabled { color:#ccc }
 .edit .related-tables h3.no-records { color:#CCC }
 .edit .related-tables h3.no-records:hover { background-color:white }
 .edit .related-tables h3 span { font-size:smaller }
-.edit .related-tables table { margin-left:0.5em }
+.edit .related-tables .new-record { margin:0; padding:0 }
+.edit .related-tables div { margin-left:0.5em }

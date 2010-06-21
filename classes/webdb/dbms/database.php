@@ -30,11 +30,12 @@ class Webdb_DBMS_Database
 	 * @param string $dbname The database's name.
 	 * @return void
 	 */
-	public function __construct($db, $dbname)
+	public function __construct($dbms, $dbname)
 	{
 		$this->_name = $dbname;
 		$this->_tables = array();
-		$this->_db = $db;
+		$this->dbms = $dbms;
+		$this->_db = $this->dbms->get_database_driver();
 	}
 
 	/**
@@ -83,6 +84,17 @@ class Webdb_DBMS_Database
 		return $this->_tables;
 	}
 
+	public function get_permissions()
+	{
+		$out = array();
+		foreach ($this->dbms->get_permissions() as $perm) {
+			if ($perm['database_name']=='*' OR $perm['database_name']==$this->_name) {
+				$out[] = $perm;
+			}
+		}
+		return $out;
+	}
+
 	/**
 	 * Get a table object.
 	 *
@@ -109,7 +121,7 @@ class Webdb_DBMS_Database
 		if (!isset($this->_tables[$tablename]))
 		{
 			$table = new Webdb_DBMS_Table($this, $tablename);
-			if ($table->can_select())
+			if ($table->can('select'))
 			{
 				$this->_tables[$tablename] = $table;
 			} else
