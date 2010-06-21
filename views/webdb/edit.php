@@ -1,4 +1,4 @@
-<?php if (!isset($row['id']) && !$table->can_insert()) return ?>
+<?php if (!isset($row['id']) && !$table->can('insert')) return ?>
 
 <?php $num_cols = 3 ?>
 
@@ -48,7 +48,7 @@
 			}
 			$cell_view->column = $column;
 			$cell_view->row = $row;
-			$cell_view->edit = $column->can_update() || $column->can_insert();
+			$cell_view->edit = $column->can('update') || $column->can('insert');
 			echo $cell_view->render();
 			?>
 		</td>
@@ -57,7 +57,7 @@
 
 	<?php endfor // rows ?>
 
-	<?php if ($table->can_update() || $table->can_insert()): ?>
+	<?php if ($table->can('update') || $table->can('insert')): ?>
 	<tfoot>
 		<tr>
 			<td colspan="<?php echo $num_cols * 2 ?>">

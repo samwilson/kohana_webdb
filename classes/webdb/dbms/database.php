@@ -121,7 +121,7 @@ class Webdb_DBMS_Database
 		if (!isset($this->_tables[$tablename]))
 		{
 			$table = new Webdb_DBMS_Table($this, $tablename);
-			if ($table->can_select())
+			if ($table->can('select'))
 			{
 				$this->_tables[$tablename] = $table;
 			} else

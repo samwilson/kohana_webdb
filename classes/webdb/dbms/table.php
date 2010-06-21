@@ -440,52 +440,16 @@ class Webdb_DBMS_Table
 	}
 
 	/**
-	 * Find out whether or not the current user can update any of the records in
-	 * this table.
+	 * Find out whether or not the current user has the given permission for any
+	 * of the records in this table.
 	 *
 	 * @return boolean
 	 */
-	public function can_update()
+	public function can($perm)
 	{
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->can_update())
-			{
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Find out whether or not the current user can insert new records into this
-	 * table.
-	 *
-	 * @return boolean
-	 */
-	public function can_insert()
-	{
-		foreach ($this->get_columns() as $column)
-		{
-			if ($column->can_insert())
-			{
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Find out whether or not the current user can select any of the records in
-	 * this table.
-	 *
-	 * @return boolean
-	 */
-	public function can_select()
-	{
-		foreach ($this->get_columns() as $column)
-		{
-			if ($column->can_select())
+			if ($column->can($perm))
 			{
 				return TRUE;
 			}
@@ -599,8 +563,8 @@ class Webdb_DBMS_Table
 			{
 				continue;
 			}
-			$can_update = $column->can_update();
-			$can_insert = $column->can_insert();
+			$can_update = $column->can('update');
+			$can_insert = $column->can('insert');
 			if ($column_name != 'id' && (
 				(!$can_update && isset($data['id'])) || (!$can_insert && !isset($data['id']))
 			))

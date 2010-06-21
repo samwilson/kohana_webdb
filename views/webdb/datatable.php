@@ -23,7 +23,7 @@
 					<?php if (isset($row['id'])): ?>
 			<td>
 							<?php
-							if ($the_table->can_update() || $the_table->can_insert()):
+							if ($the_table->can('update') || $the_table->can('insert')):
 								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'Edit');
 							else:
 								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'View');

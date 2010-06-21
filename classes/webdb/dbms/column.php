@@ -111,24 +111,11 @@ class Webdb_DBMS_Column
 		// DB user privileges
 		$this->_db_user_privileges = $info['privileges'];
 
-		// App user privileges
-		//$this->_appUserPrivileges = $this->_getAppUserPrivileges();
-
 	}
 
-	public function can_select()
+	public function can($perm)
 	{
-		return $this->_db_user_can('select') && $this->_app_user_can('select');
-	}
-
-	public function can_update()
-	{
-		return $this->_db_user_can('update') && $this->_app_user_can('update');
-	}
-
-	public function can_insert()
-	{
-		return $this->_db_user_can('insert') && $this->_app_user_can('insert');
+		return $this->_db_user_can($perm) && $this->_app_user_can($perm);
 	}
 
 	/**
@@ -144,14 +131,19 @@ class Webdb_DBMS_Column
 	{
 		foreach ($this->_table->get_permissions() as $perm) {
 			$can_column = $perm['column_names']==NULL OR strpos($this->_name, $perm['column_names'])!==FALSE;
-			$can_permission = $perm['permission']==$priv_type OR $perm['permission']=='*';
+			$can_permission = $perm['permission']==$priv_type || $perm['permission']=='*';
 			$can_identifier = $perm['identifier']=='*'
 				|| $perm['identifier']==Auth::instance()->get_user()
 				|| Auth::instance()->logged_in($perm['identifier']);
-			//echo '$perm[identifier]==* = '.kohana::debug($perm['identifier']=='*');
-			//echo '$perm[identifier]==Auth::instance()->get_user() = '.kohana::debug($perm['identifier']==Auth::instance()->get_user());
-			//echo 'Auth::instance()->logged_in($perm[identifier] = '.kohana::debug(Auth::instance()->logged_in($perm['identifier']));
-			//exit('$can_identifier = '.kohana::debug($can_identifier));
+			/*echo '$can_column'.kohana::debug($can_column);
+			echo '$can_permission'.kohana::debug($can_permission);
+			echo '$perm[permission]=='.$priv_type.kohana::debug($perm['permission']==$priv_type);
+			echo '$perm[permission]==*'.kohana::debug($perm['permission']=='*');
+			echo '$perm[identifier]==*'.kohana::debug($perm['identifier']=='*');
+			echo '$perm[identifier]==Auth::instance()->get_user()'.kohana::debug($perm['identifier']==Auth::instance()->get_user());
+			echo 'Auth::instance()->logged_in($perm[identifier]'.kohana::debug(Auth::instance()->logged_in($perm['identifier']));
+			exit('$can_identifier'.kohana::debug($perm['identifier']));
+			*/
 			if ($can_column && $can_permission && $can_identifier) {
 				return TRUE;
 			}

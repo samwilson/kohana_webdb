@@ -103,7 +103,7 @@ class Controller_WebDB extends Controller_Template
 			// Divide tables by editability
 			$this->template->tables = array('data_entry'=>array(),'reference'=>array());
 			foreach ($this->database->get_tables() as $table) {
-				if ($table->can_update() || $table->can_insert()) {
+				if ($table->can('update') || $table->can('insert')) {
 					$this->template->tables['data_entry'][$table->get_name()] = $table;
 				} else {
 					$this->template->tables['reference'][$table->get_name()] = $table;
@@ -213,7 +213,7 @@ class Controller_WebDB extends Controller_Template
 			$this->view->row = $this->table->get_row($id);
 		} else
 		{
-			if (!$this->table->can_insert())
+			if (!$this->table->can('insert'))
 			{
 				$this->add_template_message('You do not have permission to add a new record to this table.');
 				return;
@@ -243,11 +243,17 @@ class Controller_WebDB extends Controller_Template
 		exit(json_encode($json_data));
 	}
 
-	public function action_import($database, $table)
+	public function action_import()
 	{
 		$this->view->errors = FALSE;
 		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
 		$this->view->stage = 'choose_file';
+
+		if (!$this->table->can('import'))
+		{
+			$this->add_template_message('You do not have permission to import data into this table.');
+			return;
+		}
 
 		if (arr::get($_POST, 'upload', FALSE))
 		{
