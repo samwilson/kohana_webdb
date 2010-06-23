@@ -15,6 +15,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 * **Author:** Sam Wilson
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
+* **API reference:** Start at [Controller_WebDB](api/Controller_WebDB).
 
 ## Quick Start
 
