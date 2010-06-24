@@ -18,14 +18,14 @@
 
 
 
-<?php if ($errors): ?>
+<?php /*if ($errors): ?>
 <p class="info message">Some errors were encountered, please check the details you entered.</p>
 <ul>
 		<?php foreach ($errors as $message): ?>
     <li class="notice message"><?php echo $message ?></li>
 		<?php endforeach ?>
 </ul>
-<?php endif ?>
+<?php endif*/ ?>
 
 
 
@@ -48,10 +48,10 @@
 
 <?php /** Stage 2: Match Fields ********************************************/ ?>
 <?php elseif ($stage == 'match_fields'): ?>
-<form action="<?php echo url::site('webdb/import/'.$database->get_name().'/'.$table->get_name().'/'.$file->name) ?>"
+<form action="<?php echo url::site('webdb/import/'.$database->get_name().'/'.$table->get_name().'/'.$file->hash) ?>"
 	  method="post">
 <table>
-	<caption>Match up fields in the database<br />with fields in the uploaded file.</caption>
+	<caption>Match up fields in the database<br/>with fields in the uploaded file.</caption>
 	<thead>
 		<tr>
 			<th>Database</th>
@@ -63,17 +63,17 @@
 		<tr>
 			<td><?php echo Webdb_Text::titlecase($column->get_name()) ?></td>
 			<td>
-				<?php $options = array(''=>'') + $file->data[0];
+				<?php $options = array(''=>'') + $file->headers;
 				$options = array_combine(array_map('strtolower', $options), $options);
-				echo Form::select($column->get_name(), $options, strtolower(Webdb_Text::titlecase($column->get_name()))) ?>
+				echo Form::select('columns['.$column->get_name().']', $options, strtolower(Webdb_Text::titlecase($column->get_name()))) ?>
 			</td>
 		</tr>
 		<?php endforeach ?>
 	<tbody>
 	<tfoot>
 		<tr>
-			<td colspan="2">
-				<?php echo Form::submit('preview', 'Preview') ?>
+			<td colspan="2" class="submit">
+				<input type="submit" name="preview" value="Preview &rarr;"/>
 			</td>
 		</tr>
 	</tfoot>
@@ -84,7 +84,7 @@
 
 <?php /** Stage 2: Preview *************************************************/ ?>
 <?php elseif ($stage == 'preview'): ?>
-	<?php echo Kohana::debug($file->data); exit(); ?>
+	<?php //echo Kohana::debug($_POST); echo Kohana::debug($file->data); exit(); ?>
 <table>
 	<caption>The following data will be imported.</caption>
 	<thead>
@@ -98,7 +98,9 @@
 		<?php foreach ($file->data as $row): ?>
 		<tr>
 			<?php foreach ($table->get_columns() as $column): ?>
-			<td><?php echo '$row['.$column->get_name().']'; if (isset($row[$column->get_name()])) echo $row[$column->get_name()] ?></td>
+			<td>
+				<?php echo (isset($row[$column->get_name()])) ? $row[$column->get_name()] : $column->get_default() ?>
+			</td>
 			<?php endforeach ?>
 		</tr>
 		<?php endforeach ?>

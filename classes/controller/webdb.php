@@ -229,78 +229,84 @@ class Controller_WebDB extends Controller_Template
 	}
 
 	/**
-	 * This action is for importing a single CSV file into a single table.  It
-	 * guides the user through the four stages of importing: uploading, field
-	 * matching, previewing, and running the actual import.
+	 * This action is for importing a single CSV file into a single database table.
+	 * It guides the user through the four stages of importing:
+	 * uploading, field matching, previewing, and doing the actual import.
+	 * All of the actual work is done in [WebDB_File_CSV].
 	 *
-	 * In the first of these, a CSV file is uploaded to a temporary directory
-	 * (after first being validated as the correct type of file).  The file is
-	 * then accessed from this location in the subsequent stages of importing,
-	 * and only deleted upon either successful import or the user cancelling the
-	 * process.
-	 *
-	 * Once a valid CSV file has been uploaded, a [WebDB_File_CSV] object is
-	 * created from it.
+	 * 1. In the first stage, a CSV file is **uploaded**, validated, and moved to a temporary directory.
+	 *    The file is then accessed from this location in the subsequent stages of importing,
+	 *    and only deleted upon either successful import or the user cancelling the process.
+	 *    (The 'id' parameter of this action is the identifier for the uploaded file.)
+	 * 2. Once a valid CSV file has been uploaded,
+	 *    its colums are presented to the user to be **matched** to those in the database table.
+	 *    The columns from the database are presented first and the CSV columns are matched to these,
+	 *    rather than vice versa,
+	 *    because this way the user sees immediately what columns are available to be imported into.
+	 * 3. The column matches are then used to produce a **preview** of what will be added to and/or changed in the database.
+	 *    All columns from the database are shown (regardless of whether they were in the import) and all rows of the import.
+	 *    If a column is not present in the import the database will (obviously) use the default value if there is one;
+	 *    this will be shown in the preview.
+	 * 4. When the user accepts the preview, the actual **import** of data is carried out.
+	 *    Rows are saved to the database using the usual [WebDB_DBMS_Table::save()](api/Webdb_DBMS_Table#save_row),
+	 *    and a message presented to the user to indicate successful completion.
 	 *
 	 * @return void
 	 */
 	public function action_import()
 	{
+
+		// First make sure the user is allowed to import data into this table.
 		if (!$this->table->can('import'))
 		{
 			$this->template->content = '';
 			$this->add_template_message('You do not have permission to import data into this table.');
 			return;
 		}
-		
-		$this->view->errors = FALSE;
-		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
-		$this->view->stage = 'choose_file';
 
-		$filename = $this->request->param('id', FALSE);
-		if ($filename)
+		// Set up the progress bar.
+		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
+
+		// Stage 1: Uploading
+		$this->view->stage = $this->view->stages[0];
+		try
 		{
-			$this->view->file = new Webdb_File_CSV(sys_get_temp_dir().'/'.$filename);
-			if (isset($_POST['preview']))
-			{
-				$this->view->stage = 'preview';
-				$this->view->file->reassign_columns($_POST);
-			} else
-			{
-				$this->view->stage = 'match_fields';
-			}
+			$this->view->file = new Webdb_File_CSV;
+		} catch (Kohana_Exception $e)
+		{
+			$this->add_template_message($e->getMessage());
 			return;
 		}
-
-		if (arr::get($_FILES, 'file', FALSE))
+		if ($this->view->file->loaded() && !$this->request->param('id'))
 		{
-			$validation = Validate::factory($_FILES, 'uploads');
-			$validation->rule('file','upload::not_empty')->rule('file','upload::type',array(array('csv')));
-			if ($validation->check())
-			{
-				$this->view->stage = 'match_fields';
-				$filename = md5(time());
-				Upload::save($_FILES['file'], $filename, sys_get_temp_dir());
-				$this->request->redirect('webdb/import/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$filename);
-
-			} else
-			{
-				foreach ($validation->errors() as $err)
-				{
-					switch($err[0])
-					{
-						case 'upload::not_empty':
-							$this->add_template_message('You did not choose a file to upload!');
-							break;
-						case 'upload::type':
-							$this->add_template_message('The file that you uploaded is not of required type.');
-							break;
-						default:
-							$this->add_template_message('An error occured.<br /><pre>'.kohana::dump($err).'</pre>');
-					}
-				}
-			}
+			$url = 'webdb/import/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$this->view->file->hash;
+			$this->request->redirect($url);
 		}
+
+		// Stage 2: Matching fields
+		if ($this->view->file->loaded())
+		{
+			$this->view->stage = $this->view->stages[1];
+		}
+
+		// Stage 3: Previewing
+		if ($this->view->file->loaded() && isset($_POST['columns']))
+		{
+			$this->view->file->match_fields($_POST['columns']);
+			$this->view->stage = $this->view->stages[2];
+		}
+
+		// Stage 4: Import
+		if ($this->view->file->loaded() && isset($_POST['data']))
+		{
+			$this->view->stage = $this->view->stages[3];
+			foreach ($_POST['data'] as $row)
+			{
+				$this->table->save_row($row);
+			}
+			$this->add_template_message('Import complete.', 'info');
+		}
+
 	}
 
 	/**
