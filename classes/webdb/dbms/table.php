@@ -170,7 +170,7 @@ class Webdb_DBMS_Table
 		$query = new Database_Query_Builder_Select();
 		$query->select_array($columns);
 		$query->from($this->get_name());
-		$this->apply_filters(&$query);
+		$this->apply_filters($query);
 		$rows = $query->execute($this->_db);
 
 		// Then limit to paged ones (yes, there is duplication here, and things
@@ -185,7 +185,7 @@ class Webdb_DBMS_Table
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
-			$this->apply_filters(&$query);
+			$this->apply_filters($query);
 			$rows = $query->execute($this->_db);
 		}
 		return $rows;
