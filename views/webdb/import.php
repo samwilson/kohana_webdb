@@ -82,11 +82,15 @@
 
 
 
-<?php /** Stage 2: Preview *************************************************/ ?>
+<?php /** Stage 3: Preview *************************************************/ ?>
 <?php elseif ($stage == 'preview'): ?>
 	<?php //echo Kohana::debug($_POST); echo Kohana::debug($file->data); exit(); ?>
+<form action="<?php echo url::site('webdb/import/'.$database->get_name().'/'.$table->get_name().'/'.$file->hash) ?>"
+	  method="post">
 <table>
-	<caption>The following data will be imported.</caption>
+	<caption>
+		<p>The following data will be imported.  You can edit fields here, if you need to.</p>
+	</caption>
 	<thead>
 		<tr>
 			<?php foreach ($table->get_columns() as $column): ?>
@@ -95,17 +99,37 @@
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ($file->data as $row): ?>
+		<?php
+		$new_row_ident = 0;
+		foreach ($file->data as $row):
+			$new_row_ident++; ?>
 		<tr>
 			<?php foreach ($table->get_columns() as $column): ?>
 			<td>
-				<?php echo (isset($row[$column->get_name()])) ? $row[$column->get_name()] : $column->get_default() ?>
+				<?php //if (isset($row[$column->get_name()])) echo $row[$column->get_name()] ?>
+				<?php $edit = TRUE;
+				$new_row_ident_label = 'new-'.$new_row_ident;
+				echo View::factory('webdb/field')
+					->bind('column', $column)
+					->bind('row', $row)
+					->bind('edit', $edit)
+					->bind('new_row_ident', $new_row_ident_label)
+					->render() ?>
 			</td>
 			<?php endforeach ?>
 		</tr>
 		<?php endforeach ?>
 	</tbody>
+	<tfoot>
+		<tr>
+			<td class="submit" colspan="<?php echo count($table->get_columns()) ?>">
+				<input type="submit" value="Continue &rarr;"/>
+			</td>
+		</tr>
+	</tfoot>
 </table>
+</form>
+
 
 
 <?php endif ?>

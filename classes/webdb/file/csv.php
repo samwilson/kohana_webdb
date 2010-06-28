@@ -109,15 +109,17 @@ class Webdb_File_CSV
 	}
 
 	/**
-	 * Rename all keys in all data rows to match DB column names.
+	 * Rename all keys in all data rows to match DB column names, and normalize
+	 * all values to be valid for the `$table`.
 	 *
 	 * If a _value_ in the array matches a lowercased DB column header, the _key_
 	 * of that value is the DB column name to which that header has been matched.
 	 *
+	 * @param Webdb_DBMS_Table $table
 	 * @param array $array
 	 * @return void
 	 */
-	public function match_fields($array)
+	public function match_fields($table, $array)
 	{
 		// First get the indexes of the headers
 		foreach ($array as $key=>$val)
@@ -130,26 +132,29 @@ class Webdb_File_CSV
 				}
 			}
 		}
-		//echo Kohana::debug($array);
-		//echo Kohana::debug($this->headers);
-		//echo Kohana::debug($heads);
-		// Now rename the keys in all the data rows
+		
+		// Now rename the keys in all the data rows, and get IDs for foreign keys.
 		foreach ($this->data as &$row)
 		{
 			$new_row = array();
 			foreach ($row as $cell_num => $value)
 			{
-				//unset($row[$cell_num]);
 				if (isset($heads[$cell_num]))
 				{
-					$new_row[$heads[$cell_num]] = $value;
+					$db_column_name = $heads[$cell_num];
+					if (!empty($value) && $table->get_column($db_column_name)->is_foreign_key())
+					{
+						$foreign_table = $table->get_column($db_column_name)->get_referenced_table();
+						$foreign_table->reset_filters();
+						$foreign_table->add_filter($foreign_table->get_title_column()->get_name(), '=', $value);
+						$value = $foreign_table->get_rows()->current();
+						$value = $value['id'];
+					}
+					$new_row[$db_column_name] = $value;
 				}
 			}
-			//echo Kohana::debug($new_row);
-			$row = $new_row;
+			$row = array_merge($table->get_default_row(), $new_row);
 		}
-		//echo Kohana::debug($this->data);
-		//exit();
 	}
 
 }

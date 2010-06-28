@@ -3,12 +3,11 @@
  * Edit
  */
 if ($edit) {
-	
-	$name = $column->get_name();
+
 	$options = $column->get_options();
 	$selected = $row[$column->get_name()];
-	$attributes = array('id' => $name.'-column');
-	echo form::select($name, $options, $selected, $attributes);
+	$attributes = array('id' => $form_field_name);
+	echo form::select($form_field_name, $options, $selected, $attributes);
 
 	if ($column->get_comment()) {
 		echo '<ul class="notes">'

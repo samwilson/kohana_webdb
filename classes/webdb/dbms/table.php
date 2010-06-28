@@ -278,6 +278,16 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get one of this table's columns.
+	 *
+	 * @return Webdb_DBMS_Column The column.
+	 */
+	public function get_column($name)
+	{
+		return $this->_columns[$name];
+	}
+
+	/**
 	 * Get a list of this table's columns.
 	 *
 	 * @return array[Webdb_DBMS_Column] This table's columns.

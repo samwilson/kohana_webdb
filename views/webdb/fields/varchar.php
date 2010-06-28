@@ -3,26 +3,24 @@ $value = $row[$column->get_name()];
 /**
  * Edit
  */
-if ($edit):
-	$column_id = $column->get_name().'-column';
-	?>
+if ($edit): ?>
 
 	<?php if ( $column->get_size() > 0 || $column->get_type()=='text' ): ?>
 		<?php if($column->get_size() > 0 && $column->get_size() < 150):
 			echo form::input(
-			$column->get_name(),
+			$form_field_name,
 			$value,
-			array('size'=>min($column->get_size(),35), 'id'=>$column_id)
+			array('size'=>min($column->get_size(),35), 'id'=>$form_field_name)
 			)
 			?>
 
 		<?php else: ?>
-<textarea name="<?php echo $column->get_name() ?>" cols="35" rows="4"
-		  id="<?php echo $column_id?>"><?php echo $value ?></textarea>
+<textarea name="<?php echo $form_field_name ?>" cols="35" rows="4"
+		  id="<?php echo $form_field_name?>"><?php echo $value ?></textarea>
 				  <?php endif ?>
 
 	<?php else: ?>
-		<?php echo form::input($column->get_name(), $value, array('id'=>$column_id)) ?>
+		<?php echo form::input($form_field_name, $value, array('id'=>$form_field_name)) ?>
 	<?php endif ?>
 
 <ul class="notes">

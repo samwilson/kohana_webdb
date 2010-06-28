@@ -121,6 +121,7 @@ table .submit { text-align:right }
 .import .stages li.selected { border-bottom:2px solid #CCC; background-color:#CCC }
 .import .stages,
 .import table { margin-left:1em; padding:0 }
+.import table .notes { display:none }
 
 
 

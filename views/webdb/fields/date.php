@@ -5,9 +5,9 @@ if ($edit)
 	 * Edit
 	 */
 	echo form::input(
-		$column->get_name(),
+		$form_field_name,
 		$row[$column->get_name()],
-		array('class'=>'datepicker', 'id'=>$column->get_name().'-column')
+		array('class'=>'datepicker', 'id'=>$form_field_name)
 	);
 
 	if ($column->get_comment()) {

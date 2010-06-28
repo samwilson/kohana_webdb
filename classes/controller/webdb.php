@@ -205,7 +205,8 @@ class Controller_WebDB extends Controller_Template
 		*/
 		if (isset($_POST['save']))
 		{
-			$id = $this->table->save_row($_POST);
+			$row = array_shift($_POST['data']);
+			$id = $this->table->save_row($row);
 			$this->add_template_message('Record saved.', 'info');
 		}
 
@@ -292,19 +293,20 @@ class Controller_WebDB extends Controller_Template
 		// Stage 3: Previewing
 		if ($this->view->file->loaded() && isset($_POST['columns']))
 		{
-			$this->view->file->match_fields($_POST['columns']);
+			$this->view->file->match_fields($this->table, $_POST['columns']);
 			$this->view->stage = $this->view->stages[2];
 		}
 
 		// Stage 4: Import
 		if ($this->view->file->loaded() && isset($_POST['data']))
 		{
+			//exit(Kohana::debug($_POST['data']));
 			$this->view->stage = $this->view->stages[3];
 			foreach ($_POST['data'] as $row)
 			{
 				$this->table->save_row($row);
 			}
-			$this->add_template_message('Import complete.', 'info');
+			$this->add_template_message('Import complete; '.count($_POST['data']).' rows inserted and/or updated.', 'info');
 		}
 
 	}

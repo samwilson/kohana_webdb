@@ -18,36 +18,31 @@
 		</tr>
 	</thead>
 	<tbody>
-			<?php foreach ($rows as $row): ?>
+			<?php $new_row_ident = 0;
+			foreach ($rows as $row):
+			$new_row_ident++; ?>
 		<tr>
 					<?php if (isset($row['id'])): ?>
 			<td>
-							<?php
-							if ($the_table->can('update') || $the_table->can('insert')):
-								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'Edit');
-							else:
-								echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'View');
-							endif
-							?>
+					<?php
+					if ($the_table->can('update') || $the_table->can('insert')):
+						echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'Edit');
+					else:
+						echo html::anchor('webdb/edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'View');
+					endif
+					?>
 			</td>
 					<?php endif ?>
 					<?php foreach ($the_table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
-							<?php
-							//echo kohana::dump($column);
-							$view_file = kohana::find_file('views/webdb/fields', $column->get_type());
-							if ($view_file)
-							{
-								$cell_view = View::factory('webdb/fields/'.$column->get_type());
-							} else
-							{
-								$cell_view = View::factory('webdb/fields/varchar');
-							}
-							$cell_view->column = $column;
-							$cell_view->row = $row;
-							$cell_view->edit = FALSE;
-							echo $cell_view->render();
-							?>
+				<?php $edit = FALSE;
+				$new_row_ident_label = 'new-'.$new_row_ident;
+				echo View::factory('webdb/field')
+					->bind('column', $column)
+					->bind('row', $row)
+					->bind('edit', $edit)
+					->bind('new_row_ident', $new_row_ident_label)
+					->render() ?>
 			</td>
 					<?php endforeach ?>
 		</tr>
