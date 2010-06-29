@@ -205,7 +205,17 @@ class Controller_WebDB extends Controller_Template
 		*/
 		if (isset($_POST['save']))
 		{
+			// Get row
 			$row = array_shift($_POST['data']);
+			// Assume unset (i.e. unsent) checkboxes are unchecked.
+			foreach ($this->table->get_columns() as $column_name=>$column)
+			{
+				if ($column->get_type() == 'int' && $column->get_size() == 1 && !isset($row[$column_name]))
+				{
+					$row[$column_name] = 0;
+				}
+			}
+			// Save row
 			$id = $this->table->save_row($row);
 			$this->add_template_message('Record saved.', 'info');
 		}

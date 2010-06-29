@@ -18,7 +18,7 @@ if ($edit):
 	 * Booleans
 	 */
 	elseif ($column->get_size() == 1):
-		echo form::checkbox($form_field_name, $value, $value==1, array('id'=>$form_field_name));
+		echo form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
 
 	/**
 	 * Foreign keys

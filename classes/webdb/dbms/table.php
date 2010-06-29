@@ -603,7 +603,7 @@ class Webdb_DBMS_Table
 			*/
 			if ($column->get_type() == 'int' && $column->get_size() == 1)
 			{
-				if ($value == NULL || $value == '')
+				if (($value == NULL || $value == '') && !$column->is_required())
 				{
 					$data[$field] = NULL;
 				} elseif ($value === '0'
