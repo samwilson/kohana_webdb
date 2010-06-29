@@ -1,7 +1,6 @@
 <?php
-$colname = $column->get_name();
-$value = $row[$colname];
-$column_id = $colname.'-column';
+$value = $row[$column->get_name()];
+
 
 /**
  * Edit
@@ -12,14 +11,14 @@ if ($edit):
 	/**
 	 * ID column
 	 */
-	if ($colname == 'id'):
-		echo form::input('id', $value, array('readonly'=>TRUE, 'id'=>$column_id));
+	if ($column->get_name() == 'id'):
+		echo form::input($form_field_name, $value, array('readonly'=>TRUE, 'id'=>$form_field_name, 'size'=>$column->get_size()));
 
 	/**
 	 * Booleans
 	 */
 	elseif ($column->get_size() == 1):
-		echo form::checkbox($colname, $value, $value==1, array('id'=>$column_id));
+		echo form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
 
 	/**
 	 * Foreign keys
@@ -30,21 +29,23 @@ if ($edit):
 
 <script type="text/javascript">
 	$(function() {
-		$("[name='<?php echo $colname ?>_label']").autocomplete({
+		var field_to_autocomplete = '<?php echo str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>';
+		$("[name='"+field_to_autocomplete+"[label]']").autocomplete({
 			source: "<?php echo url::site('webdb/autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
 			select: function(event, ui) {
-				$(this).parent().children("[name='<?php echo $colname ?>']").val(ui.item.id);
+				var field_to_autocomplete = '<?php echo str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>';
+				$(this).parent().children("[name='"+field_to_autocomplete+"']").val(ui.item.id);
 				return false;
 			}
 		});
 	});
 </script>
 <input type="text"
-	   name="<?php echo $colname ?>_label"
-	   id="<?php echo $column_id ?>"
+	   name="<?php echo $form_field_name ?>[label]"
+	   id="<?php echo $form_field_name ?>"
 	   value="<?php echo $referenced_table->get_title($value) ?>"
 	   size="<?php echo min(35, $referenced_table->get_title_column()->get_size()) ?>" />
-<input type="hidden" name="<?php echo $colname ?>" value="<?php echo $value ?>" />
+<input type="hidden" name="<?php echo $form_field_name ?>" value="<?php echo $value ?>" />
 <ul class="notes">
 	<li>
 		This is a cross-reference to
@@ -72,7 +73,7 @@ if ($edit):
 	 * Everything else
 	 */
 	else: ?>
-		<?php echo form::input($colname, $value,  array('id'=>$column_id, 'size'=>min(35, $column->get_size()))) ?>
+		<?php echo form::input($form_field_name, $value,  array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()))) ?>
 
 	<?php endif /* end ifs choosing type of input. */ ?>
 

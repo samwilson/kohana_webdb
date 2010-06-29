@@ -170,7 +170,7 @@ class Webdb_DBMS_Table
 		$query = new Database_Query_Builder_Select();
 		$query->select_array($columns);
 		$query->from($this->get_name());
-		$this->apply_filters(&$query);
+		$this->apply_filters($query);
 		$rows = $query->execute($this->_db);
 
 		// Then limit to paged ones (yes, there is duplication here, and things
@@ -185,7 +185,7 @@ class Webdb_DBMS_Table
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
-			$this->apply_filters(&$query);
+			$this->apply_filters($query);
 			$rows = $query->execute($this->_db);
 		}
 		return $rows;
@@ -275,6 +275,16 @@ class Webdb_DBMS_Table
 		$this->apply_filters($query);
 		$rows = $query->execute($this->_db)->get('row_count');
 		return $rows;*/
+	}
+
+	/**
+	 * Get one of this table's columns.
+	 *
+	 * @return Webdb_DBMS_Column The column.
+	 */
+	public function get_column($name)
+	{
+		return $this->_columns[$name];
 	}
 
 	/**
@@ -593,7 +603,7 @@ class Webdb_DBMS_Table
 			*/
 			if ($column->get_type() == 'int' && $column->get_size() == 1)
 			{
-				if ($value == NULL || $value == '')
+				if (($value == NULL || $value == '') && !$column->is_required())
 				{
 					$data[$field] = NULL;
 				} elseif ($value === '0'

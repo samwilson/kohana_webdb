@@ -15,6 +15,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 * **Author:** Sam Wilson
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
+* **API reference:** Start at [Controller_WebDB](api/Controller_WebDB).
 
 ## Quick Start
 
@@ -31,6 +32,14 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 3. That's it!  You can now log in, and unless you set up the additional
    WebDB-specific user authorization measures (described below), you will have
    complete access to view and modify everything.
+
+## Schema Structure and Nomenclature
+
+* Every table should have an autoincrementing integer primary key called `id`.
+  It is planned that this requirement be dropped in the future, and that WebDB
+  will work with any single-column primary key whos values can be contained in a
+  URL (for that is the reason for the integer limitation; the 'id' name
+  limitation, on the other hand, has no justification).
 
 ## Access Control
 
@@ -73,7 +82,7 @@ The `permissions` table schema:
 * **Table and column comments** are displayed wherever appropriate.  For MySQL,
   column comments are limited to 255 characters, and table comments to only 60
   characters.
-* **Foreign keys** are show as links to their foreign rows, or (when being edited)
+* **Foreign keys** are shown as links to their foreign rows, or (when being edited)
   as autocomplete drop-down lists.
 * Users can **filter** by any column and a range of operations ('contains',
   'is empty', 'equals', etc.).  This includes searching foreign keys for values

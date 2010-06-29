@@ -1,22 +1,47 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
+/**
+ * WebDB controller, the entry point into WebDB, and from where all other things
+ * are coordinated.
+ *
+ * @package  WebDB
+ * @category Base
+ * @author   Sam Wilson
+ * @license  Simplified BSD License
+ * @link     http://github.com/samwilson/kohana_webdb
+ */
 class Controller_WebDB extends Controller_Template
 {
 
-	/** @var View The view object that controller actions add data to. */
-	protected $view;
-
-	/** @var Webdb_DBMS */
-	protected $dbms;
-
-	/** @var Webdb_DBMS_Database The current database. */
+	/**
+	 * @var Webdb_DBMS_Database The current database.
+	 */
 	protected $database;
 
-	/** @var Webdb_DBMS_Table The current table. */
+	/**
+	 * @var Webdb_DBMS
+	 */
+	protected $dbms;
+
+	/**
+	 * Included here for the benefit of phpDoc autocompletion (in Netbeans).
+	 * @var Request The Request that created this controller.
+	 */
+	public $request;
+
+	/**
+	 * @var Webdb_DBMS_Table The current table.
+	 */
 	protected $table;
 
-	/** @var string|View */
+	/**
+	 * @var View The site-wide WebDB page template.
+	 */
 	public $template = 'webdb/template';
+
+	/**
+	 * @var View The view object that controller actions add data to.
+	 */
+	protected $view;
 
 	/**
 	 * Set up the various views: a site-wide template; and a per-action view.
@@ -130,6 +155,26 @@ class Controller_WebDB extends Controller_Template
 		}
 		$this->template->set_global('table', $this->table);
 	}
+	
+	/**
+	 * Output JSON data for the current table, for use in autocomplete inputs.
+	 */
+	public function action_autocomplete()
+	{
+		$title_column_name = $this->table->get_title_column()->get_name();
+		if (isset($_GET['term']))
+		{
+			$this->table->reset_filters();
+			$this->table->add_filter($title_column_name, 'like', $_GET['term']);
+		}
+		$json_data = array();
+		foreach ($this->table->get_rows(FALSE) as $row)
+		{
+			$row['label'] = $row[$title_column_name];
+			$json_data[] = $row;
+		}
+		exit(json_encode($json_data));
+	}
 
 	protected function add_template_message($message, $status = 'notice')
 	{
@@ -149,46 +194,6 @@ class Controller_WebDB extends Controller_Template
 		session::instance()->set('flash_messages', $flash_messages);
 	}
 
-	/**
-	 *
-	 * @param <type> $dbname
-	 * @param <type> $tablename
-	 */
-	public function action_index()
-	{
-		$this->view->columns = array();
-		$this->view->filters = array();
-		if (!$this->table) {
-			return;
-		}
-		// The permitted filter operators.
-		$this->view->operators = $this->table->get_operators();
-		foreach ($this->table->get_columns() as $col) {
-			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
-		}
-		
-		// Get filters from GET and SESSION, then delete those in SESSION (we'll
-		// recreate them in a moment).
-		//$session = Session::instance();
-		$filters = Arr::get($_GET, 'filters', array()); // + $session->get('webdb_filters', array());
-		//$session->set('webdb_filters', array());
-		foreach ($filters as $filter) {
-			$column = arr::get($filter, 'column', FALSE);
-			$operator = arr::get($filter, 'operator', FALSE);
-			$value = arr::get($filter, 'value', FALSE);
-			$this->table->add_filter($column, $operator, $value);
-		}
-		$this->view->filters = $this->table->get_filters();
-		//$session->set('webdb_filters', $this->view->filters);
-
-		// Add new filter
-		$this->view->filters[] = array(
-			'column' => $this->table->get_title_column()->get_name(),
-			'operator' => 'like',
-			'value' => ''
-		);
-	}
-
 	public function action_edit()
 	{
 		$id = $this->request->param('id');
@@ -200,7 +205,18 @@ class Controller_WebDB extends Controller_Template
 		*/
 		if (isset($_POST['save']))
 		{
-			$id = $this->table->save_row($_POST);
+			// Get row
+			$row = array_shift($_POST['data']);
+			// Assume unset (i.e. unsent) checkboxes are unchecked.
+			foreach ($this->table->get_columns() as $column_name=>$column)
+			{
+				if ($column->get_type() == 'int' && $column->get_size() == 1 && !isset($row[$column_name]))
+				{
+					$row[$column_name] = 0;
+				}
+			}
+			// Save row
+			$id = $this->table->save_row($row);
 			$this->add_template_message('Record saved.', 'info');
 		}
 
@@ -224,63 +240,126 @@ class Controller_WebDB extends Controller_Template
 	}
 
 	/**
-	 * Output JSON data for the current table, for use in autocomplete inputs.
+	 * This action is for importing a single CSV file into a single database table.
+	 * It guides the user through the four stages of importing:
+	 * uploading, field matching, previewing, and doing the actual import.
+	 * All of the actual work is done in [WebDB_File_CSV].
+	 *
+	 * 1. In the first stage, a CSV file is **uploaded**, validated, and moved to a temporary directory.
+	 *    The file is then accessed from this location in the subsequent stages of importing,
+	 *    and only deleted upon either successful import or the user cancelling the process.
+	 *    (The 'id' parameter of this action is the identifier for the uploaded file.)
+	 * 2. Once a valid CSV file has been uploaded,
+	 *    its colums are presented to the user to be **matched** to those in the database table.
+	 *    The columns from the database are presented first and the CSV columns are matched to these,
+	 *    rather than vice versa,
+	 *    because this way the user sees immediately what columns are available to be imported into.
+	 * 3. The column matches are then used to produce a **preview** of what will be added to and/or changed in the database.
+	 *    All columns from the database are shown (regardless of whether they were in the import) and all rows of the import.
+	 *    If a column is not present in the import the database will (obviously) use the default value if there is one;
+	 *    this will be shown in the preview.
+	 * 4. When the user accepts the preview, the actual **import** of data is carried out.
+	 *    Rows are saved to the database using the usual [WebDB_DBMS_Table::save()](api/Webdb_DBMS_Table#save_row),
+	 *    and a message presented to the user to indicate successful completion.
+	 *
+	 * @return void
 	 */
-	public function action_autocomplete()
-	{
-		$title_column_name = $this->table->get_title_column()->get_name();
-		if (isset($_GET['term']))
-		{
-			$this->table->reset_filters();
-			$this->table->add_filter($title_column_name, 'like', $_GET['term']);
-		}
-		$json_data = array();
-		foreach ($this->table->get_rows(FALSE) as $row)
-		{
-			$row['label'] = $row[$title_column_name];
-			$json_data[] = $row;
-		}
-		exit(json_encode($json_data));
-	}
-
 	public function action_import()
 	{
-		$this->view->errors = FALSE;
-		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
-		$this->view->stage = 'choose_file';
 
+		// First make sure the user is allowed to import data into this table.
 		if (!$this->table->can('import'))
 		{
+			$this->template->content = '';
 			$this->add_template_message('You do not have permission to import data into this table.');
 			return;
 		}
 
-		if (arr::get($_POST, 'upload', FALSE))
+		// Set up the progress bar.
+		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
+
+		// Stage 1: Uploading
+		$this->view->stage = $this->view->stages[0];
+		try
 		{
-			$validation = Validate::factory($_FILES, 'uploads');
-			$validation->rule('file','upload::not_empty')->rule('file','upload::type',array(array('csv')));
-			if ($validation->check())
-			{
-				$this->view->stage = 'match_fields';
-				// Upload::save($_FILES['file']);
-			} else
-			{
-				foreach ($validation->errors() as $err)
-				{
-					switch($err[0])
-					{
-						case 'upload::not_empty':
-							$this->add_template_message('You did not choose a file to upload!');
-							break;
-						case 'upload::type':
-							$this->add_template_message('The file that you uploaded is not of required type.');
-							break;
-						default:
-							$this->add_template_message('An error occured.<br /><pre>'.kohana::dump($err).'</pre>');
-					}
-				}
-			}
+			$this->view->file = new Webdb_File_CSV;
+		} catch (Kohana_Exception $e)
+		{
+			$this->add_template_message($e->getMessage());
+			return;
 		}
+		if ($this->view->file->loaded() && !$this->request->param('id'))
+		{
+			$url = 'webdb/import/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$this->view->file->hash;
+			$this->request->redirect($url);
+		}
+
+		// Stage 2: Matching fields
+		if ($this->view->file->loaded())
+		{
+			$this->view->stage = $this->view->stages[1];
+		}
+
+		// Stage 3: Previewing
+		if ($this->view->file->loaded() && isset($_POST['columns']))
+		{
+			$this->view->file->match_fields($this->table, $_POST['columns']);
+			$this->view->stage = $this->view->stages[2];
+		}
+
+		// Stage 4: Import
+		if ($this->view->file->loaded() && isset($_POST['data']))
+		{
+			//exit(Kohana::debug($_POST['data']));
+			$this->view->stage = $this->view->stages[3];
+			foreach ($_POST['data'] as $row)
+			{
+				$this->table->save_row($row);
+			}
+			$this->add_template_message('Import complete; '.count($_POST['data']).' rows inserted and/or updated.', 'info');
+		}
+
+	}
+
+	/**
+	 *
+	 * @param <type> $dbname
+	 * @param <type> $tablename
+	 * @return void
+	 */
+	public function action_index()
+	{
+		$this->view->columns = array();
+		$this->view->filters = array();
+		if (!$this->table) {
+			return;
+		}
+		// The permitted filter operators.
+		$this->view->operators = $this->table->get_operators();
+		foreach ($this->table->get_columns() as $col) {
+			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
+		}
+
+		// Get filters from GET and SESSION, then delete those in SESSION (we'll
+		// recreate them in a moment).
+		//$session = Session::instance();
+		$filters = Arr::get($_GET, 'filters', array()); // + $session->get('webdb_filters', array());
+		//$session->set('webdb_filters', array());
+		foreach ($filters as $filter) {
+			$column = arr::get($filter, 'column', FALSE);
+			$operator = arr::get($filter, 'operator', FALSE);
+			$value = arr::get($filter, 'value', FALSE);
+			$this->table->add_filter($column, $operator, $value);
+		}
+		$this->view->filters = $this->table->get_filters();
+		//$session->set('webdb_filters', $this->view->filters);
+
+		// Add new filter
+		$this->view->filters[] = array(
+			'column' => $this->table->get_title_column()->get_name(),
+			'operator' => 'like',
+			'value' => ''
+		);
 	}
 
 	/**

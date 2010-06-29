@@ -37,20 +37,14 @@
 			</label>
 		</th>
 		<td>
-			<?php
-			$view_file = kohana::find_file('views/webdb/fields', $column->get_type());
-			if ($view_file)
-			{
-				$cell_view = View::factory('webdb/fields/'.$column->get_type());
-			} else
-			{
-				$cell_view = View::factory('webdb/fields/varchar');
-			}
-			$cell_view->column = $column;
-			$cell_view->row = $row;
-			$cell_view->edit = $column->can('update') || $column->can('insert');
-			echo $cell_view->render();
-			?>
+			<?php $edit = $column->can('update') || $column->can('insert');
+			$new_row_ident = 'new';
+			echo View::factory('webdb/field')
+				->bind('column', $column)
+				->bind('row', $row)
+				->bind('edit', $edit)
+				->bind('new_row_ident', $new_row_ident)
+				->render() ?>
 		</td>
 			<?php endfor // columns ?>
 	</tr>
