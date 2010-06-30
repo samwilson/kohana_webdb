@@ -72,7 +72,7 @@ class Controller_WebDB extends Controller_Template
 			'index'  => 'Browse &amp; Search',
 			'edit'   => 'New',
 			'import' => 'Import',
-			//'export' => 'Export',
+			'export' => 'Export',
 			//'calendar' => 'Calendar',
 			//'map' => 'Map',
 		);
@@ -240,6 +240,55 @@ class Controller_WebDB extends Controller_Template
 	}
 
 	/**
+	 * Export the current table with the current filters applied.
+	 * Filters are passed as $_GET parameters, just as for the
+	 * [index](api/Controller_WebDB#action_index) action.
+	 *
+	 * Each field is constructed from the standard field view, which is then
+	 * tag-stripped and trimmed.  This makes this action nice and simple, but
+	 * there may be some unforeseen issues; we'll see how things go.
+	 *
+	 * @return void
+	 */
+	public function action_export()
+	{
+		// Add filters.
+		$this->table->add_GET_filters();
+
+		// Create temp CSV file.
+        $tmp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.md5(time()).'.csv';
+        $file = fopen($tmp_file, 'w');
+
+		// Add the column headers to the file.
+		$column_names = array_keys($this->table->get_columns());
+        $headers = Webdb_Text::titlecase($column_names);
+        fputcsv($file, $headers);
+
+		// Write all the data.
+        foreach ($this->table->get_rows(FALSE) as $row) {
+            $line = array(); // The line to write to CSV.
+            foreach ($this->table->get_columns() as $column) {
+				$edit = FALSE;
+				$new_row_ident_label = '';
+				$field = View::factory('webdb/field')
+					->bind('column', $column)
+					->bind('row', $row)
+					->bind('edit', $edit)
+					->bind('new_row_ident', $new_row_ident_label)
+					->render();
+                $line[] = trim(strip_tags(trim($field)));
+            }
+            fputcsv($file, $line);
+        }
+
+        // Send file to browser.
+		$this->request->response = file_get_contents($tmp_file);
+        $filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+        $this->request->send_file(TRUE, $filename);
+
+	}
+
+	/**
 	 * This action is for importing a single CSV file into a single database table.
 	 * It guides the user through the four stages of importing:
 	 * uploading, field matching, previewing, and doing the actual import.
@@ -340,19 +389,8 @@ class Controller_WebDB extends Controller_Template
 			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
 		}
 
-		// Get filters from GET and SESSION, then delete those in SESSION (we'll
-		// recreate them in a moment).
-		//$session = Session::instance();
-		$filters = Arr::get($_GET, 'filters', array()); // + $session->get('webdb_filters', array());
-		//$session->set('webdb_filters', array());
-		foreach ($filters as $filter) {
-			$column = arr::get($filter, 'column', FALSE);
-			$operator = arr::get($filter, 'operator', FALSE);
-			$value = arr::get($filter, 'value', FALSE);
-			$this->table->add_filter($column, $operator, $value);
-		}
+		$this->table->add_GET_filters();
 		$this->view->filters = $this->table->get_filters();
-		//$session->set('webdb_filters', $this->view->filters);
 
 		// Add new filter
 		$this->view->filters[] = array(

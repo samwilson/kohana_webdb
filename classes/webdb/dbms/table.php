@@ -93,6 +93,24 @@ class Webdb_DBMS_Table
 		}
 	}
 
+	/**
+	 * Add all of the filters given in $_GET['filters'].  This is used in both
+	 * the [index](api/Controller_WebDB#action_index)
+	 * and [export](api/Controller_WebDB#action_export) actions.
+	 *
+	 * @return void
+	 */
+	public function add_GET_filters()
+	{
+		$filters = Arr::get($_GET, 'filters', array());
+		foreach ($filters as $filter) {
+			$column = arr::get($filter, 'column', FALSE);
+			$operator = arr::get($filter, 'operator', FALSE);
+			$value = arr::get($filter, 'value', FALSE);
+			$this->add_filter($column, $operator, $value);
+		}
+	}
+
 	public function apply_filters(&$query)
 	{
 		$alias = '';

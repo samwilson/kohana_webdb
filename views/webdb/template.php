@@ -137,7 +137,7 @@
 							<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
 					<li class="<?php echo $selected ?>">
 								<?php echo html::anchor(
-								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'/',
+								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'?'.$_SERVER['QUERY_STRING'],
 								"$action_title",
 								array('class'=>$selected)
 								) ?>
