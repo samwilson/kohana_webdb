@@ -444,8 +444,9 @@ class Controller_WebDB extends Controller_Template
 	{
 		$this->template->set_global('database', FALSE);
 		$this->template->set_global('table', FALSE);
-		$this->template->set_global('databases', array('Log in'));
+		$this->template->set_global('databases', array());
 		$this->template->set_global('tables', array());
+		$this->view->return_to = (isset($_REQUEST['return_to'])) ? $_REQUEST['return_to'] : URL::site('webdb');
 		if (isset($_POST['login']))
 		{
 			$post = Validate::factory($_POST)
@@ -461,8 +462,7 @@ class Controller_WebDB extends Controller_Template
 				{
 					if (Auth::instance()->login($username, $password))
 					{
-						//exit(__FILE__.__LINE__);
-						$this->request->redirect('webdb');
+						$this->request->redirect($this->view->return_to);
 					} else
 					{
 						$this->add_template_message('Login failed.  Please try again.');
