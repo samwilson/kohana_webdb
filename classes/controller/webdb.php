@@ -105,6 +105,8 @@ class Controller_WebDB extends Controller_Template
 		}
 		session::instance()->set('flash_messages', array());
 
+		$this->_query_string_session();
+
 	} // _before()
 
 	private function _set_database()
@@ -119,6 +121,50 @@ class Controller_WebDB extends Controller_Template
 		}
 		$this->template->set_global('database', $this->database);
 	} // _set_database()
+
+	/**
+	 * Save and load query string (i.e. `$_GET`) variables from the `$_SESSION`.
+	 * The idea is to carry query string variables between requests, even
+	 * when those variables have been omitted in the URI.
+	 *
+	 * 1. If a request has query string parameters, they are saved to
+	 *    `$_SESSION['qs']`, merging with whatever is already there.
+	 * 2. If there are parameters saved in `$_SESSION['qs']`, and if they're
+	 *    not already in the query string, add them and redirect the request to
+	 *    the resulting URI.
+	 *
+	 * @return void
+	 */
+	private function _query_string_session()
+	{
+		// Save the query string, adding to what's already saved.
+		if (count($_GET)>0)
+		{
+			$existing_saved = (isset($_SESSION['qs'])) ? $_SESSION['qs'] : array();
+			$_SESSION['qs'] = array_merge($existing_saved, $_GET);
+		}
+
+		// Load query string variables, unless they're already present.
+		if (isset($_SESSION['qs']) && count($_SESSION['qs'])>0)
+		{
+			$has_new = FALSE; // Whether there's anything in SESSION that's not in GET
+			foreach ($_SESSION['qs'] as $key=>$val)
+			{
+				if (!isset($_GET[$key]))
+				{
+					$_GET[$key] = $val;
+					$has_new = TRUE;
+				}
+			}
+			if ($has_new)
+			{
+				$query = URL::query($_SESSION['qs']);
+				$_SESSION['qs'] = array();
+				$uri = URL::base(FALSE, TRUE).$this->request->uri.$query;
+				$this->request->redirect($uri);
+			}
+		}
+	}
 
 	private function _set_table()
 	{

@@ -1,6 +1,6 @@
 
 <?php if ($table): ?>
-<form action="" method="get">
+<form action="<?php echo URL::site(Request::instance()->uri) ?>" method="get">
 	<table>
 		<caption><p>Find records where&hellip;</p></caption>
         <?php for ($f=0; $f<count($filters); $f++): $filter = $filters[$f] ?>
@@ -15,7 +15,7 @@
             <th colspan="3"></th>
             <th><input type="submit" value="Search" /></th>
             <th>
-				<input type="submit" name="clear_filters" value="Clear Filters" <?php if(count($filters)<2)echo'disabled="disabled"'?>/>
+				<?php if(count($filters)>1) echo '<a href="?filters=0">Clear Filters</a>' ?>
 			</th>
         </tr>
 	</table>

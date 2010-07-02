@@ -103,11 +103,14 @@ class Webdb_DBMS_Table
 	public function add_GET_filters()
 	{
 		$filters = Arr::get($_GET, 'filters', array());
-		foreach ($filters as $filter) {
-			$column = arr::get($filter, 'column', FALSE);
-			$operator = arr::get($filter, 'operator', FALSE);
-			$value = arr::get($filter, 'value', FALSE);
-			$this->add_filter($column, $operator, $value);
+		if (is_array($filters))
+		{
+			foreach ($filters as $filter) {
+				$column = arr::get($filter, 'column', FALSE);
+				$operator = arr::get($filter, 'operator', FALSE);
+				$value = arr::get($filter, 'value', FALSE);
+				$this->add_filter($column, $operator, $value);
+			}
 		}
 	}
 
