@@ -15,7 +15,7 @@
             <th colspan="3"></th>
             <th><input type="submit" value="Search" /></th>
             <th>
-				<?php if(count($filters)>1) echo '<a href="?filters=0">Clear Filters</a>' ?>
+				<?php if(count($filters)>1) echo HTML::anchor(Request::current()->uri.URL::query(array('filters' => '')), 'Clear Filters') //'<a href="'..'">Clear Filters</a>' ?>
 			</th>
         </tr>
 	</table>

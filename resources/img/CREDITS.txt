@@ -1,0 +1,8 @@
+The images in this directory are licenced under the following terms:
+
+icon_eror.png   PD   http://commons.wikimedia.org/wiki/File:Ambox_warning_pn.svg
+icon_info.png   PD   http://commons.wikimedia.org/wiki/File:Information_icon4.svg
+icon_notice.png PD   http://commons.wikimedia.org/wiki/File:Ambox_important.svg
+sort_asc.png    LGPL Crystal Project http://www.everaldo.com/crystal/
+sort_desc.png   LGPL Crystal Project http://www.everaldo.com/crystal/
+

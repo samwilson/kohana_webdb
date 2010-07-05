@@ -36,8 +36,11 @@ table, th, td { border:1px solid #CCC; border-collapse:collapse; vertical-align:
                 background-color:white; vertical-align:top }
 table th { background-color:#EFEFF5 }
 table caption p { margin:0; padding:0; text-align:left }
-table .pagination .disabled { color:#ccc }
+table .pagination { color:#ccc }
+table .pagination strong { color:black }
 table .submit { text-align:right }
+table th.sorted { background-color:#FFA }
+table th.sorted img { float:right; margin-top:2px }
 
 
 

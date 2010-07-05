@@ -1,4 +1,4 @@
-<form action="<?php echo URL::site('webdb/login') ?>" method="post" class="login-form">
+<form action="<?php echo URL::site('webdb/login') ?>?return_to=" method="post" class="login-form">
 	<table>
 		<thead>
 			<tr>
@@ -18,7 +18,7 @@
 		<tfoot>
 			<tr>
 				<th>
-					<input type="hidden" name="return_to" value="<?php echo $return_to ?>"
+					<input type="hidden" name="return_to" value="<?php echo $return_to ?>" />
 					<a href="<?php echo $return_to ?>">Cancel</a>
 				</th>
 				<th>

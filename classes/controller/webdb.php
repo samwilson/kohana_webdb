@@ -137,11 +137,23 @@ class Controller_WebDB extends Controller_Template
 	 */
 	private function _query_string_session()
 	{
+		// Only save these keys.
+		$to_save = array('filters','orderby','orderdir');
+
 		// Save the query string, adding to what's already saved.
 		if (count($_GET)>0)
 		{
-			$existing_saved = (isset($_SESSION['qs'])) ? $_SESSION['qs'] : array();
-			$_SESSION['qs'] = array_merge($existing_saved, $_GET);
+			$session = (isset($_SESSION['qs'])) ? $_SESSION['qs'] : array();
+			foreach ($_GET as $key=>$val)
+			{
+				// Merge non-empty variables only.
+				if ((empty($val) && isset($_SESSION['qs'][$key])) || (!in_array($key, $to_save))) {
+					unset($_SESSION['qs'][$key]);
+					continue;
+				}
+				$session[$key] = $val;
+			}
+			$_SESSION['qs'] = $session;
 		}
 
 		// Load query string variables, unless they're already present.
@@ -150,13 +162,14 @@ class Controller_WebDB extends Controller_Template
 			$has_new = FALSE; // Whether there's anything in SESSION that's not in GET
 			foreach ($_SESSION['qs'] as $key=>$val)
 			{
-				if (!isset($_GET[$key]))
+				if (!isset($_GET[$key]) && in_array($key, $to_save))
 				{
 					$_GET[$key] = $val;
 					$has_new = TRUE;
 				}
 			}
-			if ($has_new)
+			// Don't redirect for POST requests.
+			if ($has_new && $_SERVER['REQUEST_METHOD']=='GET')
 			{
 				$query = URL::query($_SESSION['qs']);
 				$_SESSION['qs'] = array();

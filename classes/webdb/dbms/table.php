@@ -114,6 +114,10 @@ class Webdb_DBMS_Table
 		}
 	}
 
+	/**
+	 *
+	 * @param Database_Query_Builder_Select $query
+	 */
 	public function apply_filters(&$query)
 	{
 		$alias = '';
@@ -172,6 +176,30 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 *
+	 * @param Database_Query_Builder_Select $query
+	 */
+	public function apply_ordering(&$query)
+	{
+		$this->orderby = Arr::get($_GET, 'orderby', '');
+		$this->orderdir = (Arr::get($_GET, 'orderdir', 'desc')=='asc') ? 'asc' : 'desc';
+		if (!in_array($this->orderby, array_keys($this->get_columns())))
+		{
+			$this->orderby = $this->get_title_column()->get_name();
+		}
+		if ($this->get_column($this->orderby)->is_foreign_key())
+		{
+			$foreign_table = $this->get_column($this->orderby)->get_referenced_table();
+			$query->join($foreign_table->get_name(), 'LEFT OUTER');
+			$query->on($this->get_name().'.'.$this->orderby, '=', $foreign_table->get_name().'.id');
+			$query->order_by($foreign_table->get_name().'.'.$foreign_table->get_title_column()->get_name(), $this->orderdir);
+		} else
+		{
+			$query->order_by($this->orderby, $this->orderdir);
+		}
+	}
+
+	/**
 	 * Get rows, with pagination.
 	 *
 	 * Note that rows are returned as arrays and not objects, because MySQL
@@ -192,6 +220,7 @@ class Webdb_DBMS_Table
 		$query->select_array($columns);
 		$query->from($this->get_name());
 		$this->apply_filters($query);
+		$this->apply_ordering($query);
 		$rows = $query->execute($this->_db);
 
 		// Then limit to paged ones (yes, there is duplication here, and things
@@ -207,6 +236,7 @@ class Webdb_DBMS_Table
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
 			$this->apply_filters($query);
+			$this->apply_ordering($query);
 			$rows = $query->execute($this->_db);
 		}
 		return $rows;
