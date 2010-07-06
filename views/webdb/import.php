@@ -106,14 +106,15 @@
 		<tr>
 			<?php foreach ($table->get_columns() as $column): ?>
 			<td>
-				<?php //if (isset($row[$column->get_name()])) echo $row[$column->get_name()] ?>
 				<?php $edit = TRUE;
-				$new_row_ident_label = 'new-'.$new_row_ident;
+				$form_field_name = (isset($row['id']) && is_numeric($row['id']))
+					? 'data['.$row['id'].']['.$column->get_name().']'
+					: 'data[new-'.$new_row_ident.']['.$column->get_name().']';
 				echo View::factory('webdb/field')
 					->bind('column', $column)
 					->bind('row', $row)
 					->bind('edit', $edit)
-					->bind('new_row_ident', $new_row_ident_label)
+					->bind('form_field_name', $form_field_name)
 					->render() ?>
 			</td>
 			<?php endforeach ?>

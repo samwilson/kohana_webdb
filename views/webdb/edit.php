@@ -29,21 +29,23 @@
 			for ($col_num=0; $col_num<$num_cols; $col_num++):
 				if (!isset($columns[$row_num * $num_cols + $col_num])) continue;
 				$column = $columns[$row_num * $num_cols + $col_num];
+				$form_field_name = (isset($row['id']) && is_numeric($row['id']))
+					? 'data['.$row['id'].']['.$column->get_name().']'
+					: 'data[new]['.$column->get_name().']';
 				?>
 		<th>
-			<label for="<?php echo $column->get_name() ?>-column"
+			<label for="<?php echo $form_field_name ?>"
 				   title="Column type: <?php echo $column->get_type() ?>">
 							   <?php echo Webdb_Text::titlecase($column->get_name()) ?>
 			</label>
 		</th>
 		<td>
 			<?php $edit = $column->can('update') || $column->can('insert');
-			$new_row_ident = 'new';
 			echo View::factory('webdb/field')
 				->bind('column', $column)
 				->bind('row', $row)
 				->bind('edit', $edit)
-				->bind('new_row_ident', $new_row_ident)
+				->bind('form_field_name', $form_field_name)
 				->render() ?>
 		</td>
 			<?php endfor // columns ?>

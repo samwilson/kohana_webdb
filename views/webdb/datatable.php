@@ -53,12 +53,12 @@
 					<?php foreach ($the_table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
 				<?php $edit = FALSE;
-				$new_row_ident_label = 'new-'.$new_row_ident;
+				$form_field_name = '';
 				echo View::factory('webdb/field')
 					->bind('column', $column)
 					->bind('row', $row)
 					->bind('edit', $edit)
-					->bind('new_row_ident', $new_row_ident_label)
+					->bind('form_field_name', $form_field_name)
 					->render() ?>
 			</td>
 					<?php endforeach ?>

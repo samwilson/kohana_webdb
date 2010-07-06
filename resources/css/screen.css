@@ -45,6 +45,13 @@ table th.sorted img { float:right; margin-top:2px }
 
 
 /******************************************************************************/
+/* Forms */
+form .foreign-key { /*background-image:url("./jquery/images/ui-bg_diagonals-thick_90_eeeeee_40x40.png")*/
+    background-color:#E0F8F7; border:1px #A5ACB2 solid }
+
+
+
+/******************************************************************************/
 /* Header and footer */
 .header,
 .footer {padding:0; margin:0; border-width:0; border-style:solid;
