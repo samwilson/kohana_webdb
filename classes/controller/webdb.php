@@ -72,7 +72,7 @@ class Controller_WebDB extends Controller_Template
 			'index'  => 'Browse &amp; Search',
 			'edit'   => 'New',
 			'import' => 'Import',
-			//'export' => 'Export',
+			'export' => 'Export',
 			//'calendar' => 'Calendar',
 			//'map' => 'Map',
 		);
@@ -105,6 +105,8 @@ class Controller_WebDB extends Controller_Template
 		}
 		session::instance()->set('flash_messages', array());
 
+		$this->_query_string_session();
+
 	} // _before()
 
 	private function _set_database()
@@ -119,6 +121,63 @@ class Controller_WebDB extends Controller_Template
 		}
 		$this->template->set_global('database', $this->database);
 	} // _set_database()
+
+	/**
+	 * Save and load query string (i.e. `$_GET`) variables from the `$_SESSION`.
+	 * The idea is to carry query string variables between requests, even
+	 * when those variables have been omitted in the URI.
+	 *
+	 * 1. If a request has query string parameters, they are saved to
+	 *    `$_SESSION['qs']`, merging with whatever is already there.
+	 * 2. If there are parameters saved in `$_SESSION['qs']`, and if they're
+	 *    not already in the query string, add them and redirect the request to
+	 *    the resulting URI.
+	 *
+	 * @return void
+	 */
+	private function _query_string_session()
+	{
+		// Only save these keys.
+		$to_save = array('filters','orderby','orderdir');
+
+		// Save the query string, adding to what's already saved.
+		if (count($_GET)>0)
+		{
+			$session = (isset($_SESSION['qs'])) ? $_SESSION['qs'] : array();
+			foreach ($_GET as $key=>$val)
+			{
+				// Merge non-empty variables only.
+				if ((empty($val) && isset($_SESSION['qs'][$key])) || (!in_array($key, $to_save))) {
+					unset($_SESSION['qs'][$key]);
+					continue;
+				}
+				$session[$key] = $val;
+			}
+			$_SESSION['qs'] = $session;
+		}
+
+		// Load query string variables, unless they're already present.
+		if (isset($_SESSION['qs']) && count($_SESSION['qs'])>0)
+		{
+			$has_new = FALSE; // Whether there's anything in SESSION that's not in GET
+			foreach ($_SESSION['qs'] as $key=>$val)
+			{
+				if (!isset($_GET[$key]) && in_array($key, $to_save))
+				{
+					$_GET[$key] = $val;
+					$has_new = TRUE;
+				}
+			}
+			// Don't redirect for POST requests.
+			if ($has_new && $_SERVER['REQUEST_METHOD']=='GET')
+			{
+				$query = URL::query($_SESSION['qs']);
+				$_SESSION['qs'] = array();
+				$uri = URL::base(FALSE, TRUE).$this->request->uri.$query;
+				$this->request->redirect($uri);
+			}
+		}
+	}
 
 	private function _set_table()
 	{
@@ -158,6 +217,8 @@ class Controller_WebDB extends Controller_Template
 	
 	/**
 	 * Output JSON data for the current table, for use in autocomplete inputs.
+	 *
+	 * @return void (Does not return)
 	 */
 	public function action_autocomplete()
 	{
@@ -170,7 +231,7 @@ class Controller_WebDB extends Controller_Template
 		$json_data = array();
 		foreach ($this->table->get_rows(FALSE) as $row)
 		{
-			$row['label'] = $row[$title_column_name];
+			$row['label'] = $this->table->get_title($row['id']);
 			$json_data[] = $row;
 		}
 		exit(json_encode($json_data));
@@ -237,6 +298,55 @@ class Controller_WebDB extends Controller_Template
 			// Get default data from the database and HTTP request.
 			$this->view->row = array_merge($this->table->get_default_row(), $_GET);
 		}
+	}
+
+	/**
+	 * Export the current table with the current filters applied.
+	 * Filters are passed as $_GET parameters, just as for the
+	 * [index](api/Controller_WebDB#action_index) action.
+	 *
+	 * Each field is constructed from the standard field view, which is then
+	 * tag-stripped and trimmed.  This makes this action nice and simple, but
+	 * there may be some unforeseen issues; we'll see how things go.
+	 *
+	 * @return void
+	 */
+	public function action_export()
+	{
+		// Add filters.
+		$this->table->add_GET_filters();
+
+		// Create temp CSV file.
+        $tmp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.md5(time()).'.csv';
+        $file = fopen($tmp_file, 'w');
+
+		// Add the column headers to the file.
+		$column_names = array_keys($this->table->get_columns());
+        $headers = Webdb_Text::titlecase($column_names);
+        fputcsv($file, $headers);
+
+		// Write all the data.
+        foreach ($this->table->get_rows(FALSE) as $row) {
+            $line = array(); // The line to write to CSV.
+            foreach ($this->table->get_columns() as $column) {
+				$edit = FALSE;
+				$new_row_ident_label = '';
+				$field = View::factory('webdb/field')
+					->bind('column', $column)
+					->bind('row', $row)
+					->bind('edit', $edit)
+					->bind('new_row_ident', $new_row_ident_label)
+					->render();
+                $line[] = trim(strip_tags(trim($field)));
+            }
+            fputcsv($file, $line);
+        }
+
+        // Send file to browser.
+		$this->request->response = file_get_contents($tmp_file);
+        $filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+        $this->request->send_file(TRUE, $filename);
+
 	}
 
 	/**
@@ -340,19 +450,8 @@ class Controller_WebDB extends Controller_Template
 			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
 		}
 
-		// Get filters from GET and SESSION, then delete those in SESSION (we'll
-		// recreate them in a moment).
-		//$session = Session::instance();
-		$filters = Arr::get($_GET, 'filters', array()); // + $session->get('webdb_filters', array());
-		//$session->set('webdb_filters', array());
-		foreach ($filters as $filter) {
-			$column = arr::get($filter, 'column', FALSE);
-			$operator = arr::get($filter, 'operator', FALSE);
-			$value = arr::get($filter, 'value', FALSE);
-			$this->table->add_filter($column, $operator, $value);
-		}
+		$this->table->add_GET_filters();
 		$this->view->filters = $this->table->get_filters();
-		//$session->set('webdb_filters', $this->view->filters);
 
 		// Add new filter
 		$this->view->filters[] = array(
@@ -406,8 +505,9 @@ class Controller_WebDB extends Controller_Template
 	{
 		$this->template->set_global('database', FALSE);
 		$this->template->set_global('table', FALSE);
-		$this->template->set_global('databases', array('Log in'));
+		$this->template->set_global('databases', array());
 		$this->template->set_global('tables', array());
+		$this->view->return_to = (isset($_REQUEST['return_to'])) ? $_REQUEST['return_to'] : URL::site('webdb');
 		if (isset($_POST['login']))
 		{
 			$post = Validate::factory($_POST)
@@ -423,8 +523,7 @@ class Controller_WebDB extends Controller_Template
 				{
 					if (Auth::instance()->login($username, $password))
 					{
-						//exit(__FILE__.__LINE__);
-						$this->request->redirect('webdb');
+						$this->request->redirect($this->view->return_to);
 					} else
 					{
 						$this->add_template_message('Login failed.  Please try again.');

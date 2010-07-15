@@ -93,6 +93,31 @@ class Webdb_DBMS_Table
 		}
 	}
 
+	/**
+	 * Add all of the filters given in $_GET['filters'].  This is used in both
+	 * the [index](api/Controller_WebDB#action_index)
+	 * and [export](api/Controller_WebDB#action_export) actions.
+	 *
+	 * @return void
+	 */
+	public function add_GET_filters()
+	{
+		$filters = Arr::get($_GET, 'filters', array());
+		if (is_array($filters))
+		{
+			foreach ($filters as $filter) {
+				$column = arr::get($filter, 'column', FALSE);
+				$operator = arr::get($filter, 'operator', FALSE);
+				$value = arr::get($filter, 'value', FALSE);
+				$this->add_filter($column, $operator, $value);
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param Database_Query_Builder_Select $query
+	 */
 	public function apply_filters(&$query)
 	{
 		$alias = '';
@@ -151,6 +176,30 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 *
+	 * @param Database_Query_Builder_Select $query
+	 */
+	public function apply_ordering(&$query)
+	{
+		$this->orderby = Arr::get($_GET, 'orderby', '');
+		$this->orderdir = (Arr::get($_GET, 'orderdir', 'desc')=='asc') ? 'asc' : 'desc';
+		if (!in_array($this->orderby, array_keys($this->get_columns())))
+		{
+			$this->orderby = $this->get_title_column()->get_name();
+		}
+		if ($this->get_column($this->orderby)->is_foreign_key())
+		{
+			$foreign_table = $this->get_column($this->orderby)->get_referenced_table();
+			$query->join($foreign_table->get_name(), 'LEFT OUTER');
+			$query->on($this->get_name().'.'.$this->orderby, '=', $foreign_table->get_name().'.id');
+			$query->order_by($foreign_table->get_name().'.'.$foreign_table->get_title_column()->get_name(), $this->orderdir);
+		} else
+		{
+			$query->order_by($this->orderby, $this->orderdir);
+		}
+	}
+
+	/**
 	 * Get rows, with pagination.
 	 *
 	 * Note that rows are returned as arrays and not objects, because MySQL
@@ -171,6 +220,7 @@ class Webdb_DBMS_Table
 		$query->select_array($columns);
 		$query->from($this->get_name());
 		$this->apply_filters($query);
+		$this->apply_ordering($query);
 		$rows = $query->execute($this->_db);
 
 		// Then limit to paged ones (yes, there is duplication here, and things
@@ -186,6 +236,7 @@ class Webdb_DBMS_Table
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
 			$this->apply_filters($query);
+			$this->apply_ordering($query);
 			$rows = $query->execute($this->_db);
 		}
 		return $rows;
@@ -312,18 +363,28 @@ class Webdb_DBMS_Table
 	}
 
 	/**
-	 * Get the title text for a given row.
+	 * Get the title text for a given row.  This is the value of the 'title
+	 * column' for that row.  If the title column is a foreign key, then the
+	 * title of the foreign row is used (this is recursive, to allow FKs to
+	 * reference FKs to an arbitrary depth).
 	 *
-	 * @param integer $id
-	 * @return string
+	 * @param integer $id The row ID.
+	 * @return string The title of this row.
 	 */
 	public function get_title($id)
 	{
 		$row = $this->get_row($id);
-		$title_column = $this->get_title_column()->get_name();
-		if (isset($row[$title_column]))
+		$title_column = $this->get_title_column();
+		// If the title column is  FK, pass the title request through.
+		if ($title_column->is_foreign_key())
 		{
-			return $row[$title_column];
+			$fk_row_id = $row[$title_column->get_name()];
+			return $title_column->get_referenced_table()->get_title($fk_row_id);
+		}
+		// Otherwise, get the text.
+		if (isset($row->{$title_column->get_name()}))
+		{
+			return $row[$title_column->get_name()];
 		} else
 		{
 			return '';

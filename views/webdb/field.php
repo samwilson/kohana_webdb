@@ -10,8 +10,5 @@ if ($view_file)
 $field_view->column = $column;
 $field_view->row = $row;
 $field_view->edit = $edit;
-$field_view->form_field_name = (isset($row['id']) && is_numeric($row['id']))
-		? 'data['.$row['id'].']['.$column->get_name().']'
-		: 'data['.$new_row_ident.']['.$column->get_name().']';
-//$cell_view->new_row_ident = $new_row_ident;
+$field_view->form_field_name = $form_field_name;
 echo $field_view->render();

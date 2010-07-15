@@ -67,7 +67,7 @@ class Webdb_Text extends Text
 		 */
 		if (is_array($value))
 		{
-			return array_map(array('Text', 'titlecase'), $value);
+			return array_map(array('WebDB_Text', 'titlecase'), $value);
 		} else
 		{
 			$out = ucwords(preg_replace('|_|',' ', $value));

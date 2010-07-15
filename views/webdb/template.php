@@ -55,7 +55,7 @@
 				Logged in as <?php echo auth::instance()->get_user() ?>.
 					<?php echo html::anchor('webdb/logout','[Log out]') ?>
 				<?php else: ?>
-					<?php echo html::anchor('webdb/login','[Log in]') ?>
+					<?php echo html::anchor('webdb/login?return_to='.urlencode(URL::base(FALSE, TRUE).Request::instance()->uri),'[Log in]') ?>
 				<?php endif ?>
 			</p>
             <h1>
@@ -137,7 +137,7 @@
 							<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
 					<li class="<?php echo $selected ?>">
 								<?php echo html::anchor(
-								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'/',
+								"$controller/$action_name/".$database->get_name().'/'.$table->get_name().'?'.$_SERVER['QUERY_STRING'],
 								"$action_title",
 								array('class'=>$selected)
 								) ?>
@@ -148,7 +148,7 @@
 
 				<?php if (count($messages) > 0): ?>
 					<?php // Thanks to http://en.wikipedia.org/wiki/Template:Ambox ?>
-				<ul>
+				<ul class="messages">
 						<?php foreach ($messages as $message):
 							$status = $message['status'];
 							$icon_url = url::base()."webdb/resources/img/icon_$status.png";

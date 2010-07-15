@@ -4,17 +4,34 @@
 
 <table>
 	<caption>
-			<?php echo $the_table->get_pagination()->render('webdb/pagination/truncated') ?>
-		<!--p>Showing records x&ndash;x of <?php echo $the_table->count_records() ?></p-->
+			<p>
+				Found <?php echo number_format($the_table->count_records()) ?>
+				record<?php if ($the_table->count_records()!=1) echo 's' ?>
+			</p>
+			<?php echo $the_table->get_pagination()->render('pagination/floating') ?>
 	</caption>
 	<thead>
 		<tr>
-				<?php if (in_array('id', array_keys($the_table->get_columns()))): ?>
+
+			<?php if (in_array('id', array_keys($the_table->get_columns()))): ?>
 			<th>&nbsp;</th>
-				<?php endif ?>
-				<?php foreach ($the_table->get_columns() as $column): ?>
-			<th><?php echo Webdb_Text::titlecase($column->get_name()) ?></th>
-				<?php endforeach ?>
+			<?php endif ?>
+
+			<?php foreach ($the_table->get_columns() as $column)
+			{
+				$title = Webdb_Text::titlecase($column->get_name());
+				$orderdir = $the_table->orderdir;
+				$class = '';
+				if ($the_table->orderby==$column->get_name())
+				{
+					$title .= "&nbsp;<img src='".URL::site("webdb/resources/img/sort_$orderdir.png")."' alt='Sort-direction icon' />";
+					$orderdir = ($orderdir=='desc') ? 'asc' : 'desc';
+					$class = 'sorted';
+				}
+				$url = URL::query(array('orderby'=>$column->get_name(), 'orderdir'=>$orderdir));
+				echo "<th class='$class'>".HTML::anchor(Request::instance()->uri.$url, $title)."</th>";
+			} ?>
+
 		</tr>
 	</thead>
 	<tbody>
@@ -36,12 +53,12 @@
 					<?php foreach ($the_table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
 				<?php $edit = FALSE;
-				$new_row_ident_label = 'new-'.$new_row_ident;
+				$form_field_name = '';
 				echo View::factory('webdb/field')
 					->bind('column', $column)
 					->bind('row', $row)
 					->bind('edit', $edit)
-					->bind('new_row_ident', $new_row_ident_label)
+					->bind('form_field_name', $form_field_name)
 					->render() ?>
 			</td>
 					<?php endforeach ?>

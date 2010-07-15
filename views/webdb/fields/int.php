@@ -30,6 +30,13 @@ if ($edit):
 <script type="text/javascript">
 	$(function() {
 		var field_to_autocomplete = '<?php echo str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>';
+		// Make sure the field can be emptied
+		$("[name='"+field_to_autocomplete+"[label]']").change(function(){
+			if (!$(this).val()) {
+				$("[name='"+field_to_autocomplete+"']").val(null);
+			}
+		});
+		// Set up autocompletion
 		$("[name='"+field_to_autocomplete+"[label]']").autocomplete({
 			source: "<?php echo url::site('webdb/autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
 			select: function(event, ui) {
@@ -40,7 +47,7 @@ if ($edit):
 		});
 	});
 </script>
-<input type="text"
+<input type="text" class="foreign-key"
 	   name="<?php echo $form_field_name ?>[label]"
 	   id="<?php echo $form_field_name ?>"
 	   value="<?php echo $referenced_table->get_title($value) ?>"
