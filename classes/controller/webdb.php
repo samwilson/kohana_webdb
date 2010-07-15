@@ -217,6 +217,8 @@ class Controller_WebDB extends Controller_Template
 	
 	/**
 	 * Output JSON data for the current table, for use in autocomplete inputs.
+	 *
+	 * @return void (Does not return)
 	 */
 	public function action_autocomplete()
 	{
@@ -229,7 +231,7 @@ class Controller_WebDB extends Controller_Template
 		$json_data = array();
 		foreach ($this->table->get_rows(FALSE) as $row)
 		{
-			$row['label'] = $row[$title_column_name];
+			$row['label'] = $this->table->get_title($row['id']);
 			$json_data[] = $row;
 		}
 		exit(json_encode($json_data));

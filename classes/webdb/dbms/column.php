@@ -332,7 +332,7 @@ class Webdb_DBMS_Column
 	 *
 	 * @return Webdb_DBMS_Table The table object.
 	 */
-	public function getTable()
+	public function get_table()
 	{
 		return $this->_table;
 	}

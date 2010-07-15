@@ -363,18 +363,28 @@ class Webdb_DBMS_Table
 	}
 
 	/**
-	 * Get the title text for a given row.
+	 * Get the title text for a given row.  This is the value of the 'title
+	 * column' for that row.  If the title column is a foreign key, then the
+	 * title of the foreign row is used (this is recursive, to allow FKs to
+	 * reference FKs to an arbitrary depth).
 	 *
-	 * @param integer $id
-	 * @return string
+	 * @param integer $id The row ID.
+	 * @return string The title of this row.
 	 */
 	public function get_title($id)
 	{
 		$row = $this->get_row($id);
-		$title_column = $this->get_title_column()->get_name();
-		if (isset($row->$title_column))
+		$title_column = $this->get_title_column();
+		// If the title column is  FK, pass the title request through.
+		if ($title_column->is_foreign_key())
 		{
-			return $row[$title_column];
+			$fk_row_id = $row[$title_column->get_name()];
+			return $title_column->get_referenced_table()->get_title($fk_row_id);
+		}
+		// Otherwise, get the text.
+		if (isset($row->{$title_column->get_name()}))
+		{
+			return $row[$title_column->get_name()];
 		} else
 		{
 			return '';
