@@ -243,8 +243,10 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get a single row as an associative array.
 	 *
-	 * @param integer $id
+	 * @param integer $id The ID of the row to get.
+	 * @return array
 	 */
 	public function get_row($id)
 	{
@@ -382,7 +384,7 @@ class Webdb_DBMS_Table
 			return $title_column->get_referenced_table()->get_title($fk_row_id);
 		}
 		// Otherwise, get the text.
-		if (isset($row->{$title_column->get_name()}))
+		if (isset($row[$title_column->get_name()]))
 		{
 			return $row[$title_column->get_name()];
 		} else
