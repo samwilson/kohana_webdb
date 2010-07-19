@@ -131,7 +131,7 @@ class Webdb_DBMS_Table
 				$fk1_table = $column->get_referenced_table();
 				$fk1_title_column = $fk1_table->get_title_column();
 				$fk1_alias .= 'f';
-				$query->join(array($fk1_table->get_name(), $fk1_alias))
+				$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER')
 					  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
 				$filter['column'] = $fk1_alias.'.'.$fk1_title_column->get_name();
 				// FK is also an FK?
@@ -139,8 +139,8 @@ class Webdb_DBMS_Table
 				{
 					$fk2_table = $fk1_title_column->get_referenced_table();
 					$fk2_title_column = $fk2_table->get_title_column();
-					$fk2_alias = $fk1_alias.'r';
-					$query->join(array($fk2_table->get_name(), $fk2_alias))
+					$fk2_alias = $fk1_alias.'f';
+					$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER')
 						  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
 					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
 				}
