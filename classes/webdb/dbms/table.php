@@ -120,7 +120,7 @@ class Webdb_DBMS_Table
 	 */
 	public function apply_filters(&$query)
 	{
-		$alias = '';
+		$fk1_alias = '';
 		foreach ($this->_filters as $filter)
 		{
 
@@ -128,12 +128,22 @@ class Webdb_DBMS_Table
 			$column = $this->_columns[$filter['column']];
 			if ($column->is_foreign_key())
 			{
-				$foreign_table = $column->get_referenced_table();
-				$foreign_title_column = $foreign_table->get_title_column()->get_name();
-				$alias .= 'r';
-				$query->join(array($foreign_table->get_name(), $alias))
-					  ->on($this->_name.'.'.$column->get_name(), '=', $alias.'.id');
-				$filter['column'] = $alias.'.'.$foreign_title_column;
+				$fk1_table = $column->get_referenced_table();
+				$fk1_title_column = $fk1_table->get_title_column();
+				$fk1_alias .= 'f';
+				$query->join(array($fk1_table->get_name(), $fk1_alias))
+					  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
+				$filter['column'] = $fk1_alias.'.'.$fk1_title_column->get_name();
+				// FK is also an FK?
+				if ($fk1_title_column->is_foreign_key())
+				{
+					$fk2_table = $fk1_title_column->get_referenced_table();
+					$fk2_title_column = $fk2_table->get_title_column();
+					$fk2_alias = $fk1_alias.'r';
+					$query->join(array($fk2_table->get_name(), $fk2_alias))
+						  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
+					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
+				}
 			}
 
 			// LIKE or NOT LIKE
@@ -189,10 +199,20 @@ class Webdb_DBMS_Table
 		}
 		if ($this->get_column($this->orderby)->is_foreign_key())
 		{
-			$foreign_table = $this->get_column($this->orderby)->get_referenced_table();
-			$query->join($foreign_table->get_name(), 'LEFT OUTER');
-			$query->on($this->get_name().'.'.$this->orderby, '=', $foreign_table->get_name().'.id');
-			$query->order_by($foreign_table->get_name().'.'.$foreign_table->get_title_column()->get_name(), $this->orderdir);
+			$fk1_alias = 'o1';
+			$fk1_table = $this->get_column($this->orderby)->get_referenced_table();
+			$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER');
+			$query->on($this->get_name().'.'.$this->orderby, '=', "$fk1_alias.id");
+			$orderby = $fk1_alias.'.'.$fk1_table->get_title_column()->get_name();
+			if ($fk1_table->get_title_column()->is_foreign_key())
+			{
+				$fk2_alias = 'o2';
+				$fk2_table = $fk1_table->get_title_column()->get_referenced_table();
+				$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER');
+				$query->on($fk1_alias.'.'.$fk1_table->get_title_column()->get_name(), '=', "$fk2_alias.id");
+				$orderby = $fk2_alias.'.'.$fk2_table->get_title_column()->get_name();
+			}
+			$query->order_by($orderby, $this->orderdir);
 		} else
 		{
 			$query->order_by($this->orderby, $this->orderdir);
