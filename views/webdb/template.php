@@ -18,17 +18,17 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Script-Type" content="text/javascript" />
 
-		<?php echo html::style('webdb/resources/css/all.css', array('media'=>'all')) ?>
+		<?php echo html::style('webdb/media/webdb/css/all.css', array('media'=>'all')) ?>
 
-		<?php echo html::style('webdb/resources/css/screen.css', array('media'=>'screen')) ?>
+		<?php echo html::style('webdb/media/webdb/css/screen.css', array('media'=>'screen')) ?>
 
-		<?php echo html::style('webdb/resources/css/jquery/jquery-ui-1.8.custom.css', array('media'=>'screen')) ?>
+		<?php echo html::style('webdb/media/webdb/css/jquery/jquery-ui-1.8.custom.css', array('media'=>'screen')) ?>
 
-		<?php echo html::script('webdb/resources/js/jquery-1.4.2.min.js') ?>
+		<?php echo html::script('webdb/media/webdb/js/jquery-1.4.2.min.js') ?>
 
-		<?php echo html::script('webdb/resources/js/jquery-ui-1.8.custom.min.js') ?>
+		<?php echo html::script('webdb/media/webdb/js/jquery-ui-1.8.custom.min.js') ?>
 
-		<?php echo html::script('webdb/resources/js/jquery.maskedinput-1.2.2.min.js') ?>
+		<?php echo html::script('webdb/media/webdb/js/jquery.maskedinput-1.2.2.min.js') ?>
 
         <script type="text/javascript">
             $(function() {
@@ -151,7 +151,7 @@
 				<ul class="messages">
 						<?php foreach ($messages as $message):
 							$status = $message['status'];
-							$icon_url = url::base()."webdb/resources/img/icon_$status.png";
+							$icon_url = url::base()."media/webdb/img/icon_$status.png";
 							?>
 					<li class="<?php echo $status ?> message"
 						style="background-image: url('<?php echo $icon_url ?>');

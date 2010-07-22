@@ -468,7 +468,7 @@ class Controller_WebDB extends Controller_Template
 	 * @link http://github.com/kohana/userguide/blob/19da863d48a995eb79cc2b67fd9705b17f2f2451/classes/controller/userguide.php#L166
 	 * @return void
 	 */
-	public function action_resources()
+	public function action_media()
 	{
 		// Get the file path from the request
 		$file = $this->request->param('file');
@@ -479,7 +479,7 @@ class Controller_WebDB extends Controller_Template
 		// Remove the extension from the filename
 		$file = substr($file, 0, -(strlen($ext) + 1));
 
-		$file = Kohana::find_file('resources', $file, $ext);
+		$file = Kohana::find_file('media', $file, $ext);
 		if ($file)
 		{
 
