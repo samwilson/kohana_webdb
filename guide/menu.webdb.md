@@ -1,2 +1,5 @@
 1. **WebDB**
-   - [About WebDB](webdb.about)
+   - [About](webdb.about)
+   - [Usage](webdb.usage)
+   - [Administration](webdb.admin)
+   - [File Attachments](webdb.attachments)
