@@ -4,7 +4,7 @@
  * are coordinated.
  *
  * @package  WebDB
- * @category Base
+ * @category Controller
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
@@ -184,6 +184,7 @@ class Controller_WebDB extends Controller_Template
 		if ($this->database)
 		{
 			$this->table = $this->database->get_table();
+			/*
 			// Divide tables by editability
 			$this->template->tables = array('data_entry'=>array(),'reference'=>array());
 			foreach ($this->database->get_tables() as $table) {
@@ -192,8 +193,8 @@ class Controller_WebDB extends Controller_Template
 				} else {
 					$this->template->tables['reference'][$table->get_name()] = $table;
 				}
-			}
-			//$this->template->tables = $this->database->get_tables();
+			}*/
+			$this->template->tables = $this->database->get_tables(TRUE);
 			if (!$this->table && count($this->database->get_tables()) > 0)
 			{
 				$this->add_template_message(

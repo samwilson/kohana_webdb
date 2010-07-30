@@ -43,7 +43,21 @@
 
 				// Set initial focus element
 				$('#focus-me').focus();
-				
+
+				// Table menu display
+				$(".tables ol").hide();
+				$(".tables .selected").parents(".tables ol").addClass("open").show();
+				$(".tables .selected").parents(".tables ol").prev().children(".ui-icon").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
+				$(".tables .section-head").click(function() {
+					if ($(this).next().hasClass("open")) {
+						$(this).next().slideUp("fast").removeClass("open");
+						$(this).children(".ui-icon").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
+					} else {
+						$(this).next().addClass("open").slideDown("fast");
+						$(this).children(".ui-icon").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
+					}
+				});
+
 			});
 		</script>
 
@@ -95,31 +109,32 @@
 
 		<div class="not-head-foot">
 
+			<?php if (count($tables) > 0): ?>
 			<ol class="tables">
-				<?php $multiple_heads = count($tables)>0 && count($tables['data_entry'])>0 && count($tables['reference'])>0 ?>
-				<?php foreach ($tables as $section => $tables): ?>
-					<?php if (count($tables) > 0): ?>
-				<li>
-							<?php if ($multiple_heads): ?>
-					<em class="section-head"><?php echo Webdb_Text::titlecase($section) ?></em>
-							<?php endif ?>
-					<ol>
-								<?php $table_names = array_keys($tables);
-								asort($table_names);
-								foreach ($table_names as $tab): ?>
-									<?php $selected = ($table && $tab==$table->get_name()) ? 'selected' : '' ?>
-						<li>
-										<?php echo html::anchor(
-										'webdb/index/'.$database->get_name().'/'.$tab,
-										Webdb_Text::titlecase($tab),
-										array('class'=>$selected)
-										) ?>
-						</li>
-								<?php endforeach ?>
-					</ol></li>
-					<?php endif ?>
-				<?php endforeach ?>
+				<?php
+				ksort($tables);
+				foreach ($tables as $name=>$group)
+				{
+					if (count($group)<1) continue;
+					echo '<li class=".ui-state-default"><em class="section-head">'
+						.'<span class="ui-icon ui-icon-triangle-1-e"></span>'
+						.Webdb_Text::titlecase($name)
+						.'</em><ol>';
+					ksort($group);
+					foreach ($group as $tab)
+					{
+						$selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '';
+						$title = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
+						echo '<li>'.html::anchor(
+							'webdb/index/'.$database->get_name().'/'.$tab->get_name(),
+							Webdb_Text::titlecase($title),
+							array('class'=>$selected)
+						).'</li>';
+					}
+					echo '</ol></li>';
+				} ?>
 			</ol>
+			<?php endif ?>
 
 			<div class="content">
 

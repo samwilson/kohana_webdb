@@ -4,7 +4,7 @@
  * or is stored as a temporary file (as defined herein).
  *
  * @package  WebDB
- * @category Base
+ * @category Helpers
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
