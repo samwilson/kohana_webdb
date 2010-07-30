@@ -111,3 +111,7 @@ loss of use, data, or profits; or business interruption) however caused and on
 any theory of liability, whether in contract, strict liability, or tort
 (including negligence or otherwise) arising in any way out of the use of this
 software, even if advised of the possibility of such damage.
+
+## Notes to include somewhere in this guide.
+
+* Second column MUST be a candidate key.

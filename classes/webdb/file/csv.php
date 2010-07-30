@@ -4,7 +4,7 @@
  * or is stored as a temporary file (as defined herein).
  *
  * @package  WebDB
- * @category Base
+ * @category Helpers
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
@@ -78,7 +78,7 @@ class Webdb_File_CSV
 
 	private function _load_data()
 	{
-		$file_path = sys_get_temp_dir().$this->hash;
+		$file_path = sys_get_temp_dir().DIRECTORY_SEPARATOR.$this->hash;
 		if (!file_exists($file_path))
 		{
 			throw new Kohana_Exception("No import was found with the identifier &lsquo;$this->hash&rsquo;");

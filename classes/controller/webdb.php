@@ -4,7 +4,7 @@
  * are coordinated.
  *
  * @package  WebDB
- * @category Base
+ * @category Controller
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
@@ -184,6 +184,7 @@ class Controller_WebDB extends Controller_Template
 		if ($this->database)
 		{
 			$this->table = $this->database->get_table();
+			/*
 			// Divide tables by editability
 			$this->template->tables = array('data_entry'=>array(),'reference'=>array());
 			foreach ($this->database->get_tables() as $table) {
@@ -192,8 +193,8 @@ class Controller_WebDB extends Controller_Template
 				} else {
 					$this->template->tables['reference'][$table->get_name()] = $table;
 				}
-			}
-			//$this->template->tables = $this->database->get_tables();
+			}*/
+			$this->template->tables = $this->database->get_tables(TRUE);
 			if (!$this->table && count($this->database->get_tables()) > 0)
 			{
 				$this->add_template_message(
@@ -468,7 +469,7 @@ class Controller_WebDB extends Controller_Template
 	 * @link http://github.com/kohana/userguide/blob/19da863d48a995eb79cc2b67fd9705b17f2f2451/classes/controller/userguide.php#L166
 	 * @return void
 	 */
-	public function action_resources()
+	public function action_media()
 	{
 		// Get the file path from the request
 		$file = $this->request->param('file');
@@ -479,7 +480,7 @@ class Controller_WebDB extends Controller_Template
 		// Remove the extension from the filename
 		$file = substr($file, 0, -(strlen($ext) + 1));
 
-		$file = Kohana::find_file('resources', $file, $ext);
+		$file = Kohana::find_file('media', $file, $ext);
 		if ($file)
 		{
 

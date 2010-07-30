@@ -3,7 +3,7 @@
  * A library of text manipulation functions.
  *
  * @package  WebDB
- * @category Base
+ * @category Helpers
  * @author   Sam Wilson
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb

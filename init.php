@@ -1,10 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// Static resource file serving (CSS, JS, images)
-Route::set('webdb/resources', 'webdb/resources(/<file>)', array('file' => '.+'))
+// Serve static media files (CSS, JS, images; these aren't all 'media', but
+// it's the Kohana convention to group them so).
+Route::set('webdb/media', 'webdb/media(/<file>)', array('file' => '.+'))
 	->defaults(array(
 	'controller' => 'webdb',
-	'action'     => 'resources',
+	'action'     => 'media',
 	'file'       => NULL,
 ));
 

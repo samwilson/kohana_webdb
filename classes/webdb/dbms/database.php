@@ -72,16 +72,47 @@ class Webdb_DBMS_Database
 	/**
 	 * Get a list of tables of this database.
 	 *
+	 * The `$grouped` parameter...
+	 *
+	 * PhpMyAdmin does this for database names
+	 *
+	 * @param boolean $grouped Whether or not to return a nested array of table objects.
 	 * @return array[Webdb_DBMS_Table] Array of [Webdb_DBMS_Table] objects.
 	 */
-	public function get_tables($like = NULL)
+	public function get_tables($grouped = FALSE)
 	{
-		$tablenames = $this->_db->list_tables($like);
+		$tablenames = $this->_db->list_tables();
+		asort($tablenames);
 		foreach ($tablenames as $tablename)
 		{
 			$this->get_table($tablename);
 		}
-		return $this->_tables;
+		if (!$grouped) return $this->_tables;
+
+		// Group tables together by common prefixes.
+		$prefixes = WebDB_Arr::get_prefix_groups(array_keys($this->_tables));
+		$groups = array('miscellaneous'=>$this->_tables);
+		// Go through each table,
+		foreach (array_keys($this->_tables) as $table)
+		{
+			// and each LCP,
+			foreach ($prefixes as $lcp)
+			{
+				// and, if the table name begins with this LCP, add the table
+				// to the LCP group.
+				if (strpos($table, $lcp)===0)
+				{
+					$groups[$lcp][$table] = $this->_tables[$table];
+					unset($groups['miscellaneous'][$table]);					
+				}
+			}
+		}
+		//asort($groups);
+		//foreach ($groups as $group)
+		//{
+		//	asort($group);
+		//}
+		return $groups;
 	}
 
 	public function get_permissions()
