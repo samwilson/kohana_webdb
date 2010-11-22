@@ -54,7 +54,7 @@ class Controller_WebDB extends Controller_Template
 	{
 		parent::before();
 
-		if ($this->request->action == 'resources')
+		if ($this->request->action == 'media')
 		{
 			return;
 		}
@@ -480,24 +480,25 @@ class Controller_WebDB extends Controller_Template
 		// Remove the extension from the filename
 		$file = substr($file, 0, -(strlen($ext) + 1));
 
-		$file = Kohana::find_file('media', $file, $ext);
-		if ($file)
+		$filename = Kohana::find_file('media/webdb', $file, $ext);
+		if ($filename)
 		{
 
 			// Send the file content as the response
 			$this->auto_render = FALSE;
-			$this->request->response = file_get_contents($file);
+			$this->request->response = file_get_contents($filename);
 
 			// Set the proper headers to allow caching
 			$this->request->headers['Content-Type']   = File::mime_by_ext($ext);
-			$this->request->headers['Content-Length'] = filesize($file);
-			$this->request->headers['Last-Modified']  = date('r', filemtime($file));
+			$this->request->headers['Content-Length'] = filesize($filename);
+			$this->request->headers['Last-Modified']  = date('r', filemtime($filename));
 		}
 		else
 		{
 			// Return a 404 status
 			$this->request->status = 404;
-			$this->template->messages[] = array('message'=>'Not Found','status'=>'error');
+			$this->request->headers['Content-Type'] = 'text/plain';
+			$this->template = '404 Not Found';
 		}
 
 	}
@@ -512,14 +513,14 @@ class Controller_WebDB extends Controller_Template
 		if (isset($_POST['login']))
 		{
 			$post = Validate::factory($_POST)
-				->filter(TRUE,'trim')
+				->filter(TRUE, 'trim')
 				->rule('username', 'not_empty')
-				->rule('username', 'min_length', array(1))
-				->rule('password', 'not_empty');
+				->rule('username', 'min_length', array(1));
+				//->rule('password', 'not_empty');
 			if($post->check())
 			{
 				$username = $post['username'];
-				$password = $post['password'];
+				$password = Arr::get($post, 'password', '');
 				try
 				{
 					if (Auth::instance()->login($username, $password))
