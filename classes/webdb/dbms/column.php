@@ -129,21 +129,16 @@ class Webdb_DBMS_Column
 	 */
 	private function _app_user_can($priv_type)
 	{
+		//Kohana::$log->add('DEBUG', "Checking whether current application user "
+		//	."can *$priv_type* ".$this->_table->get_database()->get_name()
+		//	.'.'.$this->_table->get_name());
 		foreach ($this->_table->get_permissions() as $perm) {
-			$can_column = $perm['column_names']==NULL OR strpos($this->_name, $perm['column_names'])!==FALSE;
-			$can_permission = $perm['permission']==$priv_type || $perm['permission']=='*';
+			$can_column = $perm['column_names']=='*' || strpos($this->_name, $perm['column_names'])!==FALSE;
+			$can_permission = $perm['permission']=='*' || stripos($perm['permission'], $priv_type)!==FALSE;
 			$can_identifier = $perm['identifier']=='*'
 				|| $perm['identifier']==Auth::instance()->get_user()
 				|| Auth::instance()->logged_in($perm['identifier']);
-			/*echo '$can_column'.kohana::debug($can_column);
-			echo '$can_permission'.kohana::debug($can_permission);
-			echo '$perm[permission]=='.$priv_type.kohana::debug($perm['permission']==$priv_type);
-			echo '$perm[permission]==*'.kohana::debug($perm['permission']=='*');
-			echo '$perm[identifier]==*'.kohana::debug($perm['identifier']=='*');
-			echo '$perm[identifier]==Auth::instance()->get_user()'.kohana::debug($perm['identifier']==Auth::instance()->get_user());
-			echo 'Auth::instance()->logged_in($perm[identifier]'.kohana::debug(Auth::instance()->logged_in($perm['identifier']));
-			exit('$can_identifier'.kohana::debug($perm['identifier']));
-			*/
+			//Kohana::$log->add('DEBUG', "can_column = $can_column; can_permission = $can_permission; can_identifier = $can_identifier");
 			if ($can_column && $can_permission && $can_identifier) {
 				return TRUE;
 			}

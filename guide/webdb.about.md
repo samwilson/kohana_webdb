@@ -68,13 +68,13 @@ further refining users' permissions, are detailed below.
 The `permissions` table schema:
 
     CREATE TABLE IF NOT EXISTS `permissions` (
-        `id`            int(5)       NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        `database_name` varchar(65)  NOT NULL DEFAULT '*' COMMENT 'A single database name, or an asterisk to denote all databases.',
-        `table_name`    varchar(65)  NOT NULL DEFAULT '*' COMMENT 'A single table name, or an asterisk to denote all tables.',
-        `column_names`  text  COMMENT 'A comma-delimited list of table columns, or an asterisk to denote all columns.',
-        `where_clause`  varchar(200) DEFAULT NULL COMMENT 'The SQL WHERE clause to use to determine row-level access.',
+        `id`            int(5)        NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        `database_name` varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single database name, or an asterisk to denote all databases.',
+        `table_name`    varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single table name, or an asterisk to denote all tables.',
+        `column_names`  varchar(1000) NOT NULL DEFAULT '*' COMMENT 'A comma-delimited list of table columns, or an asterisk to denote all columns.',
+        `where_clause`  varchar(200)  NULL DEFAULT NULL COMMENT 'The SQL WHERE clause to use to determine row-level access.',
         `permission`    enum('*','Select','Insert','Update','Delete','Import','Export') NOT NULL DEFAULT '*' COMMENT 'The permission that is being assigned (the asterisk denotes all).',
-        `identifier`    varchar(65)  NOT NULL DEFAULT '*' COMMENT 'A single database name, or asterisk to denote ALL databases.'
+        `identifier`    varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single database name, or asterisk to denote ALL databases.'
     ) COMMENT 'User permissions on databases, tables, and/or rows.';
 
 ## Other Features

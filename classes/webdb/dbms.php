@@ -198,7 +198,7 @@ class Webdb_DBMS
 			return array(array(
 				'database_name' => '*',
 				'table_name'    => '*',
-				'column_names'  => NULL,
+				'column_names'  => '*',
 				'where_clause'  => NULL,
 				'permission'    => '*',
 				'identifier'    => '*',

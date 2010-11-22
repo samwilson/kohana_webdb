@@ -24,7 +24,7 @@
 				$class = '';
 				if ($the_table->orderby==$column->get_name())
 				{
-					$title .= "&nbsp;<img src='".URL::site("webdb/media/webdb/img/sort_$orderdir.png")."' alt='Sort-direction icon' />";
+					$title .= "&nbsp;<img src='".URL::site("webdb/media/img/sort_$orderdir.png")."' alt='Sort-direction icon' />";
 					$orderdir = ($orderdir=='desc') ? 'asc' : 'desc';
 					$class = 'sorted';
 				}
