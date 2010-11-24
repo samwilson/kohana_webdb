@@ -22,15 +22,16 @@
 
 		<?php echo html::style('webdb/media/css/screen.css', array('media'=>'screen')) ?>
 
-		<?php echo html::style('webdb/media/css/jquery/jquery-ui-1.8.custom.css', array('media'=>'screen')) ?>
+		<?php echo html::style('http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.0/themes/cupertino/jquery-ui.css', array('media'=>'screen')) ?>
 		
 
-		<?php echo html::script('webdb/media/js/jquery-1.4.2.min.js') ?>
+		<?php echo html::script('http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js') ?>
 
-		<?php echo html::script('webdb/media/js/jquery-ui-1.8.custom.min.js') ?>
+		<?php echo html::script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js') ?>
 
 		<?php echo html::script('webdb/media/js/jquery.maskedinput-1.2.2.min.js') ?>
 
+		<?php echo html::script('webdb/media/js/jquery.ui.autocomplete.autoSelect.js') ?>
 
 		<script type="text/javascript">
 			$(function() {

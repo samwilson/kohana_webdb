@@ -402,13 +402,7 @@ class Webdb_DBMS_Table
 			return $title_column->get_referenced_table()->get_title($fk_row_id);
 		}
 		// Otherwise, get the text.
-		if (isset($row->{$title_column->get_name()}))
-		{
-			return $row[$title_column->get_name()];
-		} else
-		{
-			return '';
-		}
+		return Arr::get($row, $title_column->get_name(), implode(' | ', $row));
 	}
 
 	/**
