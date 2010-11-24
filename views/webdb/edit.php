@@ -1,6 +1,6 @@
 <?php if (!isset($row['id']) && !$table->can('insert')) return ?>
 
-<?php $num_cols = 2 ?>
+<?php $num_cols = 3 ?>
 
 <script type="text/javascript">
 	$(function() {

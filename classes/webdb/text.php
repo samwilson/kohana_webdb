@@ -75,8 +75,7 @@ class Webdb_Text extends Text
 			{
 				$out = preg_replace("|\b$search\b|i", $replacement, $out);
 			}
-			return $out;
+			return trim($out);
 		}
-		return $out;
 	}
 }

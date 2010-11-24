@@ -18,7 +18,7 @@
 		<tfoot>
 			<tr>
 				<th>
-					<input type="hidden" name="return_to" value="<?php echo $return_to ?>" />
+					<?php if ($return_to) echo Form::hidden('return_to', $return_to) ?>
 					<a href="<?php echo $return_to ?>">Cancel</a>
 				</th>
 				<th>

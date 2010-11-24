@@ -142,7 +142,7 @@ class Webdb_DBMS_Database
 				return $this->get_table($tablename);
 			} else
 			{
-				return false;
+				return FALSE;
 			}
 		}
 		if (!in_array($tablename, $this->_db->list_tables()))

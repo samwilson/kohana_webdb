@@ -183,7 +183,12 @@ class Controller_WebDB extends Controller_Template
 	{
 		if ($this->database)
 		{
-			$this->table = $this->database->get_table();
+			try {
+				$this->table = $this->database->get_table();
+			} catch (Exception $e)
+			{
+				$this->add_template_message($e->getMessage(), 'error');
+			}
 			/*
 			// Divide tables by editability
 			$this->template->tables = array('data_entry'=>array(),'reference'=>array());
@@ -509,44 +514,36 @@ class Controller_WebDB extends Controller_Template
 		$this->template->set_global('table', FALSE);
 		$this->template->set_global('databases', array());
 		$this->template->set_global('tables', array());
-		$this->view->return_to = (isset($_REQUEST['return_to'])) ? $_REQUEST['return_to'] : URL::site('webdb');
-		if (isset($_POST['login']))
+		$this->view->return_to = Arr::get($_REQUEST, 'return_to', 'webdb');
+		if (Arr::get($_POST, 'login', FALSE))
 		{
-			$post = Validate::factory($_POST)
-				->filter(TRUE, 'trim')
-				->rule('username', 'not_empty')
-				->rule('username', 'min_length', array(1));
-				//->rule('password', 'not_empty');
-			if($post->check())
+			$username = trim(Arr::get($_POST, 'username', ''));
+			$password = trim(Arr::get($_POST, 'password', ''));
+			try
 			{
-				$username = $post['username'];
-				$password = Arr::get($post, 'password', '');
-				try
+				if (Auth::instance()->login($username, $password))
 				{
-					if (Auth::instance()->login($username, $password))
-					{
-						$this->request->redirect($this->view->return_to);
-					} else
-					{
-						$this->add_template_message('Login failed.  Please try again.');
-					}
-				} catch (Exception $e)
+					$this->add_flash_message('You are now logged in.', 'info');
+					$this->request->redirect($this->view->return_to);
+				} else
 				{
-					//exit(__FILE__.__LINE__);
-					$this->add_template_message($e->getMessage());
+					$this->add_template_message('Login failed.  Please try again.');
 				}
-			} else
+			} catch (Exception $e)
 			{
-				$this->add_template_message('You must enter both your username and password.');
+				$this->add_template_message($e->getMessage());
 			}
-		}
+		/*} else
+		{
+			$this->add_template_message('You must enter at least a username.');
+		*/}
 	}
 
 	public function action_logout()
 	{
-		auth::instance()->logout();
+		Auth::instance()->logout();
 		$this->add_flash_message('You are now logged out.', 'info');
-		$this->request->redirect('webdb');
+		$this->request->redirect('webdb/login');
 	}
 
 }

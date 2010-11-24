@@ -28,19 +28,13 @@ if ($edit):
 		?>
 
 <script type="text/javascript">
+	<?php $js_form_field_name = str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>
 	$(function() {
-		var field_to_autocomplete = '<?php echo str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>';
-		// Make sure the field can be emptied
-		$("[name='"+field_to_autocomplete+"[label]']").change(function(){
-			if (!$(this).val()) {
-				$("[name='"+field_to_autocomplete+"']").val(null);
-			}
-		});
-		// Set up autocompletion
+		var field_to_autocomplete = '<?php echo $js_form_field_name ?>';
 		$("[name='"+field_to_autocomplete+"[label]']").autocomplete({
-			source: "<?php echo url::site('webdb/autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
+			source: "<?php echo URL::site('webdb/autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
 			select: function(event, ui) {
-				var field_to_autocomplete = '<?php echo str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>';
+				var field_to_autocomplete = '<?php echo $js_form_field_name ?>';
 				$(this).parent().children("[name='"+field_to_autocomplete+"']").val(ui.item.id);
 				return false;
 			}
@@ -50,7 +44,7 @@ if ($edit):
 <input type="text" class="foreign-key"
 	   name="<?php echo $form_field_name ?>[label]"
 	   id="<?php echo $form_field_name ?>"
-	   value="<?php echo $referenced_table->get_title($value) ?>"
+	   value="<?php if ($value>0) echo $referenced_table->get_title($value) ?>"
 	   size="<?php echo min(35, $referenced_table->get_title_column()->get_size()) ?>" />
 <input type="hidden" name="<?php echo $form_field_name ?>" value="<?php echo $value ?>" />
 <ul class="notes">
@@ -63,11 +57,10 @@ if ($edit):
 	</li>
 		<?php if($value): ?>
 	<li>
-		View
 		<?php
 		$url = "webdb/edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
-		$title = $referenced_table->get_title($value);
-		echo html::anchor($url, $title) ?>
+		$title = 'View '.$referenced_table->get_title($value);
+		echo HTML::anchor($url, $title) ?>
 		(<?php echo Webdb_Text::titlecase($referenced_table->get_name()) ?>
 		record #<?php echo $value ?>).
 	</li>
@@ -83,6 +76,8 @@ if ($edit):
 		<?php echo form::input($form_field_name, $value,  array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()))) ?>
 
 	<?php endif /* end ifs choosing type of input. */ ?>
+
+
 
 	<?php
 	if ($column->get_comment()) {
