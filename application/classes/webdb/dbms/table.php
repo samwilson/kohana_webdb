@@ -229,37 +229,37 @@ class Webdb_DBMS_Table
 	 */
 	public function get_rows($with_pagination = TRUE)
 	{
+		if (isset($this->_rows)) return $this->_rows;
+		
 		$columns = array();
 		foreach (array_keys($this->_columns) as $col)
 		{
 			$columns[] = $this->_name.'.'.$col;
 		}
 
-		// First get all columns and rows,
+		// First get all columns and rows (leaving column selection for now).
 		$query = new Database_Query_Builder_Select();
-		$query->select_array($columns);
 		$query->from($this->get_name());
 		$this->apply_filters($query);
 		$this->apply_ordering($query);
-		$rows = $query->execute($this->_db);
 
-		// Then limit to paged ones (yes, there is duplication here, and things
-		// need to be improved.
+		// Then limit to the ones on the current page.
 		if ($with_pagination)
 		{
-			$row_count = count($rows->as_array());
-			$query = new Database_Query_Builder_Select();
-			$query->select_array($columns);
-			$query->from($this->get_name());
+			$pagination_query = clone $query;
+			$row_count = $pagination_query
+				->select_array(array(DB::expr('COUNT(*) AS total')))
+				->execute($this->_db)
+				->current();
 			$config = array('total_items' => $row_count);
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
-			$this->apply_filters($query);
-			$this->apply_ordering($query);
-			$rows = $query->execute($this->_db);
 		}
-		return $rows;
+
+		$query->select_array($columns);
+		$this->_rows = $query->execute($this->_db);
+		return $this->_rows;
 	}
 
 	/**
@@ -336,18 +336,21 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get the number of rows in the current filtered set.  This leaves the
+	 * actual counting up to `$this->get_rows()`, rather than doing the query
+	 * itself, because filtering is applied in that method, and I didn't want to
+	 * duplicate that here (or anywhere else).
 	 *
+	 * @todo Rename this to `row_count()`.
 	 * @return integer
 	 */
 	public function count_records()
 	{
-		return count($this->get_rows(FALSE));
-		/*$query = new Database_Query_Builder_Select();
-		$query->select(DB::expr('COUNT(*) AS row_count'));
-		$query->from($this->get_name());
-		$this->apply_filters($query);
-		$rows = $query->execute($this->_db)->get('row_count');
-		return $rows;*/
+		if (!isset($this->_row_count))
+		{
+			$this->_row_count = count($this->get_rows(FALSE));
+		}
+		return $this->_row_count;
 	}
 
 	/**
