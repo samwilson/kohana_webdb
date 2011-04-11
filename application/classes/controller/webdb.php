@@ -322,11 +322,12 @@ class Controller_WebDB extends Controller_Template
 			{
 				$edit = FALSE;
 				$new_row_ident_label = '';
+				$form_field_name = '';
 				$field = View::factory('field')
 					->bind('column', $column)
 					->bind('row', $row)
 					->bind('edit', $edit)
-					->bind('new_row_ident', $new_row_ident_label)
+					->bind('form_field_name', $form_field_name)
 					->render();
 				$line[] = trim(strip_tags(trim($field)));
 			}
@@ -334,9 +335,9 @@ class Controller_WebDB extends Controller_Template
 		}
 
 		// Send file to browser.
-		$this->request->response = file_get_contents($tmp_file);
+		$this->response->body(file_get_contents($tmp_file));
 		$filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
-		$this->request->send_file(TRUE, $filename);
+		$this->response->send_file(TRUE, $filename);
 
 	}
 
