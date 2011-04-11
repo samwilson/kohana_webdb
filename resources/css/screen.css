@@ -1,0 +1,179 @@
+body { margin:0; background-color:#EFEFF5;
+       font-family: Frutiger, "Frutiger Linotype", Univers, Calibri,
+       "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed",
+       "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue",
+       Helvetica, Arial, sans-serif }
+a, .anchor { color:#33A; text-decoration:none; cursor:pointer }
+a:hover, .anchor:hover { text-decoration:underline }
+a.current, .anchor.current { font-weight:bolder; color:black }
+img { border:0 }
+dfn:hover, abbr:hover { border-bottom:1px dashed #CCD; cursor:help }
+ul { margin:0 }
+
+
+
+/******************************************************************************/
+/* CSS Tabs 2.0 from Unraveled: http://unraveled.com/publications/css_tabs
+ * (c) Joshua Kaufman 2007, Creative Commons Attribution 3.0 */
+.tabnav { text-align: left; margin: 1em 0 0 0; border-bottom: 1px solid #CCC;
+          list-style-type: none; padding: 3px 10px 3px 10px }
+.tabnav li { display: inline }
+.tabnav li.selected { border-bottom: 1px solid #fff; background-color: #fff }
+.tabnav li.selected:hover { cursor: default }
+.tabnav li.selected a { background-color: #fff; color: #000; position: relative;
+                        top:1px; font-weight: bolder; padding-top: 4px }
+.tabnav li a { padding:3px 4px; border:1px solid #CCC; background-color:#FEFEFE;
+               color:#333; margin-right:0; text-decoration:none; border-bottom:none }
+.tabnav a:hover { background: #EEE }
+.tabnav.small { font-size:smaller }
+.tabnav.small li.selected a { font-weight:normal }
+
+
+
+/******************************************************************************/
+/* Tables */
+table, th, td { border:1px solid #CCC; border-collapse:collapse; vertical-align:middle;
+                background-color:white; vertical-align:top }
+table th { background-color:#EFEFF5 }
+table caption p { margin:0; padding:0; text-align:left }
+table .pagination { color:#ccc }
+table .pagination strong { color:black }
+table .submit { text-align:right }
+table th.sorted { background-color:#FFA }
+table th.sorted img { float:right; margin-top:2px }
+
+
+
+/******************************************************************************/
+/* Forms */
+form .foreign-key { background-color:#E0F8F7; border:1px #A5ACB2 solid }
+form .foreign-key-actual-value { border:0 }
+
+
+
+/******************************************************************************/
+/* Header and footer */
+.header,
+.footer {padding:0; margin:0; border-width:0; border-style:solid;
+         font-size:smaller; border-color:#ccd }
+.header h1 { margin:0 }
+.header { border-bottom-width:0 }
+.header .auth { float:right; margin:0.3em 0.8em 0 0 }
+.header a { color: black }
+.header .databases { font-size:larger }
+.footer { border-width:1px 0 0 0; padding-bottom:2em; text-align:center; clear:both; list-style-type:none }
+/* not-head-foot comprises the sidebar and the content */
+.not-head-foot { margin:0; padding:0.7em 0; background-color:white; clear:both }
+
+
+
+/******************************************************************************/
+/* Sidebar */
+.tables { float:left; width: 240px; list-style-type:none; margin:0; padding:0 }
+.tables ol { list-style-type:none; margin:0; padding:0 }
+.tables .section-head  { display:block; margin: 3px 0px 0px 0px; padding-left:0.3em;
+                border-bottom: 3px double #ccd }
+.tables .section-head .ui-icon { float:left; margin-right:3px; position:relative; bottom:-2px }
+.tables .section-head:hover { cursor:pointer }
+.tables ol a { display:block; padding:3px 10px; text-decoration: none;
+            color: #3333AA; border-bottom: 1px solid #CCD; font-size:smaller }
+.tables .selected { font-weight:bolder; background-color:#DFDFE4 }
+.tables a:hover { color: #111166; background-color: #EFEFF5 }
+
+
+
+/******************************************************************************/
+/* Main content area */
+.content { margin:0 0 0 250px }
+.content .tabs.actions { font-size:smaller; margin-bottom:1em }
+.content .tabs.actions li a { padding:0 0.5em }
+.content .tabs.actions, .content h1 { padding-left:20px }
+
+/* Page title */
+.title { height:3em; margin:0; padding:0 }
+.title h1 {margin:0 0.4em 0 0; padding:0; text-align:left; float:left }
+.title,
+.title h1 a { color:#444 }
+.title h1 a:hover { text-decoration:none; color:#33A }
+.title p { margin:0; padding:0; line-height:3em }
+
+/* Message boxes, thanks to http://en.wikipedia.org/wiki/Template:Ambox */
+.messages { padding:0; margin:0 }
+.message { padding:0.8em 0.8em 0.8em 50px; margin:1em auto; border:2px solid #ddd;
+          list-style-type:none; background-color:#FBFBFB; color:black }
+.error { border-color:#B22222 }
+.notice { border-color:#F28500 }
+.info { border-color:#1E90FF }
+.error a { color:#8a1f11 }
+.notice a { color:#514721 }
+.info a { color:#264409 }
+
+/* Kohana errors */
+#kohana_error { margin:1em; border:3px double #911 }
+#kohana_error .content { margin:0 }
+#kohana_error h1 { padding:0.2em ! important }
+#kohana_error .message { background-color:inherit; margin:0; padding:0; border:0; font-weight:bolder; color:white }
+
+
+
+/******************************************************************************/
+/* Index action */
+.index table { margin:1em auto auto 0 }
+.index table td { white-space:nowrap }
+.index table td.text { white-space:normal; font-size:smaller }
+
+
+
+/******************************************************************************/
+/* Login action */
+.login .header { border-bottom:1px solid #CCC }
+.login .tables,
+.login .auth { display:none }
+.login .content { margin:0 }
+.login .title { text-align:center }
+.login table { margin:1em auto 6em auto; border:0 }
+.login th,
+.login td { padding:0.5em; border:0; background-color:white; vertical-align:middle }
+.login thead th { font-size:1.2em; text-align:left }
+.login tbody th,
+.login tbody td { background-color:#EFEFF5 }
+.login input { font-size:1.3em; width:95% }
+.login input[type=submit] { width:auto }
+.login tfoot th { text-align:right }
+.login .message { width:50% }
+
+
+
+/******************************************************************************/
+/* Import action */
+.import .stages { width:100%; height:2em }
+.import .stages li { float:left; margin:0; padding:0.2em 1.5em; list-style-position:inside; border-bottom:2px solid #EEE }
+.import .stages li.completed { border-bottom:2px solid #CCC; background-color:#EEE; text-decoration:line-through }
+.import .stages li.selected { border-bottom:2px solid #CCC; background-color:#CCC }
+.import .stages,
+.import table { margin-left:1em; padding:0 }
+.import table .notes { display:none }
+
+
+
+/******************************************************************************/
+/* Edit action */
+.edit table.edit-form { margin:1em 0; border:0 }
+.edit table.edit-form th { text-align:right; border:0; padding:0.1em 0.5em 0.1em 0; font-size:smaller; background-color:white }
+.edit table.edit-form td { text-align:left; border:0; padding:0.1em 1em 0.1em 0 }
+.edit table.edit-form th.focused,
+.edit table.edit-form td.focused { background-color:#EEE }
+.edit table.edit-form .notes { font-size:smaller; list-style-type:none; margin:0; padding:0 }
+.edit table.edit-form .notes li { margin:0; padding:0 }
+.edit table.edit-form tfoot td { text-align:right; border-bottom:1px solid #CCC }
+.edit .related-tables h2 { margin:0 }
+.edit .related-tables ol { list-style-type:none; margin:0; padding:0 }
+.edit .related-tables li { border:1px solid #CCC; border-width:1px 0 0 1px; margin:0.2em 0; padding:0 }
+.edit .related-tables h3 { margin:0; padding:0.1em 0.2em 0.2em 0.5em; font-size:1em }
+.edit .related-tables h3:hover { background-color:#EEE }
+.edit .related-tables h3.no-records { color:#CCC }
+.edit .related-tables h3.no-records:hover { background-color:white }
+.edit .related-tables h3 span { font-size:smaller }
+.edit .related-tables .new-record { margin:0; padding:0 }
+.edit .related-tables div { margin-left:0.5em }
+.edit .related-tables table { font-size:smaller }
