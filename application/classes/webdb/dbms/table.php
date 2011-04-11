@@ -229,13 +229,6 @@ class Webdb_DBMS_Table
 	 */
 	public function get_rows($with_pagination = TRUE)
 	{
-		if (isset($this->_rows)) return $this->_rows;
-		
-		$columns = array();
-		foreach (array_keys($this->_columns) as $col)
-		{
-			$columns[] = $this->_name.'.'.$col;
-		}
 
 		// First get all columns and rows (leaving column selection for now).
 		$query = new Database_Query_Builder_Select();
@@ -251,13 +244,18 @@ class Webdb_DBMS_Table
 				->select_array(array(DB::expr('COUNT(*) AS total')))
 				->execute($this->_db)
 				->current();
-			$config = array('total_items' => $row_count);
+			$this->_row_count = $row_count['total'];
+			$config = array('total_items' => $this->_row_count);
 			$this->_pagination = new Pagination($config);
 			$query->offset($this->_pagination->offset);
 			$query->limit($this->_pagination->items_per_page);
 		}
 
-		$query->select_array($columns);
+		// Select columns and do query.
+		foreach (array_keys($this->_columns) as $col)
+		{
+			$query->select($this->_name.'.'.$col);
+		}
 		$this->_rows = $query->execute($this->_db);
 		return $this->_rows;
 	}
