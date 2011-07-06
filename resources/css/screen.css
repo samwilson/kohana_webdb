@@ -18,7 +18,7 @@ ul { margin:0 }
 .tabnav { text-align: left; margin: 1em 0 0 0; border-bottom: 1px solid #CCC;
           list-style-type: none; padding: 3px 10px 3px 10px }
 .tabnav li { display: inline }
-.tabnav li.selected { border-bottom: 1px solid #fff; background-color: #fff }
+.tabnav li.selected { border-bottom:1px solid #fff; background-color:transparent }
 .tabnav li.selected:hover { cursor: default }
 .tabnav li.selected a { background-color: #fff; color: #000; position: relative;
                         top:1px; font-weight: bolder; padding-top: 4px }

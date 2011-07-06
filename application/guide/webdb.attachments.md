@@ -1,6 +1,8 @@
 # Attaching Files
 
-Most database-backed web applications store non-application files (such as uploaded images) in the filesystem rather than as objects in the database.
+Most database-backed web applications 
+	store non-application files (such as uploaded images) in the filesystem 
+	rather than as objects in the database.
 These files relate to tables and rows in the databases in various ways,
 and there are many different ways of recording these relationships.
 Here we investigate the methods used by a number of web applications to store file relationship information in their databases.

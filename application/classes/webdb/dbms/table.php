@@ -48,6 +48,12 @@ class Webdb_DBMS_Table
 		'<='          => 'is less than or equal to',
 		'<'           => 'is less than'
 	);
+	
+	/**
+	 * @var integer|false The number of currently-filtered rows, or false if no
+	 * query has been made yet or the filters have been reset.
+	 */
+	private $_row_count = FALSE;
 
 	/**
 	 * Create a new database table object.
@@ -344,7 +350,7 @@ class Webdb_DBMS_Table
 	 */
 	public function count_records()
 	{
-		if (!isset($this->_row_count))
+		if (!$this->_row_count)
 		{
 			$this->_row_count = count($this->get_rows(FALSE));
 		}
@@ -409,12 +415,22 @@ class Webdb_DBMS_Table
 	}
 
 	/**
+	 * Get the first unique-keyed column, or if there is no unique non-ID column
+	 * then use the second column (because this is often a good thing to do).
+	 * Unless there's only one column; then, just use that.
+	 * 
 	 * @return Webdb_DBMS_Column
 	 */
 	public function get_title_column()
 	{
+		// Try to get the first unique key
+		foreach ($this->get_columns() as $column)
+		{
+			if ($column->is_unique_key()) return $column;
+		}
+		// But if that fails, just use the second (or the first) column.
 		$columnIndices = array_keys($this->_columns);
-		$titleColName = $columnIndices[1];
+		$titleColName = Arr::get($columnIndices, 1, Arr::get($columnIndices, 0, 'id'));
 		return $this->_columns[$titleColName];
 	}
 
@@ -626,6 +642,7 @@ class Webdb_DBMS_Table
 	public function reset_filters()
 	{
 		$this->_filters = array();
+		$this->_row_count = FALSE;
 	}
 
 	/**

@@ -115,11 +115,5 @@ Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
 	'action'     => 'index',
 	'dbname'     => NULL,
 	'tablename'  => NULL,
-	'id'      => NULL
+	'id'         => NULL
 ));
-/*Route::set('default', '(<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'controller' => 'webdb',
-		'action'     => 'index',
-	));
-*/

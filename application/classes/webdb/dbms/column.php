@@ -34,13 +34,16 @@ class Webdb_DBMS_Column
 	private $_required = FALSE;
 
 	/** @var boolean Whether or not this column is the Primary Key. */
-	private $_isPK = false;
+	private $_isPK = FALSE;
+	
+	/** @var boolean Whether or not this column is a Unique Key. */
+	private $_isUnique = FALSE;
 
 	/** @var mixed The default value for this column. */
 	private $_default;
 
 	/** @var boolean Whether or not this column is auto-incrementing. */
-	private $_isAutoIncrement = false;
+	private $_isAutoIncrement = FALSE;
 
 	/**
 	 * @var string A comma-separated list of the privileges that the database
@@ -56,7 +59,7 @@ class Webdb_DBMS_Column
 	 * @var Webdb_DBMS_Table|false The table that this column refers to, or
 	 * false if it is not a foreign key.
 	 */
-	private $_references = false;
+	private $_references = FALSE;
 
 	/**
 	 *
@@ -65,7 +68,6 @@ class Webdb_DBMS_Column
 	public function __construct(Webdb_DBMS_Table $table, $info)
 	{
 		$info = array_combine(array_map('strtolower', array_keys($info)), array_values($info));
-		//exit('<pre>'.kohana::dump($info).'</pre>');
 
 		// Table object
 		$this->_table = $table;
@@ -89,6 +91,12 @@ class Webdb_DBMS_Column
 			}
 		}
 
+		// Unique key
+		if (strtoupper($info['key']) == 'UNI')
+		{
+			$this->_isUnique = true;
+		}
+		
 		// Comment
 		$this->_comment = $info['comment'];
 
@@ -291,6 +299,16 @@ class Webdb_DBMS_Column
 		return $this->_isPK;
 	}
 
+	/**
+	 * Whether or not this column is a unique key.
+	 *
+	 * @return boolean True if this is a Unique Key, false otherwise.
+	 */
+	public function is_unique_key()
+	{
+		return $this->_isUnique;
+	}
+	
 	/**
 	 * Whether or not this column is a foreign key.
 	 *

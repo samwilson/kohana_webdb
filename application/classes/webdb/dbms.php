@@ -112,7 +112,7 @@ class Webdb_DBMS
 	 */
 	public function username($username = FALSE)
 	{
-		if ($username)
+		if ($username!==FALSE)
 		{
 			$this->_config['connection']['username'] = $username;
 			Session::instance()->set('username', $username);

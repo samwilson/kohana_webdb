@@ -87,7 +87,7 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 				$foreign_column = $foreign['column'];
 				$foreign_table = $foreign['table'];
 				$foreign_table->reset_filters();
-				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row['id'])); //$row[$table->get_title_column()->get_name()]);
+				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row['id']));
 				$num_foreign_records = $foreign_table->count_records();
 				$class = ($num_foreign_records > 0) ? '' : 'no-records';
 				?>

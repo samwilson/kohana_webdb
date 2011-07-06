@@ -63,14 +63,15 @@ class Controller_WebDB extends Controller_Template
 			'edit'   => 'New',
 			'import' => 'Import',
 			'export' => 'Export',
-			//'calendar' => 'Calendar',
-			//'map' => 'Map',
 		);
 
 		/*
 		 * Database & table.
-		 * Do not instantiate database for resources, login, or logout actions.
-		*/
+		 * Do not instantiate database for login action.
+		 */
+		$this->template->set_global('database', $this->database);
+		$this->template->set_global('tables', array());
+		$this->template->set_global('table', $this->table);
 		$this->dbms = new Webdb_DBMS;
 		if ($this->request->action() !== 'login')
 		{
@@ -82,8 +83,7 @@ class Controller_WebDB extends Controller_Template
 				$this->_set_table();
 			} catch (Exception $e)
 			{
-				$this->add_flash_message($e->getMessage());
-				$this->request->redirect('login');
+				$this->add_template_message($e->getMessage());
 			}
 		}
 
@@ -100,18 +100,68 @@ class Controller_WebDB extends Controller_Template
 
 	} // _before()
 
+	/**
+	 * Set the current database name.
+	 */
 	private function _set_database()
 	{
-		$this->database = $this->dbms->get_database();
+		try
+		{
+			$this->database = $this->dbms->get_database();
+		} catch (Exception $e)
+		{
+			$this->add_template_message($e->getMessage(), 'notice');
+		}
 		if (!$this->database)
 		{
 			$this->add_template_message(
 				'Please select a database from the tabs above.',
 				'info'
 			);
+			// If only one DB, redirect to that one.
+			$dbs = $this->dbms->list_dbs();
+			if (count($dbs)==1)
+			{
+				//$this->request->redirect('index/'.$dbs[0]);
+			}
 		}
 		$this->template->set_global('database', $this->database);
+		return TRUE;
 	} // _set_database()
+
+	private function _set_table()
+	{
+		if ($this->database)
+		{
+			$this->template->tables = $this->database->get_tables(TRUE);
+			try
+			{
+				$this->table = $this->database->get_table();
+			} catch (Exception $e)
+			{
+				$this->add_template_message($e->getMessage(), 'notice');
+			}
+			if (!$this->table && count($this->database->get_tables()) > 0)
+			{
+				$this->add_template_message(
+					'Please select a table from the menu to the left.',
+					'info'
+				);
+			} elseif (!$this->table && count($this->database->get_tables()) == 0)
+			{
+				$this->add_template_message(
+					'You do not have permission to view any tables in this database.',
+					'notice'
+				);
+			}
+		} 
+//		else
+//		{
+//			$this->table = FALSE;
+//			$this->template->tables = array();
+//		}
+		$this->template->set_global('table', $this->table);
+	}
 
 	/**
 	 * Save and load query string (i.e. `$_GET`) variables from the `$_SESSION`.
@@ -165,43 +215,11 @@ class Controller_WebDB extends Controller_Template
 			{
 				$query = URL::query($_SESSION['qs']);
 				$_SESSION['qs'] = array();
-				$uri = URL::base(FALSE, TRUE).$this->request->uri().$query;
+				//$uri = URL::base(FALSE, TRUE).$this->request->uri().$query;
+				$uri = $this->request->uri().$query;
 				$this->request->redirect($uri);
 			}
 		}
-	}
-
-	private function _set_table()
-	{
-		if ($this->database)
-		{
-			try
-			{
-				$this->table = $this->database->get_table();
-			} catch (Exception $e)
-			{
-				$this->add_template_message($e->getMessage(), 'error');
-			}
-			$this->template->tables = $this->database->get_tables(TRUE);
-			if (!$this->table && count($this->database->get_tables()) > 0)
-			{
-				$this->add_template_message(
-					'Please select a table from the menu to the left.',
-					'info'
-				);
-			} elseif (!$this->table && count($this->database->get_tables()) == 0)
-			{
-				$this->add_template_message(
-					'You do not have permission to view any tables in this database.',
-					'notice'
-				);
-			}
-		} else
-		{
-			$this->table = FALSE;
-			$this->template->tables = array();
-		}
-		$this->template->set_global('table', $this->table);
 	}
 
 	/**
@@ -529,6 +547,7 @@ class Controller_WebDB extends Controller_Template
 	public function action_logout()
 	{
 		Session::instance()->destroy();
+		$this->dbms->username(NULL);
 		$this->add_flash_message('You are now logged out.', 'info');
 		$this->request->redirect('login');
 	}
