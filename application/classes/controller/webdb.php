@@ -83,6 +83,7 @@ class Controller_WebDB extends Controller_Template
 				$this->_set_table();
 			} catch (Exception $e)
 			{
+				$this->template->databases = array();
 				$this->add_template_message($e->getMessage());
 			}
 		}
