@@ -74,14 +74,13 @@ class Webdb_DBMS_Table
 				'SHOW FULL COLUMNS FROM '.$this->_db->quote_table($name),
 				FALSE
 			);
-			//$columns_info = $this->_db->list_columns($this->_name);
-			//var_dump($columnsInfo);
 			foreach ($columns_info as $column_info)
 			{
 				$column = new Webdb_DBMS_Column($this, $column_info);
 				$this->_columns[$column->get_name()] = $column;
 			}
 		}
+		//$this->_config = Kohana::config('webdb')->file_locations;
 	}
 
 	public function add_filter($column, $operator, $value)
@@ -277,7 +276,9 @@ class Webdb_DBMS_Table
 		$query = new Database_Query_Builder_Select();
 		$query->from($this->get_name());
 		$query->limit(1);
-		$query->where('id', '=', $id);
+		$pk_column = $this->get_pk_column();
+		$pk_name = (!$pk_column) ? 'id' : $pk_column->get_name();
+		$query->where($pk_name, '=', $id);
 		$row = $query->execute($this->_db)->current();
 		return $row;
 	}
@@ -480,6 +481,20 @@ class Webdb_DBMS_Table
 		}
 		return $out;
 	}
+	
+	/**
+	 * Get this table's Primary Key column.
+	 * 
+	 * @return Webdb_DBMS_Column The PK column.
+	 */
+	public function get_pk_column()
+	{
+		foreach ($this->get_columns() as $column)
+		{
+			if ($column->isPrimaryKey()) return $column;
+		}
+		return FALSE;
+	}
 
 	/**
 	 * Get a list of a table's foreign keys and the tables to which they refer.
@@ -591,7 +606,7 @@ class Webdb_DBMS_Table
 		$out .= "+-----------------------------------------+\n";
 		foreach ($this->get_columns() as $column)
 		{
-			$out .= "| " . $column . "\n";
+			$out .= "| $column \n";
 		}
 		$out .= "+-----------------------------------------+\n\n";
 		return $out;

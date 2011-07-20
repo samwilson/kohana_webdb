@@ -411,7 +411,7 @@ class Webdb_DBMS_Column
 			$ref = '';
 		}
 		$size = ($this->_size > 0) ? "($this->_size)" : '';
-		return "$this->_name $this->_type$size$pk$auto$ref\n";
+		return "$this->_name $this->_type$size$pk$auto$ref";
 	}
 
 	/**

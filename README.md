@@ -87,6 +87,9 @@ The `permissions` table schema:
 * Users can **filter** by any column and a range of operations ('contains',
   'is empty', 'equals', etc.).  This includes searching foreign keys for values
   found in the 'title column' of the foreign table.
+* The first non-primary unique key is used as a table's 'title column', and
+  displayed wherever a table is referred to from another table (i.e. from a
+  foreign key).
 
 ## Simplified BSD License
 
@@ -111,7 +114,3 @@ loss of use, data, or profits; or business interruption) however caused and on
 any theory of liability, whether in contract, strict liability, or tort
 (including negligence or otherwise) arising in any way out of the use of this
 software, even if advised of the possibility of such damage.
-
-## Notes to include somewhere in this guide.
-
-* Second column MUST be a candidate key.
