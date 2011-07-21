@@ -205,7 +205,7 @@ class Webdb_DBMS_Column
 	{
 		$db_privs = array('select','update','delete');
 		if (!in_array($privilege, $db_privs)) {
-			return TRUE;
+			return FALSE;
 		}
 		$has_priv = false;
 		$privs = explode(',', $privilege);

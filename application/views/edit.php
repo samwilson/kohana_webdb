@@ -1,4 +1,7 @@
-<?php if (!isset($row['id']) && !$table->can('insert')) return ?>
+<?php if ( !$table->get_pk_column()
+		|| !isset($row[$table->get_pk_column()->get_name()]) 
+		|| !($table->can('insert') || $table->can('update'))
+	) return ?>
 
 <?php $num_cols = 3 ?>
 
@@ -29,8 +32,8 @@
 			for ($col_num=0; $col_num<$num_cols; $col_num++):
 				if (!isset($columns[$row_num * $num_cols + $col_num])) continue;
 				$column = $columns[$row_num * $num_cols + $col_num];
-				$form_field_name = (isset($row['id']) && is_numeric($row['id']))
-					? 'data['.$row['id'].']['.$column->get_name().']'
+				$form_field_name = (isset($row[$table->get_pk_column()->get_name()]) && is_numeric($row[$table->get_pk_column()->get_name()]))
+					? 'data['.$row[$table->get_pk_column()->get_name()].']['.$column->get_name().']'
 					: 'data[new]['.$column->get_name().']';
 				?>
 		<th>
@@ -70,7 +73,7 @@
 
 
 <?php $related_tables = $table->get_referencing_tables();
-if (isset($row['id']) && count($related_tables) > 0): ?>
+if (isset($row[$table->get_pk_column()->get_name()]) && count($related_tables) > 0): ?>
 <script type="text/javascript">
 	$().ready(function(){
 		$('.related-tables h3').click(function() {
@@ -87,7 +90,7 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 				$foreign_column = $foreign['column'];
 				$foreign_table = $foreign['table'];
 				$foreign_table->reset_filters();
-				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row['id']));
+				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row[$table->get_pk_column()->get_name()]));
 				$num_foreign_records = $foreign_table->count_records();
 				$class = ($num_foreign_records > 0) ? '' : 'no-records';
 				?>
@@ -99,7 +102,7 @@ if (isset($row['id']) && count($related_tables) > 0): ?>
 			</h3>
 			<div>
 				<p class="new-record">
-				<?php $url = 'edit/'.$database->get_name().'/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row['id'];
+				<?php $url = 'edit/'.$database->get_name().'/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row[$table->get_pk_column()->get_name()];
 				echo HTML::anchor($url, 'Add a new record here.') ?>
 				</p>
 				<?php echo View::factory('datatable', array('the_table' => $foreign_table))->render() ?>

@@ -13,7 +13,7 @@
 	<thead>
 		<tr>
 
-			<?php if (in_array('id', array_keys($the_table->get_columns()))): ?>
+			<?php if ($the_table->get_pk_column()): ?>
 			<th>&nbsp;</th>
 			<?php endif ?>
 
@@ -39,13 +39,13 @@
 			foreach ($rows as $row):
 			$new_row_ident++; ?>
 		<tr>
-					<?php if (isset($row['id'])): ?>
+					<?php if ($the_table->get_pk_column()): ?>
 			<td>
 					<?php
 					if ($the_table->can('update') || $the_table->can('insert')):
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'Edit');
+						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$the_table->get_pk_column()->get_name()], 'Edit');
 					else:
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row['id'], 'View');
+						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$the_table->get_pk_column()->get_name()], 'View');
 					endif
 					?>
 			</td>

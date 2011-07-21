@@ -267,7 +267,6 @@ class Controller_WebDB extends Controller_Template
 	{
 		$id = $this->request->param('id');
 		$this->view->table = $this->table;
-		//$this->view->columns = $this->table->get_columns();
 
 		/*
 		 * Save submitted data.

@@ -193,22 +193,20 @@
 
 		<ol class="footer">
 			<li>Thank you for using
-				<?php echo HTML::anchor('guide/webdb.about', 'WebDB', array('title'=>'View the WebDB user guide')) ?>.
+				<a href="http://github.com/samwilson/kohana_webdb" title="WebDB homepage on Github">WebDB</a>.
 				Please report any bugs or feature requests through the
-				<a href="http://dev.kohanaframework.org/projects/webdb/issues" title="Go to the Kohana module repository">
-					issue tracker
-				</a>.
+				<a href="http://github.com/samwilson/kohana_webdb/issues" title="Github issue tracker">issue tracker</a>.
 			</li>
 			<li>
+				<!--
 				&copy; <a xmlns:cc="http://creativecommons.org/ns#"
 						  href="http://samwilson.id.au/"
 						  property="cc:attributionName" rel="cc:attributionURL">Sam Wilson</a>
 				2008&ndash;<?php echo date('Y') ?>.
+				-->
 				Released under the
 				<a rel="license" href="http://opensource.org/licenses/bsd-license.php">
 					Simplified BSD License</a>.
-			</li>
-			<li>
 				Built on <a href="http://kohanaframework.org/" title="Go to the Kohana homepage">Kohana</a>
 				<?php echo Kohana::VERSION ?>
 				<dfn title="Kohana codename"><?php echo Kohana::CODENAME ?></dfn>.
