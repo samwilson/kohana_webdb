@@ -220,7 +220,7 @@ class Webdb_DBMS_Table
 			$query->order_by($orderby, $this->orderdir);
 		} else
 		{
-			$query->order_by($this->orderby, $this->orderdir);
+			$query->order_by($this->get_name().'.'.$this->orderby, $this->orderdir);
 		}
 	}
 
