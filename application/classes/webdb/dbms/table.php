@@ -197,7 +197,7 @@ class Webdb_DBMS_Table
 	public function apply_ordering(&$query)
 	{
 		$this->orderby = Arr::get($_GET, 'orderby', '');
-		$this->orderdir = (Arr::get($_GET, 'orderdir', 'desc')=='asc') ? 'asc' : 'desc';
+		$this->orderdir = (Arr::get($_GET, 'orderdir')=='desc') ? 'desc' : 'asc';
 		if (!in_array($this->orderby, array_keys($this->get_columns())))
 		{
 			$this->orderby = $this->get_title_column()->get_name();
