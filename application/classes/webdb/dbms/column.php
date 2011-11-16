@@ -352,9 +352,9 @@ class Webdb_DBMS_Column
 
 	/**
 	 *
-	 * @param <type> $type_string
+	 * @param string $type_string
 	 */
-	private function parse_type($type_string)
+	public function parse_type($type_string)
 	{
 		//echo '<pre>Start: '.kohana::dump($type_string).'</pre>';
 		//exit();

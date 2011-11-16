@@ -115,10 +115,10 @@ class Controller_WebDB extends Controller_Template
 		}
 		if (!$this->database)
 		{
-			$this->add_template_message(
-				'Please select a database from the tabs above.',
-				'info'
-			);
+			$message = (count($this->dbms->list_dbs())>0)
+				? 'Please select a database from the tabs above.'	
+				: 'No databases are available.';
+			$this->add_template_message($message, 'info');
 			// If only one DB, redirect to that one.
 			$dbs = $this->dbms->list_dbs();
 			if (count($dbs)==1)

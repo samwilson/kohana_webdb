@@ -20,6 +20,9 @@ class Webdb_DBMS
 
 	/** @var Database */
 	private $_db;
+	
+	/** @var resource MySQL link identifier */
+	private $_connection;
 
 	/** @var Config */
 	private $_config;
@@ -48,18 +51,23 @@ class Webdb_DBMS
 	 * used if found in the Database config file.
 	 *
 	 * @param string $dbname The name of the database to which to connect.
-	 * @return void
-	 * @throws Webdb_DBMS_ConnectionException if unable to connect.
+	 * @return boolean True if connected (throws Exception otherwise)
+	 * @throws Exception if unable to connect.
 	 */
 	public function connect()
 	{
 		$this->_config = Kohana::config('database')->default;
-		$this->_connection = mysql_connect(
-			$this->_config['connection']['hostname'],
-			$this->username(),
-			$this->password()
-		);
-		return $this->_connection;
+		try {
+			$this->_connection = mysql_connect(
+				$this->_config['connection']['hostname'],
+				$this->username(),
+				$this->password()
+			);
+		} catch (Exception $e) {
+			$username_msg = ($this->username()) ? ' as '.$this->username() : '';
+			throw new Exception("Unable to connect to the DBMS$username_msg.");
+		}
+		return true;
 	}
 
 	/**
@@ -70,6 +78,7 @@ class Webdb_DBMS
 	 */
 	public function list_dbs()
 	{
+		if (!$this->_connection) return array();
 		if (!is_array($this->_database_names))
 		{
 			$this->_database_names = array();
