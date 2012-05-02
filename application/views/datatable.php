@@ -42,10 +42,11 @@
 					<?php if ($the_table->get_pk_column()): ?>
 			<td>
 					<?php
+					$pk_name = $the_table->get_pk_column()->get_name();
 					if ($the_table->can('update') || $the_table->can('insert')):
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$the_table->get_pk_column()->get_name()], 'Edit');
+						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name], 'Edit');
 					else:
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$the_table->get_pk_column()->get_name()], 'View');
+						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name], 'View');
 					endif
 					?>
 			</td>
