@@ -203,7 +203,7 @@ class Webdb_DBMS_Column
 	 */
 	public function _db_user_can($privilege)
 	{
-		$db_privs = array('select','update','delete');
+		$db_privs = array('select','update','insert','delete');
 		if (!in_array($privilege, $db_privs)) {
 			return FALSE;
 		}

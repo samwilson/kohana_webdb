@@ -1,7 +1,3 @@
-<?php if ( !$table->get_pk_column()
-		|| !isset($row[$table->get_pk_column()->get_name()]) 
-		|| !($table->can('insert') || $table->can('update'))
-	) return ?>
 
 <?php $num_cols = 3 ?>
 

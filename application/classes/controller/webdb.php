@@ -300,6 +300,7 @@ class Controller_WebDB extends Controller_Template
 			if (!$this->table->can('insert'))
 			{
 				$this->add_template_message('You do not have permission to add a new record to this table.');
+				$this->template->content = null;
 				return;
 			}
 			// Get default data from the database and HTTP request.
