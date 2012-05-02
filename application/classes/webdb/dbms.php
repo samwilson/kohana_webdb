@@ -53,12 +53,15 @@ class Webdb_DBMS
 	 */
 	public function connect()
 	{
-		$this->_config = Kohana::config('database')->default;
-		$this->_connection = mysql_connect(
-			$this->_config['connection']['hostname'],
-			$this->username(),
-			$this->password()
-		);
+		if (!isset($this->_connection))
+		{
+			$this->_config = Kohana::config('database')->default;
+			$this->_connection = mysql_connect(
+				$this->_config['connection']['hostname'],
+				$this->username(),
+				$this->password()
+			);
+		}
 		return $this->_connection;
 	}
 

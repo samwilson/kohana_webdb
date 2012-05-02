@@ -672,21 +672,26 @@ class Webdb_DBMS_Table
 	{
 		//exit(kohana::debug($data));
 
+		// Get columns and Primary Key name etc.
 		$columns = $this->get_columns();
+		$pk_name = $this->get_pk_column()->get_name();
+		$has_pk = isset($data[$pk_name]);
 
 		/*
 		 * Check permissions on each column.
 		*/
 		foreach ($columns as $column_name=>$column)
 		{
+			// Ignore this column if we're not trying to save it.
 			if (!isset($data[$column_name]))
 			{
 				continue;
 			}
+			
 			$can_update = $column->can('update');
 			$can_insert = $column->can('insert');
-			if ($column_name != 'id' && (
-				(!$can_update && isset($data['id'])) || (!$can_insert && !isset($data['id']))
+			if ($column_name != $pk_name && (
+				(!$can_update && $has_pk) || (!$can_insert && !$has_pk)
 			))
 			{
 				unset($data[$column_name]);
@@ -770,26 +775,25 @@ class Webdb_DBMS_Table
 		//exit(kohana::debug($data));
 
 		// Update?
-		if (isset($data['id']) && is_numeric($data['id']))
+		if ($has_pk)
 		{
-			$id = $data['id'];
-			unset($data['id']);
+			$pk_val = $data[$pk_name];
+			unset($data[$pk_name]);
 			DB::update($this->get_name())
 				->set($data)
-				->where('id', '=', $id)
+				->where($pk_name, '=', $pk_val)
 				->execute($this->_db);
-			//$this->dbAdapter->update($table, $data, "id = $id");
 		}
 		// Or insert?
 		else
 		{
-			$id = DB::insert($this->get_name())
+			$query = DB::insert($this->get_name())
 				->columns(array_keys($data))
 				->values($data)
 				->execute($this->_db);
-			$id = $id[0]; // Database::query() returns array (insert id, row count) for INSERT queries.
+			$pk_val = $query[0]; // Database::query() returns array (insert id, row count) for INSERT queries.
 		}
-		return $id;
+		return $pk_val;
 	}
 
 }
