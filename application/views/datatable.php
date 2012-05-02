@@ -39,18 +39,18 @@
 			foreach ($rows as $row):
 			$new_row_ident++; ?>
 		<tr>
-					<?php if ($the_table->get_pk_column()): ?>
+			
+			<?php if ($the_table->get_pk_column()): ?>
 			<td>
-					<?php
-					$pk_name = $the_table->get_pk_column()->get_name();
-					if ($the_table->can('update') || $the_table->can('insert')):
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name], 'Edit');
-					else:
-						echo html::anchor('edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name], 'View');
-					endif
-					?>
+				<?php
+				$pk_name = $the_table->get_pk_column()->get_name();
+				$label = ($the_table->can('update')) ? 'Edit' : 'View';
+				$url = 'edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name];
+				echo html::anchor($url, $label);
+				?>
 			</td>
-					<?php endif ?>
+			<?php endif // if ($the_table->get_pk_column()) ?>
+			
 					<?php foreach ($the_table->get_columns() as $column): ?>
 			<td class="<?php echo $column->get_type() ?>">
 				<?php $edit = FALSE;

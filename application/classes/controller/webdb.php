@@ -285,7 +285,9 @@ class Controller_WebDB extends Controller_Template
 			}
 			// Save row
 			$id = $this->table->save_row($row);
-			$this->add_template_message('Record saved.', 'info');
+			if ($id) {
+				$this->add_template_message('Record saved.', 'info');
+			}
 		}
 
 		/*

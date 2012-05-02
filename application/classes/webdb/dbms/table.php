@@ -670,12 +670,12 @@ class Webdb_DBMS_Table
 	 */
 	public function save_row($data)
 	{
-		//exit(kohana::debug($data));
+		//exit(kohana_debug::dump($data));
 
 		// Get columns and Primary Key name etc.
 		$columns = $this->get_columns();
 		$pk_name = $this->get_pk_column()->get_name();
-		$has_pk = isset($data[$pk_name]);
+		$has_pk = !empty($data[$pk_name]);
 
 		/*
 		 * Check permissions on each column.
@@ -772,13 +772,13 @@ class Webdb_DBMS_Table
 			}
 		}
 
-		//exit(kohana::debug($data));
-
 		// Update?
 		if ($has_pk)
 		{
 			$pk_val = $data[$pk_name];
 			unset($data[$pk_name]);
+			// If there's nothing left to update, give up.
+			if (empty($data)) return false;
 			DB::update($this->get_name())
 				->set($data)
 				->where($pk_name, '=', $pk_val)
