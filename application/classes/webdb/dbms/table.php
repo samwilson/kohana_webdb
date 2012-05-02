@@ -773,7 +773,7 @@ class Webdb_DBMS_Table
 		}
 
 		// Update?
-		if ($has_pk)
+		if ($has_pk && $this->get_row($data[$pk_name]))
 		{
 			$pk_val = $data[$pk_name];
 			unset($data[$pk_name]);
@@ -792,6 +792,9 @@ class Webdb_DBMS_Table
 				->values($data)
 				->execute($this->_db);
 			$pk_val = $query[0]; // Database::query() returns array (insert id, row count) for INSERT queries.
+			// Insert ID does not apply to non-auto-increment PKs, so we can
+			// use whatever was POSTed (and thus just saved):
+			if ($pk_val==0) $pk_val = $data[$pk_name];
 		}
 		return $pk_val;
 	}

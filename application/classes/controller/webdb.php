@@ -285,8 +285,10 @@ class Controller_WebDB extends Controller_Template
 			}
 			// Save row
 			$id = $this->table->save_row($row);
-			if ($id) {
-				$this->add_template_message('Record saved.', 'info');
+			if (!empty($id)) {
+				$this->add_flash_message('Record saved.', 'info');
+				$url = 'edit/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
+				$this->request->redirect($url);
 			}
 		}
 
