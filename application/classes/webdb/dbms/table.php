@@ -149,7 +149,10 @@ class Webdb_DBMS_Table
 						  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
 					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
 				}
-			}
+			} else {
+                            // Other filters will always be on thistable.column
+                            $filter['column'] = $this->get_name().'.'.$filter['column'];
+                        }
 
 			// LIKE or NOT LIKE
 			if ($filter['operator']=='like' || $filter['operator']=='not like')
