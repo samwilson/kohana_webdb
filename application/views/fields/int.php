@@ -28,16 +28,23 @@ if ($edit):
 		?>
 
 <script type="text/javascript">
-	<?php $js_field_name = str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>
+	<?php $fk_actual_value_field = str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>
 	<?php $fk_field_name = str_replace('[','_',str_replace(']','_',$form_field_name)).'_label' ?>
 	$(function() {
-		var field_to_autocomplete = '<?php echo $fk_field_name ?>';
-		$("[name='"+field_to_autocomplete+"']").autocomplete({
+		var fk_field_name = '<?php echo $fk_field_name ?>';
+		$("[name='"+fk_field_name+"']").autocomplete({
 			source: "<?php echo URL::site('autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
 			select: function(event, ui) {
-				var field_to_autocomplete = '<?php echo $js_field_name ?>';
-				$("[name='"+field_to_autocomplete+"']").val(ui.item.id);
+				var fk_actual_value_field = '<?php echo $fk_actual_value_field ?>';
+				$("[name='"+fk_actual_value_field+"']").val(ui.item.id);
 				return true;
+			},
+			change: function(event, ui) {
+				if ($(this).val().length==0) {
+					var fk_actual_value_field = '<?php echo $fk_actual_value_field ?>';
+					$("[name='"+fk_actual_value_field+"']").val('');
+					return true;
+				}
 			}
 		});
 	});

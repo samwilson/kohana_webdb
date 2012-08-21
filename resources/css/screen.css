@@ -48,6 +48,9 @@ table th.sorted img { float:right; margin-top:2px }
 /* Forms */
 form .foreign-key { background-color:#E0F8F7; border:1px #A5ACB2 solid }
 form .foreign-key-actual-value { border:0 }
+ul.ui-autocomplete { width:15em; padding:0; font-size:92% }
+ul.ui-autocomplete li { list-style-type:none }
+ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 
 
 
