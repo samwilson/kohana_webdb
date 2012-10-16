@@ -160,6 +160,13 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 
 
 /******************************************************************************/
+/* Export action */
+.export div.progress { margin:auto; text-align:center; margin:1em }
+.export #progress-bar { width:90%; margin:1em auto }
+
+
+
+/******************************************************************************/
 /* Edit action */
 .edit table.edit-form { margin:1em 0; border:0 }
 .edit table.edit-form th { text-align:right; border:0; padding:0.1em 0.5em 0.1em 0; font-size:smaller; background-color:white }

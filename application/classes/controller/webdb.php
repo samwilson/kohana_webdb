@@ -231,10 +231,16 @@ class Controller_WebDB extends Controller_Template
 	public function action_autocomplete()
 	{
 		$title_column_name = $this->table->get_title_column()->get_name();
+		$pk_column_name = $this->table->get_pk_column()->get_name();
 		if (isset($_GET['term']))
 		{
 			$this->table->reset_filters();
 			$this->table->add_filter($title_column_name, 'like', $_GET['term']);
+		}
+		elseif (isset($_GET[$pk_column_name]))
+		{
+			$this->table->reset_filters();
+			$this->table->add_filter($pk_column_name, '=', $_GET[$pk_column_name]);
 		}
 		$json_data = array();
 		foreach ($this->table->get_rows(FALSE) as $row)
@@ -325,43 +331,71 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_export()
 	{
-		// Add filters.
-		$this->table->add_GET_filters();
-
-		// Create temp CSV file.
-		$tmp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.md5(time()).'.csv';
-		$file = fopen($tmp_file, 'w');
-
-		// Add the column headers to the file.
-		$column_names = array_keys($this->table->get_columns());
-		$headers = Webdb_Text::titlecase($column_names);
-		fputcsv($file, $headers);
-
-		// Write all the data.
-		foreach ($this->table->get_rows(FALSE) as $row)
-		{
-			$line = array(); // The line to write to CSV.
-			foreach ($this->table->get_columns() as $column)
-			{
-				$edit = FALSE;
-				$new_row_ident_label = '';
-				$form_field_name = '';
-				$field = View::factory('field')
-					->bind('column', $column)
-					->bind('row', $row)
-					->bind('edit', $edit)
-					->bind('form_field_name', $form_field_name)
-					->render();
-				$line[] = trim(strip_tags(trim($field)));
-			}
-			fputcsv($file, $line);
+		$id = $this->request->param('id');
+		$exports = new WebDB_DBMS_Table($this->database, 'exports');
+		if ($id) {
+			$export = $exports->get_row($id);
+			$this->view->export = $export;
+		} else {
+			// Prepare the table to be exported.
+			$this->table->add_GET_filters();
+			$new_export = array(
+				'table_name' => $this->table->get_name(),
+				'filter_data' => serialize($this->table->get_filters()),
+				'row_count' => $this->table->count_records(),
+				'completed_count' => 0,
+			);
+			$id = $exports->save_row($new_export);
+			$url = 'export/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
+			$this->request->redirect($url);
 		}
+//
+//
+//		// Set up the export job.
+////		$export = new WebDB_DBMS_Export($this->database, 'exports');
+////		$id = $export->add_job($this->table);
+//
+//		$filter_data = serialize($this->table->get_filters());
+//		$new_job = array(
+//			'table_name' => $this->table->get_name(),
+//			'filter_data' => $filter_data,
+//			'row_count' => $this->table->count_records(),
+//			'completed_count' => 0,
+//		);
+//
+//		$query = new Database_Query_Builder_Select();
+//		$query->from('exports')
+//			->where('table_name', '=', $this->table->get_name())
+//			->where('filter_data', '=', $filter_data);
+//		$row = $query->execute($this->_db)->current();
+//		if ($row) {
+//			$new_job['id'] = $row['id'];
+//		}
+//		$id = $this->save_row($new_job);
+//
+//		// If the export is ready, send it.
+//		if ($export->complete())
+//		{
+//			// Send file to browser.
+//			$this->response->body(file_get_contents($tmp_file));
+//			$filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+//			$this->response->send_file(TRUE, $filename);
+//		} else {
+//			// Display the progress.
+//			$this->view->exports = $export->get_rows();
+//		}
 
-		// Send file to browser.
-		$this->response->body(file_get_contents($tmp_file));
-		$filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
-		$this->response->send_file(TRUE, $filename);
+	}
 
+	/**
+	 * Run an export job iteration. Generally, to be called by cron.
+	 *
+	 * @return void
+	 */
+	public function action_exportjob()
+	{
+		$export = new WebDB_DBMS_Export($this->database, 'export');
+		$export->run_job();
 	}
 
 	/**

@@ -145,7 +145,7 @@ class Webdb_DBMS_Database
 	 * Get a table object.
 	 *
 	 * @param string $tablename
-	 * @return Webdb_DBMS_Database
+	 * @return Webdb_DBMS_Table
 	 */
 	public function get_table($tablename = FALSE)
 	{
