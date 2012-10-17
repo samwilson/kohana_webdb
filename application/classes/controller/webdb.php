@@ -320,8 +320,7 @@ class Controller_WebDB extends Controller_Template
 
 	/**
 	 * Export the current table with the current filters applied.
-	 * Filters are passed as $_GET parameters, just as for the
-	 * [index](api/Controller_WebDB#action_index) action.
+	 * Filters are passed as $_GET parameters, just as for the index action.
 	 *
 	 * Each field is constructed from the standard field view, which is then
 	 * tag-stripped and trimmed.  This makes this action nice and simple, but
@@ -331,72 +330,68 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_export()
 	{
-		$id = $this->request->param('id');
-		$exports = new WebDB_DBMS_Table($this->database, 'exports');
-		if ($id) {
-			$export = $exports->get_row($id);
-			$this->view->export = $export;
-		} else {
-			// Prepare the table to be exported.
+		$id = $this->request->param('id', FALSE);
+		$export_name = ($id) ? $id : uniqid();
+		$this->view->export_name = $export_name;
+		$this->view->progress = 0;
+		if ($id)
+		{
 			$this->table->add_GET_filters();
-			$new_export = array(
-				'table_name' => $this->table->get_name(),
-				'filter_data' => serialize($this->table->get_filters()),
-				'row_count' => $this->table->count_records(),
-				'completed_count' => 0,
+
+			// Get temp file ready
+			$export_dir = Kohana::$cache_dir.DIRECTORY_SEPARATOR.'exports';
+			@mkdir($export_dir);
+			$filename = $export_dir.DIRECTORY_SEPARATOR.$export_name.'.csv';
+
+			// Send file if requested
+			if (isset($_GET['download']))
+			{
+				$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+				$this->response->send_file($filename, $download_name);
+			}
+
+			// Set up file
+			$new = file_exists($filename);
+			$file = fopen($filename, 'a');
+			if ($new)
+			{
+				// Add the column headers to the file.
+				$column_names = array_keys($this->table->get_columns());
+				$headers = Webdb_Text::titlecase($column_names);
+				fputcsv($file, $headers);
+			}
+
+			// Write data to the file
+			$rows = $this->table->get_rows();
+			foreach ($rows as $row)
+			{
+				$line = array(); // The line to write to CSV.
+				foreach ($this->table->get_columns() as $column) {
+					$edit = FALSE;
+					$form_field_name = '';
+					$field = View::factory('field')
+						->bind('column', $column)
+						->bind('row', $row)
+						->bind('edit', $edit)
+						->bind('form_field_name', $form_field_name)
+						->render();
+					$line[] = trim(strip_tags(trim($field)));
+				}
+				fputcsv($file, $line);
+			}
+
+			// Progress
+			$pagination = $this->table->get_pagination();
+			$this->view->progress = round(($pagination->current_page / $pagination->total_pages) * 100);
+			$result = array(
+				'progress' => $this->view->progress,
+				'next_page' => $pagination->next_page,
 			);
-			$id = $exports->save_row($new_export);
-			$url = 'export/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
-			$this->request->redirect($url);
-		}
-//
-//
-//		// Set up the export job.
-////		$export = new WebDB_DBMS_Export($this->database, 'exports');
-////		$id = $export->add_job($this->table);
-//
-//		$filter_data = serialize($this->table->get_filters());
-//		$new_job = array(
-//			'table_name' => $this->table->get_name(),
-//			'filter_data' => $filter_data,
-//			'row_count' => $this->table->count_records(),
-//			'completed_count' => 0,
-//		);
-//
-//		$query = new Database_Query_Builder_Select();
-//		$query->from('exports')
-//			->where('table_name', '=', $this->table->get_name())
-//			->where('filter_data', '=', $filter_data);
-//		$row = $query->execute($this->_db)->current();
-//		if ($row) {
-//			$new_job['id'] = $row['id'];
-//		}
-//		$id = $this->save_row($new_job);
-//
-//		// If the export is ready, send it.
-//		if ($export->complete())
-//		{
-//			// Send file to browser.
-//			$this->response->body(file_get_contents($tmp_file));
-//			$filename = date('Y-m-d').'_'.$this->table->get_name().'.csv';
-//			$this->response->send_file(TRUE, $filename);
-//		} else {
-//			// Display the progress.
-//			$this->view->exports = $export->get_rows();
-//		}
+			exit(json_encode($result));
 
-	}
+		} // if ($id)
 
-	/**
-	 * Run an export job iteration. Generally, to be called by cron.
-	 *
-	 * @return void
-	 */
-	public function action_exportjob()
-	{
-		$export = new WebDB_DBMS_Export($this->database, 'export');
-		$export->run_job();
-	}
+	} // public function action_export()
 
 	/**
 	 * This action is for importing a single CSV file into a single database table.
