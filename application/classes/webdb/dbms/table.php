@@ -247,16 +247,17 @@ class Webdb_DBMS_Table
 		// Then limit to the ones on the current page.
 		if ($with_pagination)
 		{
-			$pagination_query = clone $query;
-			$row_count = $pagination_query
-				->select_array(array(DB::expr('COUNT(*) AS total')))
-				->execute($this->_db)
-				->current();
-			$this->_row_count = $row_count['total'];
-			$config = array('total_items' => $this->_row_count);
-			$this->_pagination = new Pagination($config);
-			$query->offset($this->_pagination->offset);
-			$query->limit($this->_pagination->items_per_page);
+//			$pagination_query = clone $query;
+//			$row_count = $pagination_query
+//				->select_array(array(DB::expr('COUNT(*) AS total')))
+//				->execute($this->_db)
+//				->current();
+//			$this->_row_count = $row_count['total'];
+//			$config = array('total_items' => $this->_row_count);
+//			$this->_pagination = new Pagination($config);
+			$pagination = $this->get_pagination();
+			$query->offset($pagination->offset);
+			$query->limit($pagination->items_per_page);
 		}
 
 		// Select columns and do query.
@@ -357,6 +358,11 @@ class Webdb_DBMS_Table
 		if (!$this->_row_count)
 		{
 			$this->_row_count = count($this->get_rows(FALSE));
+//			$pagination_query = clone $query;
+//			$row_count = $pagination_query
+//				->select_array(array(DB::expr('COUNT(*) AS total')))
+//				->execute($this->_db)
+//				->current();
 		}
 		return $this->_row_count;
 	}

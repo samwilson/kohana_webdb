@@ -351,7 +351,7 @@ class Controller_WebDB extends Controller_Template
 			}
 
 			// Set up file
-			$new = file_exists($filename);
+			$new = !file_exists($filename);
 			$file = fopen($filename, 'a');
 			if ($new)
 			{
@@ -362,6 +362,8 @@ class Controller_WebDB extends Controller_Template
 			}
 
 			// Write data to the file
+			$pagination = $this->table->get_pagination();
+			$pagination->items_per_page = 1000;
 			$rows = $this->table->get_rows();
 			foreach ($rows as $row)
 			{
@@ -381,7 +383,6 @@ class Controller_WebDB extends Controller_Template
 			}
 
 			// Progress
-			$pagination = $this->table->get_pagination();
 			$this->view->progress = round(($pagination->current_page / $pagination->total_pages) * 100);
 			$result = array(
 				'progress' => $this->view->progress,
