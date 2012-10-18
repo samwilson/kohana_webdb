@@ -363,7 +363,7 @@ class Controller_WebDB extends Controller_Template
 
 			// Write data to the file
 			$pagination = $this->table->get_pagination();
-			$pagination->items_per_page = 1000;
+			$pagination->items_per_page = 500;
 			$rows = $this->table->get_rows();
 			foreach ($rows as $row)
 			{
