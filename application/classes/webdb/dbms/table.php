@@ -278,6 +278,10 @@ class Webdb_DBMS_Table
 	public function get_row($id)
 	{
 		$query = new Database_Query_Builder_Select();
+		foreach (array_keys($this->_columns) as $col)
+		{
+			$query->select($this->_name.'.'.$col);
+		}
 		$query->from($this->get_name());
 		$query->limit(1);
 		$pk_column = $this->get_pk_column();
@@ -357,12 +361,14 @@ class Webdb_DBMS_Table
 	{
 		if (!$this->_row_count)
 		{
-			$this->_row_count = count($this->get_rows(FALSE));
-//			$pagination_query = clone $query;
-//			$row_count = $pagination_query
-//				->select_array(array(DB::expr('COUNT(*) AS total')))
-//				->execute($this->_db)
-//				->current();
+			$query = new Database_Query_Builder_Select();
+			$count = 'COUNT('.$this->get_name().'.'.$this->get_pk_column()->get_name().')';
+			$query->select(array(DB::expr($count), 'total'));
+			$query->from($this->get_name());
+			$this->apply_filters($query);
+			$result = $query->execute($this->_db);
+			$total = $result->current();
+			$this->_row_count = $total['total'];
 		}
 		return $this->_row_count;
 	}
