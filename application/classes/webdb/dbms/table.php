@@ -150,9 +150,9 @@ class Webdb_DBMS_Table
 					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
 				}
 			} else {
-                            // Other filters will always be on thistable.column
-                            $filter['column'] = $this->get_name().'.'.$filter['column'];
-                        }
+				// Other filters will always be on thistable.column
+				$filter['column'] = $this->get_name().'.'.$filter['column'];
+			}
 
 			// LIKE or NOT LIKE
 			if ($filter['operator']=='like' || $filter['operator']=='not like')
@@ -371,6 +371,63 @@ class Webdb_DBMS_Table
 			$this->_row_count = $total['total'];
 		}
 		return $this->_row_count;
+	}
+
+	public function export()
+	{
+		$export_dir = Kohana::$cache_dir.DIRECTORY_SEPARATOR.'exports';
+		@mkdir($export_dir);
+		$filename = $export_dir.DIRECTORY_SEPARATOR.uniqid().'.csv';
+		if (Kohana::$is_windows)
+		{
+			$filename = str_replace('\\', '/', $filename);
+		}
+
+		$headers_query = new Database_Query_Builder_Select();
+		$data_query = new Database_Query_Builder_Select();
+		$headers_query->union($data_query);
+		$alias_num = 1;
+		foreach ($this->get_columns() as $col)
+		{
+			$header = "'".Webdb_Text::titlecase($col->get_name())."'";
+			$headers_query->select(DB::expr($header));
+
+			if ($col->is_foreign_key())
+			{
+				$fk1_alias = "e$alias_num";
+				$alias_num++;
+				$fk1_table = $col->get_referenced_table();
+				$data_query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER');
+				$data_query->on($this->get_name().'.'.$col->get_name(), '=', "$fk1_alias.id");
+				$select = $fk1_alias.'.'.$fk1_table->get_title_column()->get_name();
+				if ($fk1_table->get_title_column()->is_foreign_key())
+				{
+					$fk2_alias = "e$alias_num";
+					$alias_num++;
+					$fk2_table = $fk1_table->get_title_column()->get_referenced_table();
+					$data_query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER');
+					$data_query->on($fk1_alias.'.'.$fk1_table->get_title_column()->get_name(), '=', "$fk2_alias.id");
+					$select = $fk2_alias.'.'.$fk2_table->get_title_column()->get_name();
+				}
+			} else
+			{
+				$select = $this->get_name().'.'.$col->get_name();
+			}
+			$data_query->select(DB::expr("COALESCE($select, '')"));
+
+		}
+		$data_query->from($this->get_name());
+		$this->add_GET_filters();
+		$this->apply_filters($data_query);
+		$data_query->outfile($filename);
+		$headers_query->outfile();
+		$headers_query->execute($this->_db);
+
+		if (!file_exists($filename))
+		{
+			throw new Kohana_Exception("Export file not created: $filename");
+		}
+		return $filename;
 	}
 
 	/**

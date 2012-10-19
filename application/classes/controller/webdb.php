@@ -330,67 +330,77 @@ class Controller_WebDB extends Controller_Template
 	 */
 	public function action_export()
 	{
-		$id = $this->request->param('id', FALSE);
-		$export_name = ($id) ? $id : uniqid();
-		$this->view->export_name = $export_name;
-		$this->view->progress = 0;
-		if ($id)
-		{
-			$this->table->add_GET_filters();
+		$this->response->headers('Content-Encoding', 'UTF-8');
+		$this->response->headers('Content-type', 'text/csv; charset=UTF-8');
+		//$this->response->headers(''Content-Dispositionattachment; filename=Customers_Export.csv');
+		$filename = $this->table->export();
+		$this->response->body("\xEF\xBB\xBF".file_get_contents($filename));
+		//$this-> "\xEF\xBB\xBF"; // UTF-8 BOM
+		$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+		$this->response->send_file(TRUE, $download_name);
+		return;
 
-			// Get temp file ready
-			$export_dir = Kohana::$cache_dir.DIRECTORY_SEPARATOR.'exports';
-			@mkdir($export_dir);
-			$filename = $export_dir.DIRECTORY_SEPARATOR.$export_name.'.csv';
-
-			// Send file if requested
-			if (isset($_GET['download']))
-			{
-				$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
-				$this->response->send_file($filename, $download_name);
-			}
-
-			// Set up file
-			$new = !file_exists($filename);
-			$file = fopen($filename, 'a');
-			if ($new)
-			{
-				// Add the column headers to the file.
-				$column_names = array_keys($this->table->get_columns());
-				$headers = Webdb_Text::titlecase($column_names);
-				fputcsv($file, $headers);
-			}
-
-			// Write data to the file
-			$pagination = $this->table->get_pagination();
-			$pagination->items_per_page = 500;
-			$rows = $this->table->get_rows();
-			foreach ($rows as $row)
-			{
-				$line = array(); // The line to write to CSV.
-				foreach ($this->table->get_columns() as $column) {
-					$edit = FALSE;
-					$form_field_name = '';
-					$field = View::factory('field')
-						->bind('column', $column)
-						->bind('row', $row)
-						->bind('edit', $edit)
-						->bind('form_field_name', $form_field_name)
-						->render();
-					$line[] = trim(strip_tags(trim($field)));
-				}
-				fputcsv($file, $line);
-			}
-
-			// Progress
-			$this->view->progress = round(($pagination->current_page / $pagination->total_pages) * 100);
-			$result = array(
-				'progress' => $this->view->progress,
-				'next_page' => $pagination->next_page,
-			);
-			exit(json_encode($result));
-
-		} // if ($id)
+//		$id = $this->request->param('id', FALSE);
+//		$export_name = ($id) ? $id : uniqid();
+//		$this->view->export_name = $export_name;
+//		$this->view->progress = 0;
+//		if ($id)
+//		{
+//			$this->table->add_GET_filters();
+//
+//			// Get temp file ready
+//			$export_dir = Kohana::$cache_dir.DIRECTORY_SEPARATOR.'exports';
+//			@mkdir($export_dir);
+//			$filename = $export_dir.DIRECTORY_SEPARATOR.$export_name.'.csv';
+//
+//			// Send file if requested
+//			if (isset($_GET['download']))
+//			{
+//				$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
+//				$this->response->send_file($filename, $download_name);
+//			}
+//
+//			// Set up file
+//			$new = !file_exists($filename);
+//			$file = fopen($filename, 'a');
+//			if ($new)
+//			{
+//				// Add the column headers to the file.
+//				$column_names = array_keys($this->table->get_columns());
+//				$headers = Webdb_Text::titlecase($column_names);
+//				fputcsv($file, $headers);
+//			}
+//
+//			// Write data to the file
+//			$pagination = $this->table->get_pagination();
+//			$pagination->items_per_page = 500;
+//			$rows = $this->table->get_rows();
+//			foreach ($rows as $row)
+//			{
+//				$line = array(); // The line to write to CSV.
+//				foreach ($this->table->get_columns() as $column) {
+//					$edit = FALSE;
+//					$form_field_name = '';
+//					$field = View::factory('field')
+//						->bind('column', $column)
+//						->bind('row', $row)
+//						->bind('edit', $edit)
+//						->bind('form_field_name', $form_field_name)
+//						->render();
+//					$line[] = trim(strip_tags(trim($field)));
+//				}
+//				fputcsv($file, $line);
+//			}
+//
+//			// Progress
+//			$this->view->progress = round(($pagination->current_page / $pagination->total_pages) * 100);
+//			$result = array(
+//				'progress' => $this->view->progress,
+//				'next_page' => $pagination->next_page,
+//			);
+//			exit(json_encode($result));
+//
+//		} // if ($id)
 
 	} // public function action_export()
 
