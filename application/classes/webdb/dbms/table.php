@@ -413,7 +413,7 @@ class Webdb_DBMS_Table
 			{
 				$select = $this->get_name().'.'.$col->get_name();
 			}
-			$data_query->select(DB::expr("COALESCE($select, '')"));
+			$data_query->select(DB::expr("REPLACE(IFNULL($select, ''),'\r\n', '\n')"));
 
 		}
 		$data_query->from($this->get_name());

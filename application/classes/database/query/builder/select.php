@@ -23,8 +23,8 @@ class Database_Query_Builder_Select extends Kohana_Database_Query_Builder_Select
 			$outfile = ' INTO OUTFILE \''.$this->_outfile.'\''
 				.' FIELDS TERMINATED BY ","'
 				.' OPTIONALLY ENCLOSED BY \'"\''
-				//.' ESCAPED BY \'"'
-				.' LINES TERMINATED BY "\n"';
+				.' ESCAPED BY \'"\''
+				.' LINES TERMINATED BY "\r\n"';
 			$this->_sql .= $outfile;
 			($this->_sql);
 		}
