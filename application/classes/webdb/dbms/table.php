@@ -362,8 +362,7 @@ class Webdb_DBMS_Table
 		if (!$this->_row_count)
 		{
 			$query = new Database_Query_Builder_Select();
-			$count = 'COUNT(*)';
-			$query->select(array(DB::expr($count), 'total'));
+			$query->select(array(DB::expr('COUNT(*)'), 'total'));
 			$query->from($this->get_name());
 			$this->apply_filters($query);
 			$result = $query->execute($this->_db);
