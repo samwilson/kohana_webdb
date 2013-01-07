@@ -1,20 +1,10 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 // -- Environment setup --------------------------------------------------------
-
 // Load the core Kohana class
 require SYSPATH.'classes/kohana/core'.EXT;
-
-if (is_file(APPPATH.'classes/kohana'.EXT))
-{
-	// Application extends the core
-	require APPPATH.'classes/kohana'.EXT;
-}
-else
-{
-	// Load empty core extension
-	require SYSPATH.'classes/kohana'.EXT;
-}
+// Load empty core extension
+require SYSPATH.'classes/kohana'.EXT;
 
 /**
  * Set the default time zone.
@@ -71,19 +61,22 @@ if (isset($_SERVER['KOHANA_ENV']))
  *
  * The following options are available:
  *
- * - string   base_url    path, and optionally domain, of your application   NULL
- * - string   index_file  name of your index file, usually "index.php"       index.php
- * - string   charset     internal character set used for input and output   utf-8
- * - string   cache_dir   set the internal cache directory                   APPPATH/cache
- * - boolean  errors      enable or disable error handling                   TRUE
- * - boolean  profile     enable or disable internal profiling               TRUE
- * - boolean  caching     enable or disable internal caching                 FALSE
+ * - string base_url path, and optionally domain, of your application NULL
+ * - string index_file name of your index file, usually "index.php" index.php
+ * - string charset internal character set used for input and output utf-8
+ * - string cache_dir set the internal cache directory APPPATH/cache
+ * - integer cache_life lifetime, in seconds, of items cached 60
+ * - boolean errors enable or disable error handling TRUE
+ * - boolean profile enable or disable internal profiling TRUE
+ * - boolean caching enable or disable internal caching FALSE
+ * - boolean expose set the X-Powered-By header FALSE
  */
 Kohana::init(array(
-	'base_url'   => dirname($_SERVER['SCRIPT_NAME']),
-	'index_file' => '',
+	'base_url' => dirname($_SERVER['SCRIPT_NAME']),
+	'index_file' => FALSE,
 ));
 
+Cookie::$salt = 'change this salt';
 /**
  * Attach the file write to logging. Multiple writers are supported.
  */
@@ -99,9 +92,8 @@ Kohana::$config->attach(new Config_File);
  */
 Kohana::modules(array(
 	//'auth'       => MODPATH.'auth',       // Basic authentication
-	'database'   => MODPATH.'database',   // Database access
-    'pagination' => MODPATH.'pagination', // Pagination
-	//'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+	'database' => MODPATH.'database', // Database access
+	'pagination' => MODPATH.'pagination', // Pagination
 ));
 
 /**
@@ -111,9 +103,9 @@ Kohana::modules(array(
 // Main WebDB URL structure
 Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
 	->defaults(array(
-	'controller' => 'webdb',
-	'action'     => 'index',
-	'dbname'     => NULL,
-	'tablename'  => NULL,
-	'id'         => NULL
-));
+		'controller' => 'WebDB',
+		'action' => 'index',
+		'dbname' => NULL,
+		'tablename' => NULL,
+		'id' => NULL
+	));

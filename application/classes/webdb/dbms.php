@@ -58,7 +58,7 @@ class Webdb_DBMS
 	{
 		if (!isset($this->_connection))
 		{
-			$this->_config = Kohana::config('database')->default;
+			$this->_config = Kohana::$config->load('database')->default;
 			try {
 				$this->_connection = mysql_connect(
 					$this->_config['connection']['hostname'],
@@ -190,7 +190,7 @@ class Webdb_DBMS
 			'permission'    => '*',
 			'identifier'    => '*',
 		));
-		$config = Kohana::config('webdb');
+		$config = Kohana::$config->load('webdb');
 		if (!isset($config->permissions) || empty($config->permissions['table']))
 		{
 			return $default_permissions;

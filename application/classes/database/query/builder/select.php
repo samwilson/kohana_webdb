@@ -15,7 +15,7 @@ class Database_Query_Builder_Select extends Kohana_Database_Query_Builder_Select
 		return $this;
 	}
 
-	public function compile(Database $db)
+	public function compile($db = NULL)
 	{
 		parent::compile($db);
 		if ( ! empty($this->_outfile))
