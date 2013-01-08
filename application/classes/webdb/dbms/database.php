@@ -69,18 +69,14 @@ class Webdb_DBMS_Database
 	 */
 	public function list_tables($like = NULL)
 	{
-		return $this->_db->list_tables($like);
+		$cache = Cache::instance();
+		$cache_key = 'tables_in_'.$this->get_name();
+		$this->_table_names = $cache->get($cache_key);
 		if (!is_array($this->_table_names))
 		{
-			$this->_table_names = array();
-			$query = mysql_query("SHOW TABLES");
-			//exit(var_dump(mysql_fetch_assoc($query)));
-			foreach (mysql_fetch_assoc($query) as $row)
-			{
-				$this->_table_names[] = $row;
-			}
+			$this->_table_names = $this->_db->list_tables($like);
+			$cache->set($cache_key, $this->_table_names);
 		}
-		//exit(var_dump($this->_table_names));
 		return $this->_table_names;
 	}
 

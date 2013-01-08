@@ -1,4 +1,7 @@
 application/cache/*
+application/config/cache.php
+application/config/database.php
+application/config/webdb.php
 application/logs/*
 .htaccess
 nbproject/private

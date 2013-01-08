@@ -75,21 +75,33 @@ class Webdb_DBMS
 
 	/**
 	 * Get a list of all databases visible to the current database user.  The
-	 * 'information_schema' is omitted.
-	 *
+	 * 'information_schema' is omitted.  DB names are cached.
+	 * 
 	 * @return array[string] List of all available databases.
 	 */
 	public function list_dbs()
 	{
 		if (!$this->_connection) return array();
+		
+		// Check cache
+		$cache = Cache::instance();
+		$this->_database_names = $cache->get('database_names');
+		
+		// If not cached, query DB
 		if (!is_array($this->_database_names))
 		{
 			$this->_database_names = array();
 			$query = mysql_query("SHOW DATABASES", $this->_connection);
 			while ($row = mysql_fetch_row($query))
 			{
-				$this->_database_names[] = $row[0];
+				$db_name = $row[0];
+				// Exclude information_schema
+				if (strtoupper($db_name) != 'INFORMATION_SCHEMA')
+				{
+					$this->_database_names[] = $db_name;
+				}
 			}
+			$cache->set('database_names', $this->_database_names);
 		}
 		return $this->_database_names;
 	}

@@ -56,7 +56,9 @@ class Webdb_DBMS_Table
 	private $_row_count = FALSE;
 
 	/**
-	 * Create a new database table object.
+	 * Create a new database table object.  Queries the database or cache for
+	 * information about the table's columns, and creates new Webdb_DBMS_Column
+	 * objects for each.
 	 *
 	 * @param Webdb_DBMS_Database The database to which this table belongs.
 	 * @param string $name The name of the table.
@@ -69,18 +71,27 @@ class Webdb_DBMS_Table
 		if (!isset($this->_columns))
 		{
 			$this->_columns = array();
-			$columns_info = $this->_db->query(
-				Database::SELECT,
-				'SHOW FULL COLUMNS FROM '.$this->_db->quote_table($name),
-				FALSE
-			);
+			
+			// Check cache for columns info
+			$cache = Cache::instance();
+			$cache_key = $this->_database->get_name().$this->get_name().'columns_info';
+			$columns_info = $cache->get($cache_key);
+			
+			// If not cached, fetch
+			if (!$columns_info)
+			{
+				$sql = 'SHOW FULL COLUMNS FROM '.$this->_db->quote_table($name);
+				$columns_info = $this->_db->query(Database::SELECT, $sql);
+				$cache->set($cache_key, $columns_info);
+			}
+			
+			// Create column objects
 			foreach ($columns_info as $column_info)
 			{
 				$column = new Webdb_DBMS_Column($this, $column_info);
 				$this->_columns[$column->get_name()] = $column;
 			}
 		}
-		//$this->_config = Kohana::config('webdb')->file_locations;
 	}
 
 	public function add_filter($column, $operator, $value)
