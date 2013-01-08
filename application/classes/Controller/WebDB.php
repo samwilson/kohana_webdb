@@ -218,7 +218,7 @@ class Controller_WebDB extends Controller_Template
 				$_SESSION['qs'] = array();
 				//$uri = URL::base(FALSE, TRUE).$this->request->uri().$query;
 				$uri = $this->request->uri().$query;
-				$this->request->redirect($uri);
+				$this->redirect($uri);
 			}
 		}
 	}
@@ -294,7 +294,7 @@ class Controller_WebDB extends Controller_Template
 			if (!empty($id)) {
 				$this->add_flash_message('Record saved.', 'info');
 				$url = 'edit/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
-				$this->request->redirect($url);
+				$this->redirect($url);
 			}
 		}
 
@@ -456,7 +456,7 @@ class Controller_WebDB extends Controller_Template
 		if ($this->view->file->loaded() && !$this->request->param('id'))
 		{
 			$url = 'import/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$this->view->file->hash;
-			$this->request->redirect($url);
+			$this->redirect($url);
 		}
 
 		// Stage 2: Matching fields
@@ -577,7 +577,7 @@ class Controller_WebDB extends Controller_Template
 				if ($this->dbms->connect())
 				{
 					$this->add_flash_message('You are now logged in.', 'info');
-					$this->request->redirect($this->view->return_to);
+					$this->redirect($this->view->return_to);
 				} else
 				{
 					$this->add_template_message('Login failed.  Please try again.');
@@ -594,7 +594,7 @@ class Controller_WebDB extends Controller_Template
 		Session::instance()->destroy();
 		$this->dbms->username(NULL);
 		$this->add_flash_message('You are now logged out.', 'info');
-		$this->request->redirect('login');
+		$this->redirect('login');
 	}
 
 }
