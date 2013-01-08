@@ -1,4 +1,3 @@
-DirectorySlash Off
 Options -MultiViews
 
 # Turn on URL rewriting

@@ -3,5 +3,6 @@ application/config/cache.php
 application/config/database.php
 application/config/webdb.php
 application/logs/*
+application/bootstrap.php
 .htaccess
 nbproject/private
