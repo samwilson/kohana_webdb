@@ -77,11 +77,17 @@ class Webdb_DBMS_Table
 			$cache_key = $this->_database->get_name().$this->get_name().'columns_info';
 			$columns_info = $cache->get($cache_key);
 			
-			// If not cached, fetch
-			if (!$columns_info)
+			// If not cached, fetch and build an array of the raw info, then
+			// cache that
+			if (!is_array($columns_info))
 			{
+				$columns_info = array();
 				$sql = 'SHOW FULL COLUMNS FROM '.$this->_db->quote_table($name);
-				$columns_info = $this->_db->query(Database::SELECT, $sql);
+				$column_query = $this->_db->query(Database::SELECT, $sql);
+				foreach ($column_query as $column_info)
+				{
+					$columns_info[] = $column_info;
+				}
 				$cache->set($cache_key, $columns_info);
 			}
 			
@@ -525,7 +531,20 @@ class Webdb_DBMS_Table
 	 */
 	private function _get_defining_sql()
 	{
-		if (!isset($this->_definingSql))
+		// If already loaded
+		if ( ! empty($this->_definingSql))
+		{
+			return $this->_definingSql;
+		}
+		
+		// Check cache
+		$cache = Cache::instance();
+		$cache_key = $this->_database->get_name().$this->get_name().'defining_sql';
+		
+		$this->_definingSql = $cache->get($cache_key);
+		
+		// Retrieve from DB
+		if (empty($this->_definingSql))
 		{
 			$defining_sql = $this->_db->query(Database::SELECT, "SHOW CREATE TABLE `$this->_name`", TRUE);
 			if ($defining_sql->count() > 0)
@@ -545,6 +564,7 @@ class Webdb_DBMS_Table
 			{
 				throw new Kohana_Exception('Table not found: '.$this->_name);
 			}
+			$cache->set($cache_key, $defining_sql);
 			$this->_definingSql = $defining_sql;
 		}
 		return $this->_definingSql;
