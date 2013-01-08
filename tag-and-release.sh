@@ -7,7 +7,7 @@ fi
 
 TAG=$1
 echo "Creating Git tag: $TAG"
-git tag -a "$TAG"
+git tag -af "$TAG"
 
 FILENAME="webdb_$TAG.tgz"
 echo "Creating release file: $FILENAME"
