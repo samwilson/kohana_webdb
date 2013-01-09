@@ -75,17 +75,17 @@ class Controller_WebDB extends Controller_Template
 		$this->dbms = new Webdb_DBMS;
 		if ($this->request->action() !== 'login')
 		{
-//			try
-//			{
+			try
+			{
 				$this->dbms->connect();
 				$this->template->databases = $this->dbms->list_dbs();
 				$this->_set_database();
 				$this->_set_table();
-//			} catch (Exception $e)
-//			{
-//				$this->template->databases = array();
-//				$this->add_template_message('Initialisation error: '.$e->getMessage());
-//			}
+			} catch (Exception $e)
+			{
+				$this->template->databases = array();
+				$this->add_template_message('Initialisation error: '.$e->getMessage());
+			}
 		}
 
 		/*
@@ -582,9 +582,9 @@ class Controller_WebDB extends Controller_Template
 				{
 					$this->add_template_message('Login failed.  Please try again.');
 				}
-			} catch (Exception $e)
+			} catch (Database_Exception $e)
 			{
-				$this->add_template_message($e->getMessage());
+				$this->add_template_message('Unable to log in: '.$e->getMessage());
 			}
 		}
 	}

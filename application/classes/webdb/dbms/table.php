@@ -74,7 +74,7 @@ class Webdb_DBMS_Table
 			
 			// Check cache for columns info
 			$cache = Cache::instance();
-			$cache_key = $this->_database->get_name().$this->get_name().'columns_info';
+			$cache_key = 'columns_info'.$this->_database->get_name().$this->get_name().$this->_database->get_dbms()->username();
 			$columns_info = $cache->get($cache_key);
 			
 			// If not cached, fetch and build an array of the raw info, then
@@ -539,7 +539,7 @@ class Webdb_DBMS_Table
 		
 		// Check cache
 		$cache = Cache::instance();
-		$cache_key = $this->_database->get_name().$this->get_name().'defining_sql';
+		$cache_key = 'defining_sql'.$this->_database->get_name().$this->get_name().$this->get_database()->get_dbms()->username();
 		
 		$this->_definingSql = $cache->get($cache_key);
 		

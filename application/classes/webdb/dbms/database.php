@@ -16,6 +16,9 @@ class Webdb_DBMS_Database
 
 	/** @var Database The [Kohana_Database] object. */
 	private $_db;
+	
+	/** @var Webdb_DBMS The DBMS to which this database belongs. */
+	private $_dbms;
 
 	/** @var string The name of the database. */
 	private $_name;
@@ -37,8 +40,8 @@ class Webdb_DBMS_Database
 	{
 		$this->_name = $dbname;
 		$this->_tables = array();
-		$this->dbms = $dbms;
-		$this->_db = $this->dbms->get_database_driver();
+		$this->_dbms = $dbms;
+		$this->_db = $this->_dbms->get_database_driver();
 	}
 
 	/**
@@ -49,6 +52,16 @@ class Webdb_DBMS_Database
 	public function get_db()
 	{
 		return $this->_db;
+	}
+	
+	/**
+	 * Get the DBMS object to which this database belongs.
+	 * 
+	 * @return WebDB_DBMS
+	 */
+	public function get_dbms()
+	{
+		return $this->_dbms;
 	}
 
 	/**
@@ -70,7 +83,7 @@ class Webdb_DBMS_Database
 	public function list_tables($like = NULL)
 	{
 		$cache = Cache::instance();
-		$cache_key = 'tables_in_'.$this->get_name();
+		$cache_key = 'tables'.$this->get_name().$this->_dbms->username();
 		$this->_table_names = $cache->get($cache_key);
 		if (!is_array($this->_table_names))
 		{
@@ -129,7 +142,7 @@ class Webdb_DBMS_Database
 	public function get_permissions()
 	{
 		$out = array();
-		foreach ($this->dbms->get_permissions() as $perm) {
+		foreach ($this->_dbms->get_permissions() as $perm) {
 			if ($perm['database_name']=='*' OR $perm['database_name']==$this->_name) {
 				$out[] = $perm;
 			}

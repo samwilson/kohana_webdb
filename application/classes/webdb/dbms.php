@@ -67,7 +67,7 @@ class Webdb_DBMS
 				);
 			} catch (Exception $e) {
 				$username_msg = ($this->username()) ? ' as '.$this->username() : '';
-				throw new Exception("Unable to connect to the DBMS$username_msg.");
+				throw new Database_Exception("Unable to connect to the DBMS$username_msg.");
 			}
 		}
 		return true;
@@ -85,7 +85,8 @@ class Webdb_DBMS
 		
 		// Check cache
 		$cache = Cache::instance();
-		$this->_database_names = $cache->get('database_names');
+		$cache_key = 'database_names'.$this->username();
+		$this->_database_names = $cache->get($cache_key);
 		
 		// If not cached, query DB
 		if (!is_array($this->_database_names))
@@ -101,7 +102,7 @@ class Webdb_DBMS
 					$this->_database_names[] = $db_name;
 				}
 			}
-			$cache->set('database_names', $this->_database_names);
+			$cache->set($cache_key, $this->_database_names);
 		}
 		return $this->_database_names;
 	}
