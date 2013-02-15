@@ -8,7 +8,7 @@
 		<tbody>
 			<tr>
 				<th><?php echo form::label('username','Username:')?></th>
-				<td><?php echo form::input('username', NULL, array('id'=>'focus-me')) ?></td>
+				<td><?php echo form::input('username', $username, array('id'=>'focus-me')) ?></td>
 			</tr>
 			<tr>
 				<th><?php echo form::label('password','Password:')?></th>

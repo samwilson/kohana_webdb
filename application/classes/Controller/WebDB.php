@@ -81,8 +81,13 @@ class Controller_WebDB extends Controller_Template
 				$this->template->databases = $this->dbms->list_dbs();
 				$this->_set_database();
 				$this->_set_table();
-			} catch (Exception $e)
+			} catch (Database_Exception $e)
 			{
+				if (!Auth::instance()->logged_in())
+				{
+					$this->add_flash_message('Unable to connect.  Please log in.');
+					$this->redirect('login');
+				}
 				$this->template->databases = array();
 				$this->add_template_message('Initialisation error: '.$e->getMessage());
 			}
@@ -271,6 +276,10 @@ class Controller_WebDB extends Controller_Template
 
 	public function action_edit()
 	{
+		if (!$this->table) {
+			$this->template->content = null;
+			return;
+		}
 		$id = $this->request->param('id');
 		$this->view->table = $this->table;
 
@@ -496,10 +505,11 @@ class Controller_WebDB extends Controller_Template
 	{
 		$this->view->columns = array();
 		$this->view->filters = array();
-		if (!$this->table)
-		{
+		if (!$this->table) {
+			$this->template->content = null;
 			return;
 		}
+
 		// The permitted filter operators.
 		$this->view->operators = $this->table->get_operators();
 		foreach ($this->table->get_columns() as $col)
@@ -518,82 +528,53 @@ class Controller_WebDB extends Controller_Template
 		);
 	}
 
-	/**
-	 * Serve up static resource files such as CSS, Javascript, or images. This
-	 * controller copied from the userguide and modified.
-	 *
-	 * @link http://github.com/kohana/userguide/blob/19da863d48a995eb79cc2b67fd9705b17f2f2451/classes/controller/userguide.php#L166
-	 * @return void
-	 */
-	public function action_media()
-	{
-		// Get the file path from the request
-		$file = $this->request->param('file');
-
-		// Find the file extension
-		$ext = pathinfo($file, PATHINFO_EXTENSION);
-
-		// Remove the extension from the filename
-		$file = substr($file, 0, -(strlen($ext) + 1));
-
-		$filename = Kohana::find_file('media/webdb', $file, $ext);
-		if ($filename)
-		{
-
-			// Send the file content as the response
-			$this->auto_render = FALSE;
-			$this->request->response = file_get_contents($filename);
-
-			// Set the proper headers to allow caching
-			$this->request->headers['Content-Type']   = File::mime_by_ext($ext);
-			$this->request->headers['Content-Length'] = filesize($filename);
-			$this->request->headers['Last-Modified']  = date('r', filemtime($filename));
-		}
-		else
-		{
-			// Return a 404 status
-			$this->request->status = 404;
-			$this->request->headers['Content-Type'] = 'text/plain';
-			$this->template = '404 Not Found';
-		}
-
-	}
-
 	public function action_login()
 	{
 		$this->template->set_global('database', FALSE);
 		$this->template->set_global('table', FALSE);
 		$this->template->set_global('databases', array());
 		$this->template->set_global('tables', array());
+		$this->view->username = '';
 		$this->view->return_to = Arr::get($_REQUEST, 'return_to', '');
-		if (Arr::get($_POST, 'login', FALSE))
+		if ($this->request->post('login') !== NULL)
 		{
-			$username = trim(Arr::get($_POST, 'username', ''));
-			$password = trim(Arr::get($_POST, 'password', ''));
-			try
+			Auth::instance()->logout(); // Just in case we're logged in.
+			$this->view->username = trim($this->request->post('username'));
+			$password = trim($this->request->post('password'));
+			Auth::instance()->login($this->view->username, $password);
+			if (Auth::instance()->logged_in())
 			{
-				$this->dbms->username($username);
-				$this->dbms->password((empty($password))?NULL:$password);
-				if ($this->dbms->connect())
+				try
 				{
+					$this->dbms->refresh_cache();
 					$this->add_flash_message('You are now logged in.', 'info');
-					$this->redirect($this->view->return_to);
-				} else
+					Kohana::$log->add(Kohana_Log::INFO, $this->view->username.' logged in.');
+				} catch (Exception $e)
 				{
-					$this->add_template_message('Login failed.  Please try again.');
+					$msg = 'Unable to log in as '.$this->view->username.'. '.$e->getMessage();
+					Kohana::$log->add(Kohana_Log::INFO, $msg);
 				}
-			} catch (Database_Exception $e)
+				$this->redirect($this->view->return_to);
+			} else
 			{
-				$this->add_template_message('Unable to log in: '.$e->getMessage());
+				Kohana::$log->add(Kohana_Log::INFO, 'Failed log in: '.$this->view->username);
+				$this->add_template_message('Login failed.  Please try again.');
 			}
-		}
+		} // if ($this->request->post('login') !== NULL)
 	}
 
 	public function action_logout()
 	{
-		Session::instance()->destroy();
-		$this->dbms->username(NULL);
-		$this->add_flash_message('You are now logged out.', 'info');
+		if (Auth::instance()->logged_in())
+		{
+			$log_message = Auth::instance()->get_user().' logged out.';
+			Kohana::$log->add(Kohana_Log::INFO, $log_message);
+			Auth::instance()->logout();
+			Session::instance()->destroy();
+			$this->add_flash_message('You are now logged out.', 'info');
+		} else {
+			$this->add_flash_message('You were not logged in.', 'notice');
+		}
 		$this->redirect('login');
 	}
 

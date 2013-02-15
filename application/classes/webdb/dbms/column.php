@@ -137,61 +137,18 @@ class Webdb_DBMS_Column
 	 */
 	private function _app_user_can($priv_type)
 	{
-		//Kohana::$log->add('DEBUG', "Checking whether current application user "
-		//	."can *$priv_type* ".$this->_table->get_database()->get_name()
-		//	.'.'.$this->_table->get_name());
 		foreach ($this->_table->get_permissions() as $perm) {
-			$can_column = $perm['column_names']=='*' || strpos($this->_name, $perm['column_names'])!==FALSE;
+			$columns = explode(',', $perm['column_names']);
+			$can_column = $perm['column_names']=='*' || in_array($this->_name, $columns);
 			$can_permission = $perm['permission']=='*' || stripos($perm['permission'], $priv_type)!==FALSE;
 			$can_identifier = $perm['identifier']=='*'
 				|| $perm['identifier']==Auth::instance()->get_user()
 				|| Auth::instance()->logged_in($perm['identifier']);
-			//Kohana::$log->add('DEBUG', "can_column = $can_column; can_permission = $can_permission; can_identifier = $can_identifier");
 			if ($can_column && $can_permission && $can_identifier) {
 				return TRUE;
 			}
 		}
 		return FALSE;
-		/*
-		$config = kohana::config('webdb')->permissions;
-		if (empty($config['table']))
-		{
-			Kohana::$log->add(Kohana::INFO, 'No permissions table specified, assuming all permissions.');
-			return TRUE;
-		}
-		$db = $this->_table->get_database();
-		$query = DB::select('identifier')
-			->from($config['database'].'.'.$config['table'])
-			->where('database_name', 'IN', array($db->get_name(), '*'))
-			->and_where('table_name', 'IN', array($this->_table->get_name(), '*'))
-			->and_where_open()
-			->where(DB::expr("LOCATE('$this->_name', column_names)"), '!=', 0)
-			->or_where('column_names', 'IS', NULL)
-			->and_where_close()
-			->and_where('permission', 'IN', array($priv_type, '*'));
-		$sql = $query->compile($this->_table->get_database()->get_db());
-		Kohana::$log->add(Kohana::DEBUG, $sql);
-		$identifiers = $query->execute($db->get_db())->as_array('identifier');
-		$identifiers = array_keys($identifiers);
-		// Check for the wildcard, or username.
-		if (in_array('*', $identifiers) || in_array(Auth::instance()->get_user(), $identifiers))
-		{
-			Kohana::$log->add(Kohana::INFO, 'User (or wildcard) is listed in identifiers.');
-			return TRUE;
-		}
-		// Check for any of this user's roles.
-		foreach ($identifiers as $identifier)
-		{
-			if (Auth::instance()->logged_in($identifier))
-			{
-				Kohana::$log->add(Kohana::INFO, "One of user's groups is listed in identifiers.");
-				return TRUE;
-			}
-		}
-		Kohana::$log->add(Kohana::INFO, 'User does not have privilege.');
-		return FALSE;
-		 *
-		 */
 	}
 
 	/**

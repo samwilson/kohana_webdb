@@ -62,21 +62,21 @@
 			});
 		</script>
 
-    </head>
+	</head>
 
 
-    <body class="<?php echo $controller.' '.$action ?>">
+	<body class="<?php echo $controller.' '.$action ?>">
 
-        <div class="header">
+		<div class="header">
 			<p class="auth">
-				<?php if ($username = Session::instance()->get('username')): ?>
-				Logged in as <?php echo $username ?>.
+				<?php if (Auth::instance()->logged_in()): ?>
+				Logged in as <?php echo Auth::instance()->get_user() ?>.
 					<?php echo HTML::anchor('logout','[Log out]') ?>
 				<?php else: ?>
 					<?php echo HTML::anchor('login?return_to='.urlencode(URL::base(Request::current())),'[Log in]') ?>
 				<?php endif ?>
 			</p>
-            <h1>
+			<h1>
 				<?php echo HTML::anchor('', 'WebDB') ?>
 				<?php if ($database)
 				{
@@ -198,14 +198,8 @@
 				<a href="http://github.com/samwilson/kohana_webdb/issues" title="Github issue tracker">issue tracker</a>.
 			</li>
 			<li>
-				<!--
-				&copy; <a xmlns:cc="http://creativecommons.org/ns#"
-						  href="http://samwilson.id.au/"
-						  property="cc:attributionName" rel="cc:attributionURL">Sam Wilson</a>
-				2008&ndash;<?php echo date('Y') ?>.
-				-->
 				Released under the
-				<a rel="license" href="http://opensource.org/licenses/bsd-license.php">
+				<a rel="license" href="https://github.com/samwilson/kohana_webdb#simplified-bsd-license">
 					Simplified BSD License</a>.
 				Built on <a href="http://kohanaframework.org/" title="Go to the Kohana homepage">Kohana</a>
 				<?php echo Kohana::VERSION ?>

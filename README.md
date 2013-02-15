@@ -18,8 +18,13 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 
 ## Quick Start
 
-1. Enable the module in `bootstrap.php`;
-2. Set up authentication and authorization sources:
+1. Download and uncompress in a web-accessible location.
+2. Copy application/bootstrap.dist.php to application/bootstrap.php and edit the
+   basic configuration therein.
+3. Copy at a configuration files:
+   `APPPATH/config/database.php` to `APPPATH/config/database.php`,
+   `APPPATH/config/database.php` to `APPPATH/config/database.php`,
+3. Set up database information and an authentication source:
    1. Set username and password to NULL in `APPPATH/application/config/database.php`,
       and Auth driver to `'db'` in `APPPATH/application/config/auth.php`;
    2. **Or** set all credentials in `APPPATH/application/config/database.php`
@@ -30,15 +35,27 @@ make it as easy as possible to enter data.  Many other features make WebDB a
    for your chosen Auth driver.
 3. That's it!  You can now log in, and unless you set up the additional
    WebDB-specific user authorization measures (described below), you will have
-   complete access to view and modify everything.
+   complete access to view and modify everything (depending on your DB-level
+   authorization).
+
+## Configuration
+
+The following configuration files are required:
+
+* Copy `MODPATH/cache/config/database.php` to `APPPATH/cache/auth.php`
+* Copy `MODPATH/auth/config/auth.php` to `APPPATH/config/auth.php`
+
+These other config files are not required unless you wish to change from the default
+values:
+
+* Copy `MODPATH/database/config/database.php` to `APPPATH/config/database.php`
+* Copy `APPPATH/config/webdb.dist.php` to `APPPATH/config/webdb.php`
+* Copy `MODPATH/kadldap/config/kadldap.php` to `APPPATH/config/kadldap.php`
 
 ## Schema Structure and Nomenclature
 
-* Every table should have an autoincrementing integer primary key called `id`.
-  It is planned that this requirement be dropped in the future, and that WebDB
-  will work with any single-column primary key whos values can be contained in a
-  URL (for that is the reason for the integer limitation; the 'id' name
-  limitation, on the other hand, has no justification).
+For its records be edited or viewed, tables should have single-column primary
+keys, with values that can be included in URLs.  For example, autoincrementing integers.
 
 ## Access Control
 
@@ -48,25 +65,27 @@ file, user input, or elsewhere (such as an LDAP server) — and are generally a
 combination of these.  How they are combined, and what the options are for
 further refining users' permissions, are detailed below.
 
-1. If valid connection details are provided in
-   `APPPATH/application/config/database.php` then these will be used to connect
-   to the database.
-2. If not, the user will be prompted for a username and password and these will
-   be used to connect.
-3. If a connection is made with credentials from the configuration file, then it
-   is most likely that there will be further application-level access control.
-   At this point, a user can log in and have complete access to everything.
-4. With the addition of the `permissions` table to the system, WebDB
-   will run with full *table-* and *row-level* user permissions.  This means
-   that an unauthenticated user will see nothing by default (unless the wildcard
-  `*` is specified for some permissions), and the site administrator must
-   explicitly grant all privileges.
+1. If valid connection details are provided in `APPPATH/config/database.php`
+   then these will be used to connect to the database.  The user will at this
+   point have all of the permissions of the database user.  Note that if the
+   MySQL anonymous user (who has an empty username) is present, then its access
+   will apply at this point.
+2. WebDB user authentication is handled by the Auth module, and so any drivers
+   for that module can be used.  The DB driver, provided with WebDB, can be used
+   to authenticate as MySQL users.
+3. If a valid MySQL user is given in the Database configuration file, and a
+   driver other than DB is selected in the Auth configuration file, then users
+   can authenticate against that other driver, and if logged in will have all of
+   the permissions of the MySQL user.
+4. With the addition of 'permissions' tables to the system, WebDB will run with
+   full *table-* and *row-level* user permissions.  This means that an
+   unauthenticated user will see nothing by default (unless the wildcard `*` is
+   specified for some permissions), and the site administrator must explicitly
+   grant all privileges.
 
-[!!] More information about the permissions system will be coming soon.
+The `webdb_permissions` table schema:
 
-The `permissions` table schema:
-
-    CREATE TABLE IF NOT EXISTS `permissions` (
+    CREATE TABLE IF NOT EXISTS `webdb_permissions` (
         `id`            int(5)        NOT NULL PRIMARY KEY AUTO_INCREMENT,
         `database_name` varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single database name, or an asterisk to denote all databases.',
         `table_name`    varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single table name, or an asterisk to denote all tables.',
@@ -75,6 +94,11 @@ The `permissions` table schema:
         `permission`    enum('*','Select','Insert','Update','Delete','Import','Export') NOT NULL DEFAULT '*' COMMENT 'The permission that is being assigned (the asterisk denotes all).',
         `identifier`    varchar(65)   NOT NULL DEFAULT '*' COMMENT 'A single username or a role name, or asterisk to denote ALL databases.'
     ) COMMENT 'User permissions on databases, tables, and/or rows.';
+
+The name of this table can be changed in the WebDB configuration file at
+`APPPATH/config/webdb.php`.  If no database is set in the config, the table must
+be present in the current database.  If it is not, the permissions of the MySQL
+user will be used.
 
 ## Other Features
 

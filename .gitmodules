@@ -13,3 +13,6 @@
 [submodule "modules/auth"]
 	path = modules/auth
 	url = https://github.com/kohana/auth.git
+[submodule "modules/kadldap"]
+	path = modules/kadldap
+	url = https://github.com/samwilson/kohana_kadldap.git

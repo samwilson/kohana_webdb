@@ -4,8 +4,8 @@ return array(
 	
 	// The source for the 'application' permissions.
 	'permissions' => array(
-		'database' => 'webdb',
-		'table' => 'permissions',
+		'database' => NULL,
+		'table' => 'webdb_permissions',
 	),
 	
 );

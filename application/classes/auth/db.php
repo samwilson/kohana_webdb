@@ -29,7 +29,7 @@
  *         ),
  *     );
  *
- * (Of course, if your hast and database names match the defaults as given in
+ * (Of course, if your host and database names match the defaults as given in
  * `MODPATH/database/config/database.php` then you don't need your own Database
  * config file at all!  How easy is that?!)
  *
@@ -38,7 +38,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Auth_Db extends Webdb_Auth_Db
+class Auth_DB extends WebDB_Auth_DB
 {
 
 }

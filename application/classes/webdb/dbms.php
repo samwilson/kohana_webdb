@@ -31,26 +31,27 @@ class Webdb_DBMS
 	public $logged_in = FALSE;
 
 	/**
+	 * Construct the DBMS object, including loading database configuration.
 	 */
 	public function __construct()
 	{
+		$this->_config = Kohana::$config->load('database')->default;
 	}
 
 	/**
 	 * Connect to the DBMS.
 	 *
-	 *  1. If no `$dbname` is specified, try to connect to the database named in
-	 *     the [Database] config file with the credentials from the same.  If this
-	 *     doesn't work, try connecting to the same database with credentials
-	 *     garnered from the [Auth] instance.  If this doesn't work (or,
-	 *     obviously, if there is no Auth) throw an exception.
+	 *  1. Try to connect to the database host named in the [Database] config
+	 *     file with the credentials from same.  If this doesn't work, try
+	 *     connecting to the same place with credentials garnered from the
+	 *     [Auth] instance.  If this doesn't work (or, obviously, if there is no
+	 *     Auth) throw an exception.
 	 *  2. When a `$dbname` is provided, repeat the above, but ignore any
 	 *     database name given in the config file.
 	 *
 	 * Also, if a database name is provided, then a group of the same name is
 	 * used if found in the Database config file.
 	 *
-	 * @param string $dbname The name of the database to which to connect.
 	 * @return boolean True if connected (throws Exception otherwise)
 	 * @throws Exception if unable to connect.
 	 */
@@ -58,16 +59,13 @@ class Webdb_DBMS
 	{
 		if (!isset($this->_connection))
 		{
-			$this->_config = Kohana::$config->load('database')->default;
 			try {
-				$this->_connection = mysql_connect(
-					$this->_config['connection']['hostname'],
-					$this->username(),
-					$this->password()
-				);
+				$hostname = $this->_config['connection']['hostname'];
+				$this->_connection = mysql_connect($hostname, $this->username(), $this->password());
 			} catch (Exception $e) {
-				$username_msg = ($this->username()) ? ' as '.$this->username() : '';
-				throw new Database_Exception("Unable to connect to the DBMS$username_msg.");
+				$message = 'Unable to connect to the DBMS as '.$this->username();
+				throw new Database_Exception($message);
+				
 			}
 		}
 		return true;
@@ -77,19 +75,25 @@ class Webdb_DBMS
 	 * Get a list of all databases visible to the current database user.  The
 	 * 'information_schema' is omitted.  DB names are cached.
 	 * 
+	 * @param boolean $refresh_cache Don't use the cache, but rebuild it.
 	 * @return array[string] List of all available databases.
 	 */
-	public function list_dbs()
+	public function list_dbs($refresh_cache = FALSE)
 	{
+		// Start a new benchmark
+		if (Kohana::$profiling === TRUE)
+		{
+			$benchmark = Profiler::start('WebDB', __FUNCTION__);
+		}
 		if (!$this->_connection) return array();
 		
 		// Check cache
 		$cache = Cache::instance();
-		$cache_key = 'database_names'.$this->username();
+		$cache_key = 'database_names_'.Auth::instance()->get_user();
 		$this->_database_names = $cache->get($cache_key);
 		
 		// If not cached, query DB
-		if (!is_array($this->_database_names))
+		if (!is_array($this->_database_names) || $refresh_cache)
 		{
 			$this->_database_names = array();
 			$query = mysql_query("SHOW DATABASES", $this->_connection);
@@ -102,53 +106,60 @@ class Webdb_DBMS
 					$this->_database_names[] = $db_name;
 				}
 			}
+			Kohana::$log->add(Kohana_Log::DEBUG, "Caching DB names under $cache_key.");
 			$cache->set($cache_key, $this->_database_names);
 		}
+		// Stop benchmark
+		if (isset($benchmark)) Profiler::stop($benchmark);
+		// Return DB names
 		return $this->_database_names;
 	}
 
 	/**
-	 * Get or set password, including saving it in Session.
-	 *
-	 * @param string $password
-	 * @return void|string Nothing if setting; the username if getting.
+	 * Refresh all cached DB metadata.  Called when a user logs in, or
+	 * permissions are changed, or any other times when the visible data is
+	 * liable to have been changed.
+	 * 
+	 * @return void
 	 */
-	public function password($password = FALSE)
+	public function refresh_cache()
 	{
-		if ($password !== FALSE)
+		if (!$this->_connection)
 		{
-			$this->_config['connection']['password'] = $password;
-			Session::instance()->set('password', $password);
-		} else
-		{
-			if (Session::instance()->get('password', FALSE))
-			{
-				$this->_config['connection']['password'] = Session::instance()->get('password');
-			}
-			return $this->_config['connection']['password'];
+			$this->connect();
 		}
+		$this->list_dbs(TRUE);
 	}
 
 	/**
-	 * Get or set username, including saving it in Session.
-	 * 
-	 * @param string $username
+	 * Get password from config or Auth.
+	 *
 	 * @return void|string Nothing if setting; the username if getting.
 	 */
-	public function username($username = FALSE)
+	public function password()
 	{
-		if ($username!==FALSE)
+		if (empty($this->_config['connection']['password']))
 		{
-			$this->_config['connection']['username'] = $username;
-			Session::instance()->set('username', $username);
-		} else
-		{
-			if (Session::instance()->get('username', FALSE))
-			{
-				$this->_config['connection']['username'] = Session::instance()->get('username');
-			}
-			return $this->_config['connection']['username'];
+			$auth = Auth::instance();
+			$password = $auth->password($auth->get_user());
+			$this->_config['connection']['password'] = $password;
 		}
+		return $this->_config['connection']['password'];
+	}
+
+	/**
+	 * Get username from config or Auth.  If it's retrieved from Auth, the DB
+	 * config is updated with this value.
+	 * 
+	 * @return string The username
+	 */
+	public function username()
+	{
+		if (empty($this->_config['connection']['username']))
+		{
+			$this->_config['connection']['username'] = Auth::instance()->get_user();
+		}
+		return $this->_config['connection']['username'];
 	}
 
 	/**
@@ -204,12 +215,33 @@ class Webdb_DBMS
 			'identifier'    => '*',
 		));
 		$config = Kohana::$config->load('webdb');
+
+		// See if WebDB permissions are being used.
 		if (!isset($config->permissions) || empty($config->permissions['table']))
 		{
 			return $default_permissions;
 		}
+
+		// Fully-qualify the database name.
+		$db_name = '';
+		if (!empty($config->permissions['database'])) 
+		{
+			$db_name = $config->permissions['database'].'.';
+		}
+
+		// For individual permissions tables per database, see if the
+		// permissions table exists in the current database.
+		if (empty($db_name) && !empty($config->permissions['table'])) {
+			if ($current_db = $this->get_database()) {
+				if (!in_array($config->permissions['table'], $current_db->list_tables())) {
+					return $default_permissions;
+				}
+			}
+		}
+
+		// Finally, fetch the permissions rows.
 		$query = new Database_Query_Builder_Select();
-		$query->from($config['database'].'.'.$config['table']);
+		$query->from($db_name.$config->permissions['table']);
 		$query->where('identifier', 'IN', array(Auth::instance()->get_user(), '*'));
 		$rows = $query->execute($this->_db)->as_array();
 		return $rows;

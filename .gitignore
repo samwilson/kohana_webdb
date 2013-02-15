@@ -1,7 +1,6 @@
 application/cache/*
-application/config/cache.php
-application/config/database.php
-application/config/webdb.php
+application/config/*
+!application/config/*.dist.php
 application/logs/*
 application/bootstrap.php
 .htaccess

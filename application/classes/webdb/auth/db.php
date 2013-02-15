@@ -8,10 +8,23 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_Auth_Db extends Webdb_Auth
+class Webdb_Auth_DB extends Auth
 {
 
-	private $_db_password_session_suffix = '_dbpass';
+	/** @var string The key under which the password is stored. */
+	private $_db_password_session_key;
+
+	/**
+	 * Loads Session and configuration options.
+	 *
+	 * @param   array  $config  Config Options
+	 * @return  void
+	 */
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		$this->_db_password_session_key = $this->_config['session_key'].'_dbpass';
+	}
 
 	/**
 	 *
@@ -19,51 +32,36 @@ class Webdb_Auth_Db extends Webdb_Auth
 	 * @param string $password
 	 * @param void   $remember NOT USED
 	 */
-
 	protected function _login($username, $password, $remember)
 	{
-		try
+		$config = Kohana::$config->load('database')->default;
+		$server = $config['connection']['hostname'];
+		$connected = @mysql_connect($server, $username, $password);
+		if ($connected)
 		{
-			$this->_session->set($this->_config['session_key'], $username);
-			$this->_session->set($this->_config['session_key'].$this->_db_password_session_suffix, $password);
-			$db = new Webdb_DBMS;
+			// Save password
+			$this->_session->set($this->_db_password_session_key, $password);
+			// Finish loggin in
 			return $this->complete_login($username);
-		} catch (Webdb_DBMS_ConnectionException $e)
-		{
-			$this->_session->delete($this->_config['session_key']);
-			$this->_session->delete($this->_config['session_key'].$this->_db_password_session_suffix);
-			throw $e;
 		}
-		/*
-		$config = kohana::config('database')->default;
-		$config['connection']['password'] = $password;
-		$config['connection']['username'] = $username;
-		unset(Database::$instances['default']);
-		//exit(__FILE__.__LINE__.kohana::debug($config));
-		$db = Database::instance('default', $config);
-		try
-		{
-			$db->connect();
-			$this->_session->set($this->_config['session_key'].$this->_db_password_session_suffix, $password);
-			return $this->complete_login($username);
-		} catch (Exception $e)
-		{
-			throw new Kohana_Exception('Unable to connect to DBMS.');
-			//return FALSE;
-		}
-		 *
-		*/
-
+		// Log in failed
+		return FALSE;
 	}
 
+	/**
+	 * Get the password for the currently logged in user.
+	 * 
+	 * @param string $username NOT USED
+	 * @return null|string The password, or NULL if the user has not logged in.
+	 */
 	public function password($username)
 	{
-		return $this->_session->get($this->_config['session_key'].$this->_db_password_session_suffix);
+		return $this->_session->get($this->_db_password_session_key);
 	}
 
 	public function check_password($password)
 	{
-
+		
 	}
 
 }
