@@ -100,7 +100,7 @@ class WebDB_DBMS_Table
 		}
 	}
 
-	public function add_filter($column, $operator, $value)
+	public function add_filter($column, $operator, $value, $raw = FALSE)
 	{
 		$valid_columm = in_array($column, array_keys($this->_columns));
 		$valid_operator = in_array($operator, array_keys($this->_operators));
@@ -109,8 +109,9 @@ class WebDB_DBMS_Table
 		if ($valid_columm && $valid_operator && $valid_value) {
 			$this->_filters[] = array(
 				'column'    => $column,
-				'operator' => $operator,
-				'value'     => trim($value)
+				'operator'  => $operator,
+				'value'     => trim($value),
+				'raw'       => $raw,
 			);
 		}
 	}
@@ -145,6 +146,12 @@ class WebDB_DBMS_Table
 		$fk1_alias = '';
 		foreach ($this->_filters as $filter)
 		{
+			// 'Raw' filters don't require translation
+			if ($filter['raw'] === TRUE)
+			{
+				$query->where($filter['column'], $filter['operator'], $filter['value']);
+				continue;
+			}
 
 			// FOREIGN KEYS
 			$column = $this->_columns[$filter['column']];

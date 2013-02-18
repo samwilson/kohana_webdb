@@ -86,7 +86,10 @@ if (isset($row[$table->get_pk_column()->get_name()]) && count($related_tables) >
 				$foreign_column = $foreign['column'];
 				$foreign_table = $foreign['table'];
 				$foreign_table->reset_filters();
-				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row[$table->get_pk_column()->get_name()]));
+				$this_pk = $table->get_pk_column()->get_name();
+				$foreign_pk = $foreign_table->get_pk_column()->get_name();
+				$foreign_table->add_filter($foreign_column, '=', $row[$this_pk], TRUE);
+				//$foreign_table->add_filter($foreign_column, '=', $table->get_title($row[$table->get_pk_column()->get_name()]));
 				$num_foreign_records = $foreign_table->count_records();
 				$class = ($num_foreign_records > 0) ? '' : 'no-records';
 				?>
