@@ -7,12 +7,12 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_DBMS_Table
+class WebDB_DBMS_Table
 {
 
 	/** @var Database The Database instance in use. */
 	private $_db;
-	/** @var Webdb_DBMS_Database The database to which this table belongs. */
+	/** @var WebDB_DBMS_Database The database to which this table belongs. */
 	private $_database;
 	/** @var string The name of this table. */
 	private $_name;
@@ -60,7 +60,7 @@ class Webdb_DBMS_Table
 	 * information about the table's columns, and creates new Webdb_DBMS_Column
 	 * objects for each.
 	 *
-	 * @param Webdb_DBMS_Database The database to which this table belongs.
+	 * @param WebDB_DBMS_Database The database to which this table belongs.
 	 * @param string $name The name of the table.
 	 */
 	public function __construct($db, $name)
@@ -94,7 +94,7 @@ class Webdb_DBMS_Table
 			// Create column objects
 			foreach ($columns_info as $column_info)
 			{
-				$column = new Webdb_DBMS_Column($this, $column_info);
+				$column = new WebDB_DBMS_Column($this, $column_info);
 				$this->_columns[$column->get_name()] = $column;
 			}
 		}
@@ -405,7 +405,7 @@ class Webdb_DBMS_Table
 		$alias_num = 1;
 		foreach ($this->get_columns() as $col)
 		{
-			$header = "'".Webdb_Text::titlecase($col->get_name())."'";
+			$header = "'".WebDB_Text::titlecase($col->get_name())."'";
 			$headers_query->select(DB::expr($header));
 
 			if ($col->is_foreign_key())
@@ -681,7 +681,7 @@ class Webdb_DBMS_Table
 	/**
 	 * Get the database to which this table belongs.
 	 *
-	 * @return Webdb_DBMS_Database The database object.
+	 * @return WebDB_DBMS_Database The database object.
 	 */
 	public function get_database()
 	{

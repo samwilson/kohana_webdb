@@ -2,9 +2,9 @@
 
 // -- Environment setup --------------------------------------------------------
 // Load the core Kohana class
-require SYSPATH.'classes/kohana/core'.EXT;
+require SYSPATH.'classes/Kohana/Core'.EXT;
 // Load empty core extension
-require SYSPATH.'classes/kohana'.EXT;
+require SYSPATH.'classes/Kohana'.EXT;
 
 /**
  * Set the default time zone.
@@ -94,6 +94,8 @@ Kohana::modules(array(
 	'cache'      => MODPATH.'cache',
 	'database'   => MODPATH.'database',
 	'pagination' => MODPATH.'pagination',
+	//'kadldap'    => MODPATH.'kadldap',
+	'auth'       => MODPATH.'auth',
 ));
 
 /**

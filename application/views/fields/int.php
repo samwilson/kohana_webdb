@@ -64,7 +64,7 @@ if ($edit):
 		This is a cross-reference to
 		<?php 
 		$url = "index/".$database->get_name().'/'.$referenced_table->get_name();
-		$title = Webdb_Text::titlecase($referenced_table->get_name());
+		$title = WebDB_Text::titlecase($referenced_table->get_name());
 		echo html::anchor($url, $title) ?>.
 	</li>
 		<?php if($value): ?>
@@ -73,7 +73,7 @@ if ($edit):
 		$url = "edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
 		$title = 'View '.$referenced_table->get_title($value);
 		echo HTML::anchor($url, $title) ?>
-		(<?php echo Webdb_Text::titlecase($referenced_table->get_name()) ?>
+		(<?php echo WebDB_Text::titlecase($referenced_table->get_name()) ?>
 		record #<?php echo $value ?>).
 	</li>
 		<?php endif ?>

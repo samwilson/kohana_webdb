@@ -13,7 +13,7 @@ class Controller_WebDB extends Controller_Template
 {
 
 	/**
-	 * @var Webdb_DBMS_Database The current database.
+	 * @var WebDB_DBMS_Database The current database.
 	 */
 	protected $database;
 
@@ -72,7 +72,7 @@ class Controller_WebDB extends Controller_Template
 		$this->template->set_global('database', $this->database);
 		$this->template->set_global('tables', array());
 		$this->template->set_global('table', $this->table);
-		$this->dbms = new Webdb_DBMS;
+		$this->dbms = new WebDB_DBMS;
 		if ($this->request->action() !== 'login')
 		{
 			try
@@ -514,7 +514,7 @@ class Controller_WebDB extends Controller_Template
 		$this->view->operators = $this->table->get_operators();
 		foreach ($this->table->get_columns() as $col)
 		{
-			$this->view->columns[$col->get_name()] = Webdb_Text::titlecase($col->get_name());
+			$this->view->columns[$col->get_name()] = WebDB_Text::titlecase($col->get_name());
 		}
 
 		$this->table->add_GET_filters();

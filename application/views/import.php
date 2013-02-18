@@ -4,10 +4,10 @@
 		<?php if ($stage==$s_name): ?>
 	<li class="selected">
 				<?php $class = '' ?>
-		<strong><?php echo Webdb_Text::titlecase($s_name) ?></strong>
+		<strong><?php echo WebDB_Text::titlecase($s_name) ?></strong>
 			<?php else: ?>
 	<li class="<?php echo $class ?>">
-				<?php echo Webdb_Text::titlecase($s_name) ?>
+				<?php echo WebDB_Text::titlecase($s_name) ?>
 			<?php endif ?>
 	</li>
 	<?php endforeach ?>
@@ -61,11 +61,11 @@
 	<tbody>
 		<?php foreach ($table->get_columns() as $column): ?>
 		<tr>
-			<td><?php echo Webdb_Text::titlecase($column->get_name()) ?></td>
+			<td><?php echo WebDB_Text::titlecase($column->get_name()) ?></td>
 			<td>
 				<?php $options = array(''=>'') + $file->headers;
 				$options = array_combine(array_map('strtolower', $options), $options);
-				echo Form::select('columns['.$column->get_name().']', $options, strtolower(Webdb_Text::titlecase($column->get_name()))) ?>
+				echo Form::select('columns['.$column->get_name().']', $options, strtolower(WebDB_Text::titlecase($column->get_name()))) ?>
 			</td>
 		</tr>
 		<?php endforeach ?>
@@ -94,7 +94,7 @@
 	<thead>
 		<tr>
 			<?php foreach ($table->get_columns() as $column): ?>
-			<th><?php echo Webdb_Text::titlecase($column->get_name()) ?></th>
+			<th><?php echo WebDB_Text::titlecase($column->get_name()) ?></th>
 			<?php endforeach ?>
 		</tr>
 	</thead>

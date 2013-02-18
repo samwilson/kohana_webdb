@@ -19,7 +19,7 @@
 
 			<?php foreach ($the_table->get_columns() as $column)
 			{
-				$title = Webdb_Text::titlecase($column->get_name());
+				$title = WebDB_Text::titlecase($column->get_name());
 				$orderdir = $the_table->orderdir;
 				$class = '';
 				if ($the_table->orderby==$column->get_name())

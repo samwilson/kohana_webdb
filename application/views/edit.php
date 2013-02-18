@@ -35,7 +35,7 @@
 		<th>
 			<label for="<?php echo $form_field_name ?>"
 				   title="Column type: <?php echo $column->get_type() ?>">
-							   <?php echo Webdb_Text::titlecase($column->get_name()) ?>
+							   <?php echo WebDB_Text::titlecase($column->get_name()) ?>
 			</label>
 		</th>
 		<td>
@@ -92,8 +92,8 @@ if (isset($row[$table->get_pk_column()->get_name()]) && count($related_tables) >
 				?>
 		<li>
 			<h3 title="Show or hide these related records" class="anchor <?php echo $class ?>">
-				<?php echo Webdb_Text::titlecase($foreign_table->get_name()) ?>
-				<span class="smaller">(as &lsquo;<?php echo Webdb_Text::titlecase($foreign_column) ?>&rsquo;).</span>
+				<?php echo WebDB_Text::titlecase($foreign_table->get_name()) ?>
+				<span class="smaller">(as &lsquo;<?php echo WebDB_Text::titlecase($foreign_column) ?>&rsquo;).</span>
 				<?php echo $num_foreign_records ?> record<?php echo ($num_foreign_records!=1) ? 's' : '' ?>.
 			</h3>
 			<div>
