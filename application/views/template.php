@@ -3,11 +3,11 @@
  * Base site-wide template.
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=8" />
+		<meta charset='utf-8'>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Script-Type" content="text/javascript" />
 
@@ -18,49 +18,21 @@
 
 		</title>
 
+		<?php echo HTML::style('resources/css/jquery-ui.css', array('media'=>'screen')) ?>
+
 		<?php echo HTML::style('resources/css/all.css', array('media'=>'all')) ?>
 
 		<?php echo HTML::style('resources/css/screen.css', array('media'=>'screen')) ?>
 
-		<?php echo HTML::style('http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.0/themes/cupertino/jquery-ui.css', array('media'=>'screen')) ?>
+		<?php echo HTML::script('resources/js/jquery.js') ?>
 
+		<?php echo HTML::script('resources/js/jquery-ui.js') ?>
 
-		<?php echo HTML::script('http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js') ?>
+		<?php echo HTML::script('resources/js/jquery-maskedinput.js') ?>
 
-		<?php echo HTML::script('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js') ?>
+		<?php echo HTML::script('resources/js/jquery-ui-autocomplete-autoSelect.js') ?>
 
-		<?php echo HTML::script('resources/js/jquery.maskedinput-1.2.2.min.js') ?>
-
-		<?php echo HTML::script('resources/js/jquery.ui.autocomplete.autoSelect.js') ?>
-
-		<script type="text/javascript">
-			$(function() {
-
-				// Date and time masks and pickers
-				$('input.time').mask('99:99');
-				$('input.datetime').mask('9999-99-99 99:99');
-				$('input.datepicker').mask('9999-99-99');
-				$('input.datepicker').datepicker( {dateFormat: 'yy-mm-dd'} );
-
-				// Set initial focus element
-				$('#focus-me').focus();
-
-				// Table menu display
-				$(".tables ol").hide();
-				$(".tables .selected").parents(".tables ol").addClass("open").show();
-				$(".tables .selected").parents(".tables ol").prev().children(".ui-icon").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
-				$(".tables .section-head").click(function() {
-					if ($(this).next().hasClass("open")) {
-						$(this).next().slideUp("fast").removeClass("open");
-						$(this).children(".ui-icon").removeClass("ui-icon-triangle-1-s").addClass("ui-icon-triangle-1-e");
-					} else {
-						$(this).next().addClass("open").slideDown("fast");
-						$(this).children(".ui-icon").removeClass("ui-icon-triangle-1-e").addClass("ui-icon-triangle-1-s");
-					}
-				});
-
-			});
-		</script>
+		<?php echo HTML::script('resources/js/scripts.js') ?>
 
 	</head>
 
