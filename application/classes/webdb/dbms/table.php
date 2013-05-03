@@ -250,7 +250,7 @@ class Webdb_DBMS_Table
 	 * Note that rows are returned as arrays and not objects, because MySQL
 	 * allows column names to begin with a number, but PHP does not.
 	 *
-	 * @return array[array[string=>string]] The row data
+	 * @return Database_Result The row data
 	 */
 	public function get_rows($with_pagination = TRUE)
 	{

@@ -442,7 +442,7 @@ class Controller_WebDB extends Controller_Template
 	{
 
 		// First make sure the user is allowed to import data into this table.
-		if (!$this->table->can('import'))
+		if (!$this->table->can('insert'))
 		{
 			$this->template->content = '';
 			$this->add_template_message('You do not have permission to import data into this table.');
@@ -453,10 +453,17 @@ class Controller_WebDB extends Controller_Template
 		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
 
 		// Stage 1: Uploading
+		$url_params = array(
+			'action' => 'import',
+			'dbname' => $this->database->get_name(),
+			'tablename' => $this->table->get_name(),
+		);
+		$this->view->form_action = Route::url('default', $url_params);
 		$this->view->stage = $this->view->stages[0];
 		try
 		{
-			$this->view->file = new Webdb_File_CSV;
+			$hash = $this->request->param('id', FALSE);
+			$this->view->file = new Webdb_File_CSV($hash);
 		} catch (Kohana_Exception $e)
 		{
 			$this->add_template_message($e->getMessage());
@@ -464,33 +471,33 @@ class Controller_WebDB extends Controller_Template
 		}
 		if ($this->view->file->loaded() && !$this->request->param('id'))
 		{
-			$url = 'import/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$this->view->file->hash;
-			$this->redirect($url);
+			$url_params['id'] = $this->view->file->hash;
+			$this->redirect(Route::url('default', $url_params, TRUE));
 		}
 
 		// Stage 2: Matching fields
 		if ($this->view->file->loaded())
 		{
 			$this->view->stage = $this->view->stages[1];
+			$params = array_merge($url_params, array('id'=>$hash));
+			$this->view->form_action = Route::url('default', $params);
 		}
 
 		// Stage 3: Previewing
-		if ($this->view->file->loaded() && isset($_POST['columns']))
+		if ($this->view->file->loaded() && isset($_POST['preview']))
 		{
-			$this->view->file->match_fields($this->table, $_POST['columns']);
 			$this->view->stage = $this->view->stages[2];
+			$this->view->import_url = Route::url('default', $url_params);
+			$this->view->columns = serialize($_POST['columns']);
+			$this->view->errors = $this->view->file->match_fields($this->table, $_POST['columns']);
 		}
 
 		// Stage 4: Import
-		if ($this->view->file->loaded() && isset($_POST['data']))
+		if ($this->view->file->loaded() && isset($_POST['import']))
 		{
-			//exit(Kohana::debug($_POST['data']));
 			$this->view->stage = $this->view->stages[3];
-			foreach ($_POST['data'] as $row)
-			{
-				$this->table->save_row($row);
-			}
-			$this->add_template_message('Import complete; '.count($_POST['data']).' rows inserted and/or updated.', 'info');
+			$result = $this->view->file->import_data($this->table, unserialize($_POST['columns']));
+			$this->add_template_message('Import complete; '.$result.' rows imported.', 'info');
 		}
 
 	}
