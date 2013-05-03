@@ -11,7 +11,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_DBMS_Database
+class WebDB_DBMS_Database
 {
 
 	/** @var Database The [Kohana_Database] object. */
@@ -175,7 +175,7 @@ class Webdb_DBMS_Database
 		}
 		if (!isset($this->_tables[$tablename]))
 		{
-			$table = new Webdb_DBMS_Table($this, $tablename);
+			$table = new WebDB_DBMS_Table($this, $tablename);
 			if ($table->can('select'))
 			{
 				$this->_tables[$tablename] = $table;

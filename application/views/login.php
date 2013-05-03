@@ -7,12 +7,12 @@
 		</thead>
 		<tbody>
 			<tr>
-				<th><?php echo form::label('username','Username:')?></th>
-				<td><?php echo form::input('username', $username, array('id'=>'focus-me')) ?></td>
+				<th><?php echo Form::label('username','Username:')?></th>
+				<td><?php echo Form::input('username', $username, array('id'=>'focus-me')) ?></td>
 			</tr>
 			<tr>
-				<th><?php echo form::label('password','Password:')?></th>
-				<td><?php echo form::password('password') ?></td>
+				<th><?php echo Form::label('password','Password:')?></th>
+				<td><?php echo Form::password('password') ?></td>
 			</tr>
 		</tbody>
 		<tfoot>

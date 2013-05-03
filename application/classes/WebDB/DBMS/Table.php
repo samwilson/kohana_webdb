@@ -7,12 +7,12 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_DBMS_Table
+class WebDB_DBMS_Table
 {
 
 	/** @var Database The Database instance in use. */
 	private $_db;
-	/** @var Webdb_DBMS_Database The database to which this table belongs. */
+	/** @var WebDB_DBMS_Database The database to which this table belongs. */
 	private $_database;
 	/** @var string The name of this table. */
 	private $_name;
@@ -60,7 +60,7 @@ class Webdb_DBMS_Table
 	 * information about the table's columns, and creates new Webdb_DBMS_Column
 	 * objects for each.
 	 *
-	 * @param Webdb_DBMS_Database The database to which this table belongs.
+	 * @param WebDB_DBMS_Database The database to which this table belongs.
 	 * @param string $name The name of the table.
 	 */
 	public function __construct($db, $name)
@@ -94,13 +94,13 @@ class Webdb_DBMS_Table
 			// Create column objects
 			foreach ($columns_info as $column_info)
 			{
-				$column = new Webdb_DBMS_Column($this, $column_info);
+				$column = new WebDB_DBMS_Column($this, $column_info);
 				$this->_columns[$column->get_name()] = $column;
 			}
 		}
 	}
 
-	public function add_filter($column, $operator, $value)
+	public function add_filter($column, $operator, $value, $raw = FALSE)
 	{
 		$valid_columm = in_array($column, array_keys($this->_columns));
 		$valid_operator = in_array($operator, array_keys($this->_operators));
@@ -109,8 +109,9 @@ class Webdb_DBMS_Table
 		if ($valid_columm && $valid_operator && $valid_value) {
 			$this->_filters[] = array(
 				'column'    => $column,
-				'operator' => $operator,
-				'value'     => trim($value)
+				'operator'  => $operator,
+				'value'     => trim($value),
+				'raw'       => $raw,
 			);
 		}
 	}
@@ -145,6 +146,12 @@ class Webdb_DBMS_Table
 		$fk1_alias = '';
 		foreach ($this->_filters as $filter)
 		{
+			// 'Raw' filters don't require translation
+			if ($filter['raw'] === TRUE)
+			{
+				$query->where($filter['column'], $filter['operator'], $filter['value']);
+				continue;
+			}
 
 			// FOREIGN KEYS
 			$column = $this->_columns[$filter['column']];
@@ -405,7 +412,7 @@ class Webdb_DBMS_Table
 		$alias_num = 1;
 		foreach ($this->get_columns() as $col)
 		{
-			$header = "'".Webdb_Text::titlecase($col->get_name())."'";
+			$header = "'".WebDB_Text::titlecase($col->get_name())."'";
 			$headers_query->select(DB::expr($header));
 
 			if ($col->is_foreign_key())
@@ -681,7 +688,7 @@ class Webdb_DBMS_Table
 	/**
 	 * Get the database to which this table belongs.
 	 *
-	 * @return Webdb_DBMS_Database The database object.
+	 * @return WebDB_DBMS_Database The database object.
 	 */
 	public function get_database()
 	{

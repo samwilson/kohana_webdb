@@ -12,9 +12,9 @@
 		<meta http-equiv="Content-Script-Type" content="text/javascript" />
 
 		<title>
-			WebDB<?php if ($database) echo ': '.Webdb_Text::titlecase($database->get_name());
-			if ($table) echo ' &raquo; '.Webdb_Text::titlecase($table->get_name());
-			if ($action) echo ' &raquo; '.Webdb_Text::titlecase($action) ?>
+			WebDB<?php if ($database) echo ': '.WebDB_Text::titlecase($database->get_name());
+			if ($table) echo ' &raquo; '.WebDB_Text::titlecase($table->get_name());
+			if ($action) echo ' &raquo; '.WebDB_Text::titlecase($action) ?>
 
 		</title>
 
@@ -54,14 +54,14 @@
 				{
 					echo ' :: '.HTML::anchor(
 						'index/'.$database->get_name(),
-						Webdb_Text::titlecase($database->get_name())
+						WebDB_Text::titlecase($database->get_name())
 					);
 				}
 				if ($table)
 				{
 					echo ' &raquo; '.HTML::anchor(
 						'index/'.$database->get_name().'/'.$table->get_name(),
-						Webdb_Text::titlecase($table->get_name())
+						WebDB_Text::titlecase($table->get_name())
 					);
 				} ?>
             </h1>
@@ -71,7 +71,7 @@
 					<?php foreach ($databases as $db): ?>
 						<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
                 <li class="<?php echo $selected ?>">
-							<?php echo HTML::anchor("index/$db", Webdb_Text::titlecase($db),
+							<?php echo HTML::anchor("index/$db", WebDB_Text::titlecase($db),
 							array('class'=>$selected)) ?>
                 </li>
 					<?php endforeach ?>
@@ -91,7 +91,7 @@
 						if (count($group)<1) continue;
 						echo '<li class=".ui-state-default"><em class="section-head">'
 							.'<span class="ui-icon ui-icon-triangle-1-e"></span>'
-							.Webdb_Text::titlecase($name)
+							.WebDB_Text::titlecase($name)
 							.'</em><ol>';
 						ksort($group);
 						foreach ($group as $tab)
@@ -100,7 +100,7 @@
 							$title = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
 							echo '<li>'.HTML::anchor(
 								'index/'.$database->get_name().'/'.$tab->get_name(),
-								Webdb_Text::titlecase($title),
+								WebDB_Text::titlecase($title),
 								array('class'=>$selected)
 								).'</li>';
 						}
@@ -115,7 +115,7 @@
 				<div class="title">
 					<h1><?php echo HTML::anchor(
 							'index/'.$database->get_name().'/'.$table->get_name(),
-							Webdb_Text::titlecase($table->get_name())
+							WebDB_Text::titlecase($table->get_name())
 							) ?>
 					</h1>
 						<?php if ($table->get_comment()) echo '<p>'.$table->get_comment().'</p>' ?>

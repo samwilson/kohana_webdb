@@ -167,7 +167,7 @@ class Webdb_DBMS
 	 * database from the 'dbname' route variable.  If that fails, return false.
 	 *
 	 * @param string $dbname The name of the desired database.
-	 * @return Webdb_DBMS_Database The database object.
+	 * @return WebDB_DBMS_Database The database object.
 	 * @return false If no database could be found.
 	 * @throws Exception
 	 */
@@ -191,7 +191,7 @@ class Webdb_DBMS
 		$this->_config['connection']['database'] = $dbname;
 		$this->_db = Database::instance(NULL, $this->_config);
 		$this->_db->connect();
-		return new Webdb_DBMS_Database($this, $dbname);
+		return new WebDB_DBMS_Database($this, $dbname);
 	}
 
 	public function get_database_driver()

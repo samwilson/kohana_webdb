@@ -35,7 +35,7 @@
 		<th>
 			<label for="<?php echo $form_field_name ?>"
 				   title="Column type: <?php echo $column->get_type() ?>">
-							   <?php echo Webdb_Text::titlecase($column->get_name()) ?>
+							   <?php echo WebDB_Text::titlecase($column->get_name()) ?>
 			</label>
 		</th>
 		<td>
@@ -86,14 +86,17 @@ if (isset($row[$table->get_pk_column()->get_name()]) && count($related_tables) >
 				$foreign_column = $foreign['column'];
 				$foreign_table = $foreign['table'];
 				$foreign_table->reset_filters();
-				$foreign_table->add_filter($foreign_column, '=', $table->get_title($row[$table->get_pk_column()->get_name()]));
+				$this_pk = $table->get_pk_column()->get_name();
+				$foreign_pk = $foreign_table->get_pk_column()->get_name();
+				$foreign_table->add_filter($foreign_column, '=', $row[$this_pk], TRUE);
+				//$foreign_table->add_filter($foreign_column, '=', $table->get_title($row[$table->get_pk_column()->get_name()]));
 				$num_foreign_records = $foreign_table->count_records();
 				$class = ($num_foreign_records > 0) ? '' : 'no-records';
 				?>
 		<li>
 			<h3 title="Show or hide these related records" class="anchor <?php echo $class ?>">
-				<?php echo Webdb_Text::titlecase($foreign_table->get_name()) ?>
-				<span class="smaller">(as &lsquo;<?php echo Webdb_Text::titlecase($foreign_column) ?>&rsquo;).</span>
+				<?php echo WebDB_Text::titlecase($foreign_table->get_name()) ?>
+				<span class="smaller">(as &lsquo;<?php echo WebDB_Text::titlecase($foreign_column) ?>&rsquo;).</span>
 				<?php echo $num_foreign_records ?> record<?php echo ($num_foreign_records!=1) ? 's' : '' ?>.
 			</h3>
 			<div>

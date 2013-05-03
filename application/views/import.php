@@ -4,28 +4,16 @@
 		<?php if ($stage==$s_name): ?>
 	<li class="selected">
 				<?php $class = '' ?>
-		<strong><?php echo Webdb_Text::titlecase($s_name) ?></strong>
+		<strong><?php echo WebDB_Text::titlecase($s_name) ?></strong>
 			<?php else: ?>
 	<li class="<?php echo $class ?>">
-				<?php echo Webdb_Text::titlecase($s_name) ?>
+				<?php echo WebDB_Text::titlecase($s_name) ?>
 			<?php endif ?>
 	</li>
 	<?php endforeach ?>
 </ol>
 
 
-
-
-
-
-<?php /*if ($errors): ?>
-<p class="info message">Some errors were encountered, please check the details you entered.</p>
-<ul>
-		<?php foreach ($errors as $message): ?>
-    <li class="notice message"><?php echo $message ?></li>
-		<?php endforeach ?>
-</ul>
-<?php endif*/ ?>
 
 
 
@@ -116,9 +104,6 @@
 		<?php endif ?>
 	</fieldset>
 </form>
-
-
-
 <?php endif ?>
 
 
