@@ -1,31 +1,35 @@
 <?php
-$value = $row[$column->get_name()];
-
 
 /**
- * Edit
+ * ID column
  */
-if ($edit):
+if ($column->isPrimaryKey()):
+	$params = array('readonly'=>TRUE, 'id'=>$form_field_name, 'size'=>$column->get_size());
+	echo Form::input($form_field_name, $value, $params);
 
+/**
+ * Booleans
+ */
+elseif ($column->get_size() == 1):
+	echo Form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
 
-	/**
-	 * ID column
-	 */
-	if ($column->get_name() == 'id'):
-		echo form::input($form_field_name, $value, array('readonly'=>TRUE, 'id'=>$form_field_name, 'size'=>$column->get_size()));
+/**
+ * Foreign keys
+ */
+elseif($column->is_foreign_key()):
+	$referenced_table = $column->get_referenced_table();
 
-	/**
-	 * Booleans
-	 */
-	elseif ($column->get_size() == 1):
-		echo form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
-
-	/**
-	 * Foreign keys
-	 */
-	elseif($column->is_foreign_key()):
-		$referenced_table = $column->get_referenced_table();
-		?>
+	$foreign_count = $referenced_table->count_records();
+	//$items_per_page = $table->get_pagination()->config_group()->items_per_page;
+	//$pagination_config = Kohana::$config->load('pagination'); //->items_per_page;
+	if ($foreign_count < $table->get_pagination(FALSE)->items_per_page):
+		$options = array();
+		foreach ($referenced_table->get_rows(TRUE, FALSE) as $foreign_row) {
+			$options[$foreign_row['id']] = $foreign_row['webdb_title'];
+		}
+		echo Form::select($form_field_name, $options, $value);
+	else:
+	?>
 
 <script type="text/javascript">
 	<?php $fk_actual_value_field = str_replace('[','\\[',str_replace(']','\\]',$form_field_name)) ?>
@@ -50,7 +54,7 @@ if ($edit):
 	});
 </script>
 
-<?php $form_field_value = ($value>0) ? $referenced_table->get_title($value) : '' ?>
+<?php $form_field_value = ($value) ? $row[$column->get_name().'_webdb_title'] : ''; //$referenced_table->get_title($value) : '' ?>
 <input type="text" class="foreign-key-actual-value" readonly
 	   name="<?php echo $form_field_name ?>"
 	   size="<?php echo (empty($value)) ? 1 : strlen($value) ?>"
@@ -59,6 +63,9 @@ if ($edit):
 	   name="<?php echo $fk_field_name ?>"
 	   size="<?php echo min(35, strlen($form_field_value)) ?>"
 	   value="<?php echo $form_field_value ?>" />
+
+<?php endif // foreign count < 100 ?>
+
 <ul class="notes">
 	<li>
 		This is a cross-reference to
@@ -71,7 +78,7 @@ if ($edit):
 	<li>
 		<?php
 		$url = "edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
-		$title = 'View '.$referenced_table->get_title($value);
+		$title = 'View '.$row[$column->get_name().'_webdb_title']; //$referenced_table->get_title($value);
 		echo HTML::anchor($url, $title) ?>
 		(<?php echo WebDB_Text::titlecase($referenced_table->get_name()) ?>
 		record #<?php echo $value ?>).
@@ -80,45 +87,21 @@ if ($edit):
 </ul>
 
 
-	<?php
-	/**
-	 * Everything else
-	 */
-	else: ?>
-		<?php echo form::input($form_field_name, $value,  array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()))) ?>
+<?php
+/**
+ * Everything else
+ */
+else: ?>
+	<?php echo Form::input($form_field_name, $value,  array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()))) ?>
 
-	<?php endif /* end ifs choosing type of input. */ ?>
-
-
-
-	<?php
-	if ($column->get_comment()) {
-	echo '<ul class="notes">'
-		.'<li><strong>'.$column->get_comment().'</strong></li>'
-		.'</ul>';
-	}
-	?>
+<?php endif /* end ifs choosing type of input. */ ?>
 
 
 
-<?php /**
- * Don't edit
- */ else: ?>
-
-	<?php if ($column->is_foreign_key() && $value): ?>
-		<?php
-		$referenced_table = $column->get_referenced_table();
-		$url = "edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
-		echo HTML::anchor($url, $referenced_table->get_title($value));
-		?>
-
-	<?php elseif ($column->get_size() == 1): ?>
-		<?php if ($value==1) echo 'Yes'; elseif ($value==0) echo 'No'; else echo ''; ?>
-
-	<?php else: ?>
-		<?php echo $value ?>
-
-	<?php endif ?>
-
+<?php if ($column->get_comment()): ?>
+<ul class="notes">
+	<li><strong><?php echo $column->get_comment() ?></strong></li>
+</ul>
 <?php endif ?>
+
 

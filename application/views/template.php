@@ -177,9 +177,9 @@
 				<?php echo Kohana::VERSION ?>
 				<dfn title="Kohana codename"><?php echo Kohana::CODENAME ?></dfn>.
 			</li>
-			<?php if (Kohana::$environment != Kohana::PRODUCTION): ?>
+			<?php if (Kohana::$profiling): ?>
 			<li id="kohana-profiler">
-					<?php echo View::factory('profiler/stats') ?>
+				<?php echo View::factory('profiler/stats') ?>
 			</li>
 			<?php endif ?>
 		</ol>

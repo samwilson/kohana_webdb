@@ -4,14 +4,12 @@
 <script type="text/javascript">
 	$(function() {
 		$("input,textarea,select").focus(function(){
-			var this_id = $(this).attr('id');
-			$(this).parents('tr').find("label[for='"+this_id+"']").parents('th').attr('class', 'focused');
-			$(this).parents('td').attr('class', 'focused');
+			$(this).parents("td").addClass("focused");
+			$(this).parents("td").prev("th").addClass("focused");
 		});
 		$("input,textarea,select").blur(function(){
-			var this_id = $(this).attr('id');
-			$(this).parents('tr').find("label[for='"+this_id+"']").parents('th').attr('class', '');
-			$(this).parents('td').attr('class', '');
+			$(this).parents("td").removeClass("focused");
+			$(this).parents("td").prev("th").removeClass("focused");
 		});
 	});
 </script>

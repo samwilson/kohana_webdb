@@ -248,9 +248,9 @@ class Controller_WebDB extends Controller_Template
 			$this->table->add_filter($pk_column_name, '=', $_GET[$pk_column_name]);
 		}
 		$json_data = array();
-		foreach ($this->table->get_rows(FALSE) as $row)
+		foreach ($this->table->get_rows(TRUE, FALSE) as $row)
 		{
-			$row['label'] = $this->table->get_title($row['id']);
+			$row['label'] = $row['webdb_title']; //$this->table->get_title($row['id']);
 			$json_data[] = $row;
 		}
 		exit(json_encode($json_data));

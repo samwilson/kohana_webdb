@@ -55,6 +55,9 @@ class WebDB_DBMS_Table
 	 */
 	private $_row_count = FALSE;
 
+	/** @var array Each joined table gets a unique alias, based on this. */
+	protected $alias_count = 1;
+
 	/**
 	 * Create a new database table object.  Queries the database or cache for
 	 * information about the table's columns, and creates new Webdb_DBMS_Column
@@ -143,40 +146,43 @@ class WebDB_DBMS_Table
 	 */
 	public function apply_filters(&$query)
 	{
-		$fk1_alias = '';
+		$profiler = Profiler::start('WebDB', get_class().'::'.__METHOD__);
 		foreach ($this->_filters as $filter)
 		{
 			// 'Raw' filters don't require translation
 			if ($filter['raw'] === TRUE)
 			{
-				$query->where($filter['column'], $filter['operator'], $filter['value']);
+				$col_name = $this->get_name().'.'.$filter['column'];
+				$query->where($col_name, $filter['operator'], $filter['value']);
 				continue;
 			}
 
-			// FOREIGN KEYS
 			$column = $this->_columns[$filter['column']];
-			if ($column->is_foreign_key())
-			{
-				$fk1_table = $column->get_referenced_table();
-				$fk1_title_column = $fk1_table->get_title_column();
-				$fk1_alias .= 'f';
-				$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER')
-					  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
-				$filter['column'] = $fk1_alias.'.'.$fk1_title_column->get_name();
-				// FK is also an FK?
-				if ($fk1_title_column->is_foreign_key())
-				{
-					$fk2_table = $fk1_title_column->get_referenced_table();
-					$fk2_title_column = $fk2_table->get_title_column();
-					$fk2_alias = $fk1_alias.'f';
-					$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER')
-						  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
-					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
-				}
-			} else {
-				// Other filters will always be on thistable.column
-				$filter['column'] = $this->get_name().'.'.$filter['column'];
-			}
+			$filter['column'] = $this->join_for($column, $query);
+			// FOREIGN KEYS
+//			if ($column->is_foreign_key())
+//			{
+//				$filter['column'] = $this->join_for($column, $query);
+//				$fk1_table = $column->get_referenced_table();
+//				$fk1_title_column = $fk1_table->get_title_column();
+//				$fk1_alias .= 'f';
+//				$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER')
+//					  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
+//				$filter['column'] = $fk1_alias.'.'.$fk1_title_column->get_name();
+//				// FK is also an FK?
+//				if ($fk1_title_column->is_foreign_key())
+//				{
+//					$fk2_table = $fk1_title_column->get_referenced_table();
+//					$fk2_title_column = $fk2_table->get_title_column();
+//					$fk2_alias = $fk1_alias.'f';
+//					$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER')
+//						  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
+//					$filter['column'] = $fk2_alias.'.'.$fk2_title_column->get_name();
+//				}
+//			} else {
+//				// Other filters will always be on thistable.column
+//				$filter['column'] = $this->get_name().'.'.$filter['column'];
+//			}
 
 			// LIKE or NOT LIKE
 			if ($filter['operator']=='like' || $filter['operator']=='not like')
@@ -209,12 +215,55 @@ class WebDB_DBMS_Table
 		} // end foreach filter
 
 		// Get WHERE permissions
-		foreach ($this->get_permissions() as $perm) {
-			if (!empty($perm['where_clause']))
-			{
-				$query->and_where(DB::expr($perm['where_clause'].' AND 1'), '=', 1);
-			}
+//		foreach ($this->get_permissions() as $perm) {
+//			if (!empty($perm['where_clause']))
+//			{
+//				$query->and_where(DB::expr($perm['where_clause'].' AND 1'), '=', 1);
+//			}
+//		}
+		Profiler::stop($profiler);
+	}
+
+	/**
+	 * For a given foreign key column, join the given query to the foreign table
+	 * and return the alias for use in selecting against the foreign table.
+	 * 
+	 * If the column is not a foreign key, the alias will just be the qualified
+	 * column name, and no join will be done.
+	 * 
+	 * @param WebDB_DBMS_Column $column The column (usually a FK).
+	 * @param Database_Query $query The query.
+	 * 
+	 * @return array Array with 'join_clause' and 'column_alias' keys
+	 */
+	public function join_for($column, &$query)
+	{
+		$token = Profiler::start('WebDB', __METHOD__);
+
+		if ( ! $column->is_foreign_key())
+		{
+			return $this->get_name().'.'.$column->get_name();
 		}
+		$fk1_table = $column->get_referenced_table();
+		$fk1_title_column = $fk1_table->get_title_column();
+		$fk1_alias = 'f'.$this->alias_count;
+		$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER')
+			  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
+		$alias = $fk1_alias.'.'.$fk1_title_column->get_name();
+		// FK is also an FK?
+		if ($fk1_title_column->is_foreign_key())
+		{
+			$fk2_table = $fk1_title_column->get_referenced_table();
+			$fk2_title_column = $fk2_table->get_title_column();
+			$fk2_alias = 'ff'.$this->alias_count;
+			$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER')
+				  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
+			$alias = $fk2_alias.'.'.$fk2_title_column->get_name();
+		}
+		$this->alias_count++;
+
+		Profiler::stop($token);
+		return $alias;
 	}
 
 	/**
@@ -259,8 +308,9 @@ class WebDB_DBMS_Table
 	 *
 	 * @return Database_Result The row data
 	 */
-	public function get_rows($with_pagination = TRUE)
+	public function get_rows($with_pagination = TRUE, $consider_total = TRUE)
 	{
+		$token = Profiler::start('WebDB', __METHOD__);
 
 		// First get all columns and rows (leaving column selection for now).
 		$query = new Database_Query_Builder_Select();
@@ -271,6 +321,10 @@ class WebDB_DBMS_Table
 		// Then limit to the ones on the current page.
 		if ($with_pagination)
 		{
+			// If paginated, load the 'title'.
+			$title_alias = $this->join_for($this->get_title_column(), $query);
+			$query->select(array($title_alias, 'webdb_title'));
+
 //			$pagination_query = clone $query;
 //			$row_count = $pagination_query
 //				->select_array(array(DB::expr('COUNT(*) AS total')))
@@ -279,18 +333,39 @@ class WebDB_DBMS_Table
 //			$this->_row_count = $row_count['total'];
 //			$config = array('total_items' => $this->_row_count);
 //			$this->_pagination = new Pagination($config);
-			$pagination = $this->get_pagination();
+			$pagination = $this->get_pagination($consider_total);
 			$query->offset($pagination->offset);
 			$query->limit($pagination->items_per_page);
 		}
 
 		// Select columns and do query.
-		foreach (array_keys($this->_columns) as $col)
-		{
-			$query->select($this->_name.'.'.$col);
-		}
+		$this->select_columns($query);
+//		foreach (array_keys($this->_columns) as $col)
+//		{
+//			$query->select($this->_name.'.'.$col);
+//			if ($col->is_foreign_key())
+//			{
+//				$alias = $this->join_for($col, $query);
+//				$query->select(array($alias, $col->get_name().'_webdb_title'));
+//			}
+//		}
 		$this->_rows = $query->execute($this->_db);
+		Profiler::stop($token);
 		return $this->_rows;
+	}
+
+	private function select_columns(&$query)
+	{
+		foreach ($this->_columns as $col)
+		{
+			$query->select($this->get_name().'.'.$col->get_name());
+			// For FKs, also select a special 'title' column.
+			if ($col->is_foreign_key())
+			{
+				$alias = $this->join_for($col, $query);
+				$query->select(array($alias, $col->get_name().'_webdb_title'));
+			}
+		}
 	}
 
 	/**
@@ -301,17 +376,25 @@ class WebDB_DBMS_Table
 	 */
 	public function get_row($id)
 	{
+		$token = Profiler::start('WebDB', __METHOD__);
 		$query = new Database_Query_Builder_Select();
-		foreach (array_keys($this->_columns) as $col)
-		{
-			$query->select($this->_name.'.'.$col);
-		}
+//		foreach ($this->get_columns() as $col)
+//		{
+//			$query->select($this->get_name().'.'.$col->get_name());
+//			if ($col->is_foreign_key())
+//			{
+//				$alias = $this->join_for($col, $query);
+//				$query->select(array($alias, $col->get_name().'_webdb_title'));
+//			}
+//		}
+		$this->select_columns($query);
 		$query->from($this->get_name());
 		$query->limit(1);
 		$pk_column = $this->get_pk_column();
 		$pk_name = (!$pk_column) ? 'id' : $pk_column->get_name();
-		$query->where($pk_name, '=', $id);
+		$query->where($this->get_name().'.'.$pk_name, '=', $id);
 		$row = $query->execute($this->_db)->current();
+		Profiler::stop($token);
 		return $row;
 	}
 
@@ -356,17 +439,19 @@ class WebDB_DBMS_Table
 	}
 
 	/**
-	 * Get the pagination object for this table.
+	 * Get the pagination object for this table. Optionally ignore the total
+	 * number of records, for when this is irrelevant (e.g. for autocomplete
+	 * pagination).
 	 *
+	 * @param boolean $with_total Whether to consider the total number of rows.
 	 * @return Pagination
 	 */
-	public function get_pagination()
+	public function get_pagination($with_total = TRUE)
 	{
 		if (!isset($this->_pagination))
 		{
-			$total_row_count = $this->count_records();
-			//$view = View::factory('pagination/basic');
-			$config = array('total_items' => $total_row_count); //, 'view'=>$view);
+			$total_row_count = ($with_total) ? $this->count_records() : 0;
+			$config = array('total_items' => $total_row_count);
 			$this->_pagination = new Pagination($config);
 		}
 		return $this->_pagination;

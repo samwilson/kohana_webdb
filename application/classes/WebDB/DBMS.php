@@ -80,11 +80,8 @@ class Webdb_DBMS
 	 */
 	public function list_dbs($refresh_cache = FALSE)
 	{
-		// Start a new benchmark
-		if (Kohana::$profiling === TRUE)
-		{
-			$benchmark = Profiler::start('WebDB', __FUNCTION__);
-		}
+		$token = Profiler::start('WebDB', __METHOD__);
+
 		if (!$this->_connection) return array();
 		
 		// Check cache
@@ -109,9 +106,8 @@ class Webdb_DBMS
 			Kohana::$log->add(Kohana_Log::DEBUG, "Caching DB names under $cache_key.");
 			$cache->set($cache_key, $this->_database_names);
 		}
-		// Stop benchmark
-		if (isset($benchmark)) Profiler::stop($benchmark);
-		// Return DB names
+
+		Profiler::stop($token);
 		return $this->_database_names;
 	}
 
