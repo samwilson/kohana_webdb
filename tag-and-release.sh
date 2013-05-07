@@ -17,6 +17,7 @@ tar -czf $FILENAME \
   --exclude-vcs \
   --exclude-from="$BASENAME/.gitignore" \
   --exclude='nbproject' \
+  --exclude='.gitmodules' \
   --exclude='*.sh' \
   --exclude='*.tar' \
   --exclude='*.tgz' \
