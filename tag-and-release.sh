@@ -9,14 +9,16 @@ TAG=$1
 echo "Creating Git tag: $TAG"
 git tag -af "$TAG"
 
-FILENAME="webdb_$TAG.tgz"
+BASENAME="$(basename $(pwd))"
+FILENAME=$BASENAME/$BASENAME"_"$TAG".tgz"
 echo "Creating release file: $FILENAME"
+cd ..
 tar -czf $FILENAME \
   --exclude-vcs \
-  --exclude-from='.gitignore' \
+  --exclude-from="$BASENAME/.gitignore" \
   --exclude='nbproject' \
   --exclude='*.sh' \
   --exclude='*.tar' \
   --exclude='*.tgz' \
-  *
+  $BASENAME
 
