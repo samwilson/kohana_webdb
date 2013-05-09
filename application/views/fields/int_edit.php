@@ -74,7 +74,7 @@ elseif($column->is_foreign_key()):
 		$title = WebDB_Text::titlecase($referenced_table->get_name());
 		echo html::anchor($url, $title) ?>.
 	</li>
-		<?php if($value): ?>
+		<?php if(isset($row[$column->get_name().'_webdb_title'])): // Won't work for default values in new records. ?>
 	<li>
 		<?php
 		$url = "edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
