@@ -42,7 +42,10 @@
 		<div class="header">
 			<p class="auth">
 				<?php if (Auth::instance()->logged_in()): ?>
-				Logged in as <?php echo Auth::instance()->get_user() ?>.
+					Logged in as <?php echo Auth::instance()->get_user() ?>.
+					<a href="<?php
+					echo $url = Route::url('profile', array('username'=>Auth::instance()->get_user()))
+					?>" title="Change your password">[Password]</a>
 					<?php echo HTML::anchor('logout','[Log out]') ?>
 				<?php else: ?>
 					<?php echo HTML::anchor('login?return_to='.urlencode(URL::base(Request::current())),'[Log in]') ?>

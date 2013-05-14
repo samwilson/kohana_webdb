@@ -99,9 +99,22 @@ Kohana::modules(array(
 ));
 
 /**
- * Set the routes. Each route must have a minimum of a name, a URI and a set of
- * defaults for the URI.
+ * Routing.
  */
+
+// Users
+Route::set('login', 'login')->defaults(array(
+	'controller' => 'User',
+	'action' => 'login',
+));
+Route::set('logout', 'logout')->defaults(array(
+	'controller' => 'User',
+	'action' => 'logout',
+));
+Route::set('profile', 'profile')->defaults(array(
+	'controller'=>'User',
+	'action' => 'profile',
+));
 // Main WebDB URL structure
 Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
 	->defaults(array(
@@ -110,4 +123,4 @@ Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
 		'dbname' => NULL,
 		'tablename' => NULL,
 		'id' => NULL
-	));
+));

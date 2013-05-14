@@ -9,7 +9,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Controller_WebDB extends Controller_Template
+class Controller_WebDB extends Controller_Base
 {
 
 	/**
@@ -49,60 +49,23 @@ class Controller_WebDB extends Controller_Template
 	{
 		parent::before();
 
-		// Set up views
-		if (Kohana::find_file('views', $this->request->action()))
-		{
-			$this->view = View::factory($this->request->action());
-			$this->template->content = $this->view;
-		}
-		$this->template->messages = array();
-		$this->template->controller = $this->request->controller();
-		$this->template->action = $this->request->action();
-		$this->template->actions = array(
-			'index'  => 'Browse &amp; Search',
-			'edit'   => 'New',
-			'import' => 'Import',
-			'export' => 'Export',
-		);
-
-		/*
-		 * Database & table.
-		 * Do not instantiate database for login action.
-		 */
-		$this->template->set_global('database', $this->database);
-		$this->template->set_global('tables', array());
-		$this->template->set_global('table', $this->table);
 		$this->dbms = new WebDB_DBMS;
-		if ($this->request->action() !== 'login')
+		try
 		{
-			try
+			$this->dbms->connect();
+			$this->template->databases = $this->dbms->list_dbs();
+			$this->_set_database();
+			$this->_set_table();
+		} catch (Database_Exception $e)
+		{
+			if (!Auth::instance()->logged_in())
 			{
-				$this->dbms->connect();
-				$this->template->databases = $this->dbms->list_dbs();
-				$this->_set_database();
-				$this->_set_table();
-			} catch (Database_Exception $e)
-			{
-				if (!Auth::instance()->logged_in())
-				{
-					$this->add_flash_message('Unable to connect.  Please log in.');
-					$this->redirect('login');
-				}
-				$this->template->databases = array();
-				$this->add_template_message('Initialisation error: '.$e->getMessage());
+				$this->add_flash_message('Unable to connect.  Please log in.');
+				$this->redirect('login');
 			}
+			$this->template->databases = array();
+			$this->add_template_message('Initialisation error: '.$e->getMessage());
 		}
-
-		/*
-		 * Add flash messages to the template, then clear them from the session.
-		*/
-		foreach (Session::instance()->get('flash_messages', array()) as $msg)
-		{
-			$this->add_template_message($msg['message'], $msg['status']);
-		}
-		Session::instance()->set('flash_messages', array());
-
-		$this->_query_string_session();
 
 	} // _before()
 
@@ -170,65 +133,6 @@ class Controller_WebDB extends Controller_Template
 	}
 
 	/**
-	 * Save and load query string (i.e. `$_GET`) variables from the `$_SESSION`.
-	 * The idea is to carry query string variables between requests, even
-	 * when those variables have been omitted in the URI.
-	 *
-	 * 1. If a request has query string parameters, they are saved to
-	 *    `$_SESSION['qs']`, merging with whatever is already there.
-	 * 2. If there are parameters saved in `$_SESSION['qs']`, and if they're
-	 *    not already in the query string, add them and redirect the request to
-	 *    the resulting URI.
-	 *
-	 * @return void
-	 */
-	private function _query_string_session()
-	{
-		// Only save these keys.
-		$to_save = array('filters','orderby','orderdir');
-
-		// Save the query string, adding to what's already saved.
-		if (count($_GET)>0)
-		{
-			$session = (isset($_SESSION['qs'])) ? $_SESSION['qs'] : array();
-			foreach ($_GET as $key=>$val)
-			{
-				// Merge non-empty variables only.
-				if ((empty($val) && isset($_SESSION['qs'][$key])) || (!in_array($key, $to_save)))
-				{
-					unset($_SESSION['qs'][$key]);
-					continue;
-				}
-				$session[$key] = $val;
-			}
-			$_SESSION['qs'] = $session;
-		}
-
-		// Load query string variables, unless they're already present.
-		if (isset($_SESSION['qs']) && count($_SESSION['qs'])>0)
-		{
-			$has_new = FALSE; // Whether there's anything in SESSION that's not in GET
-			foreach ($_SESSION['qs'] as $key=>$val)
-			{
-				if (!isset($_GET[$key]) && in_array($key, $to_save))
-				{
-					$_GET[$key] = $val;
-					$has_new = TRUE;
-				}
-			}
-			// Don't redirect for POST requests.
-			if ($has_new && $_SERVER['REQUEST_METHOD']=='GET')
-			{
-				$query = URL::query($_SESSION['qs']);
-				$_SESSION['qs'] = array();
-				//$uri = URL::base(FALSE, TRUE).$this->request->uri().$query;
-				$uri = $this->request->uri().$query;
-				$this->redirect($uri);
-			}
-		}
-	}
-
-	/**
 	 * Output JSON data for the current table, for use in autocomplete inputs.
 	 *
 	 * @return void (Does not return)
@@ -254,24 +158,6 @@ class Controller_WebDB extends Controller_Template
 			$json_data[] = $row;
 		}
 		exit(json_encode($json_data));
-	}
-
-	protected function add_template_message($message, $status = 'notice')
-	{
-		$this->template->messages[] = array(
-			'status'  => $status,
-			'message' => $message
-		);
-	}
-
-	protected function add_flash_message($message, $status = 'notice')
-	{
-		$flash_messages = Session::instance()->get('flash_messages', array());
-		$flash_messages[] = array(
-			'status'=>$status,
-			'message'=>$message
-		);
-		Session::instance()->set('flash_messages', $flash_messages);
 	}
 
 	public function action_edit()
@@ -533,56 +419,6 @@ class Controller_WebDB extends Controller_Template
 			'operator' => 'like',
 			'value' => ''
 		);
-	}
-
-	public function action_login()
-	{
-		$this->template->set_global('database', FALSE);
-		$this->template->set_global('table', FALSE);
-		$this->template->set_global('databases', array());
-		$this->template->set_global('tables', array());
-		$this->view->username = '';
-		$this->view->return_to = Arr::get($_REQUEST, 'return_to', '');
-		if ($this->request->post('login') !== NULL)
-		{
-			Auth::instance()->logout(); // Just in case we're logged in.
-			$this->view->username = trim($this->request->post('username'));
-			$password = trim($this->request->post('password'));
-			Auth::instance()->login($this->view->username, $password);
-			if (Auth::instance()->logged_in())
-			{
-				try
-				{
-					$this->dbms->refresh_cache();
-					$this->add_flash_message('You are now logged in.', 'info');
-					Kohana::$log->add(Kohana_Log::INFO, $this->view->username.' logged in.');
-				} catch (Exception $e)
-				{
-					$msg = 'Unable to log in as '.$this->view->username.'. '.$e->getMessage();
-					Kohana::$log->add(Kohana_Log::INFO, $msg);
-				}
-				$this->redirect($this->view->return_to);
-			} else
-			{
-				Kohana::$log->add(Kohana_Log::INFO, 'Failed log in: '.$this->view->username);
-				$this->add_template_message('Login failed.  Please try again.');
-			}
-		} // if ($this->request->post('login') !== NULL)
-	}
-
-	public function action_logout()
-	{
-		if (Auth::instance()->logged_in())
-		{
-			$log_message = Auth::instance()->get_user().' logged out.';
-			Kohana::$log->add(Kohana_Log::INFO, $log_message);
-			Auth::instance()->logout();
-			Session::instance()->destroy();
-			$this->add_flash_message('You are now logged out.', 'info');
-		} else {
-			$this->add_flash_message('You were not logged in.', 'notice');
-		}
-		$this->redirect('login');
 	}
 
 }
