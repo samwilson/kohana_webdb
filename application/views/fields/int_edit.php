@@ -20,8 +20,6 @@ elseif($column->is_foreign_key()):
 	$referenced_table = $column->get_referenced_table();
 
 	$foreign_count = $referenced_table->count_records();
-	//$items_per_page = $table->get_pagination()->config_group()->items_per_page;
-	//$pagination_config = Kohana::$config->load('pagination'); //->items_per_page;
 	if ($foreign_count < $table->get_pagination(FALSE)->items_per_page):
 		$options = array();
 		foreach ($referenced_table->get_rows(TRUE, FALSE) as $foreign_row) {
@@ -54,7 +52,12 @@ elseif($column->is_foreign_key()):
 	});
 </script>
 
-<?php $form_field_value = ($value) ? $row[$column->get_name().'_webdb_title'] : ''; //$referenced_table->get_title($value) : '' ?>
+<?php $form_field_value = $value;
+if ($value) {
+	$form_field_value = (isset($row[$column->get_name().'_webdb_title']))
+	? $row[$column->get_name().'_webdb_title']
+	: $referenced_table->get_title($value);
+} ?>
 <input type="text" class="foreign-key-actual-value" readonly
 	   name="<?php echo $form_field_name ?>"
 	   size="<?php echo (empty($value)) ? 1 : strlen($value) ?>"
@@ -64,7 +67,7 @@ elseif($column->is_foreign_key()):
 	   size="<?php echo min(35, strlen($form_field_value)) ?>"
 	   value="<?php echo $form_field_value ?>" />
 
-<?php endif // foreign count < 100 ?>
+<?php endif // if ($foreign_count < $table->get_pagination(FALSE)->items_per_page) ?>
 
 <ul class="notes">
 	<li>

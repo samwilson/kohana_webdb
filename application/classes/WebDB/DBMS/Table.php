@@ -340,54 +340,51 @@ class WebDB_DBMS_Table
 
 		// Select columns and do query.
 		$this->select_columns($query);
-//		foreach (array_keys($this->_columns) as $col)
-//		{
-//			$query->select($this->_name.'.'.$col);
-//			if ($col->is_foreign_key())
-//			{
-//				$alias = $this->join_for($col, $query);
-//				$query->select(array($alias, $col->get_name().'_webdb_title'));
-//			}
-//		}
+
 		$this->_rows = $query->execute($this->_db);
 		Profiler::stop($token);
 		return $this->_rows;
 	}
 
-	private function select_columns(&$query)
+	/**
+	 * Add this table's columns to a given select query, optionally with joining
+	 * to any foreign tables and adding FK title column aliases.
+	 * @uses Database_Query_Builder_Select::select()
+	 * @param Database_Query_Builder_Select $query
+	 * @param boolean $with_fk_titles Whether to add FK title column aliases
+	 * @return void
+	 */
+	private function select_columns(&$query, $with_fk_titles = TRUE)
 	{
-		foreach ($this->_columns as $col)
+		$token = Profiler::start('WebDB', __METHOD__);
+		foreach ($this->get_columns() as $col)
 		{
 			$query->select($this->get_name().'.'.$col->get_name());
 			// For FKs, also select a special 'title' column.
-			if ($col->is_foreign_key())
+			if ($with_fk_titles AND $col->is_foreign_key())
 			{
 				$alias = $this->join_for($col, $query);
 				$query->select(array($alias, $col->get_name().'_webdb_title'));
 			}
 		}
+		Profiler::stop($token);
 	}
 
 	/**
 	 * Get a single row as an associative array.
-	 *
+	 * 
+	 * Foreign keys garner an additional column, suffixed with '_webdb_title',
+	 * that is the title of the remote row.
+	 * 
 	 * @param integer $id The ID of the row to get.
+	 * @param boolean $with_fk_titles Whether to include the 'title' columns.
 	 * @return array
 	 */
-	public function get_row($id)
+	public function get_row($id, $with_fk_titles = TRUE)
 	{
 		$token = Profiler::start('WebDB', __METHOD__);
 		$query = new Database_Query_Builder_Select();
-//		foreach ($this->get_columns() as $col)
-//		{
-//			$query->select($this->get_name().'.'.$col->get_name());
-//			if ($col->is_foreign_key())
-//			{
-//				$alias = $this->join_for($col, $query);
-//				$query->select(array($alias, $col->get_name().'_webdb_title'));
-//			}
-//		}
-		$this->select_columns($query);
+		$this->select_columns($query, $with_fk_titles);
 		$query->from($this->get_name());
 		$query->limit(1);
 		$pk_column = $this->get_pk_column();
@@ -967,7 +964,7 @@ class WebDB_DBMS_Table
 		}
 
 		// Update?
-		if ($has_pk && $this->get_row($data[$pk_name]))
+		if ($has_pk && $this->get_row($data[$pk_name], FALSE))
 		{
 			$pk_val = $data[$pk_name];
 			unset($data[$pk_name]);
