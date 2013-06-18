@@ -174,8 +174,11 @@ class Webdb_File_CSV
 				{
 					// @TODO
 				}
-				// Too long
-				if (strlen($value) > $column->get_size())
+				// Too long (if the column has a size and the value is greater than this)
+				if ( ! $column->is_foreign_key()
+					AND $column->get_size() > 0
+					AND strlen($value) > $column->get_size()
+					)
 				{
 					$errors[] = array(
 						'column_name' => $this->headers[$col_num],
@@ -196,8 +199,10 @@ class Webdb_File_CSV
 
 	/**
 	 * Assume all data is now valid, and only FK values remain to be translated.
+	 * 
 	 * @param WebDB_Table
 	 * @param array $column_map array of DB names to import names.
+	 * @return integer The number of rows imported.
 	 */
 	public function import_data($table, $column_map)
 	{
@@ -216,7 +221,7 @@ class Webdb_File_CSV
 				$column = $table->get_column($db_column_name);
 				if ($column->is_foreign_key())
 				{
-					$foreign_row = $this->get_fk_rows($column, $value)->current();
+					$foreign_row = $this->get_fk_rows($column->get_referenced_table(), $value)->current();
 					$pk = $column->get_referenced_table()->get_pk_column()->get_name();
 					$value = $foreign_row[$pk];
 				}
@@ -229,13 +234,21 @@ class Webdb_File_CSV
 		return $count;
 	}
 
+	/**
+	 * Determine whether a given value is valid for a foreign key (i.e. is the
+	 * title of a foreign row).
+	 * 
+	 * @param Webdb_DBMS_Column $column
+	 * @param integer $col_num
+	 * @param integer $row_num
+	 * @param string $value
+	 * @return FALSE if the value is valid
+	 * @return array error array if the value is not valid
+	 */
 	public function validate_foreign_key($column, $col_num, $row_num, $value)
 	{
-//		$foreign_table = $column->get_referenced_table();
-//		$foreign_table->reset_filters();
-//		$foreign_table->add_filter($foreign_table->get_title_column()->get_name(), '=', $value);
-//		$valid = $foreign_table->get_rows()->valid();
-		if ( ! $this->get_fk_rows($column, $value)->valid())
+		$foreign_table = $column->get_referenced_table();
+		if ( ! $this->get_fk_rows($foreign_table, $value)->valid())
 		{
 			$route_params = array(
 				'action' => 'index',
@@ -256,15 +269,17 @@ class Webdb_File_CSV
 		}
 		return FALSE;
 	}
-	
+
 	/**
-	 * @param Webdb_DBMS_Column $column
-	 * @param string $value
+	 * Get the rows of a foreign table where the title column equals a given
+	 * value.
+	 * 
+	 * @param WebDB_DBMS_Table $foreign_table
+	 * @param string $value The value to match against the title column.
 	 * @return Database_Result
 	 */
-	private function get_fk_rows($column, $value)
+	private function get_fk_rows($foreign_table, $value)
 	{
-		$foreign_table = $column->get_referenced_table();
 		$foreign_table->reset_filters();
 		$foreign_table->add_filter($foreign_table->get_title_column()->get_name(), '=', $value);
 		return $foreign_table->get_rows();
