@@ -335,7 +335,6 @@ class Webdb_DBMS_Column
 		$decimal_pattern = '/^decimal\((\d+),(\d+)\)/';
 		$float_pattern   = '/^float\((\d+),(\d+)\)/';
 		$integer_pattern = '/^((?:big|medium|small|tiny)?int)\(?(\d+)\)?/';
-		$integer_pattern = '/.*?(int)\(+(\d+)\)/';
 		$enum_pattern = '/^(enum|set)\(\'(.*?)\'\)/';
 
 		if (preg_match($varchar_pattern, $type_string, $matches))
