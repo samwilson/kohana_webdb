@@ -15,7 +15,7 @@
 	url = https://github.com/kohana/auth.git
 [submodule "modules/tasks-cache"]
 	path = modules/tasks-cache
-	url = https://github.com/kohana-minion/tasks-cache.git
+	url = https://github.com/samwilson/tasks-cache.git
 [submodule "modules/minion"]
 	path = modules/minion
 	url = https://github.com/kohana/minion.git
