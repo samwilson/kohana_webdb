@@ -159,15 +159,18 @@ class Webdb_File_CSV
 				{
 					continue;
 				}
+				$col_errors = array();
 				$db_column_name = $heads[$col_num];
 				$column = $table->get_column($db_column_name);
 				// Required, but empty
 				if ($column->is_required() AND empty($value)) {
-					$errors[] = array(
-						'column_name' => $this->headers[$col_num],
-						'row_number' => $row_num,
-						'message' => 'Required but empty',
-					);
+					$col_errors[] = 'Required but empty';
+//					$errors[] = array(
+//						'column_name' => $this->headers[$col_num],
+//						'field_name' => $column->get_name(),
+//						'row_number' => $row_num,
+//						'message' => 'Required but empty',
+//					);
 				}
 				// Already exists
 				if ($column->is_unique_key())
@@ -180,17 +183,32 @@ class Webdb_File_CSV
 					AND strlen($value) > $column->get_size()
 					)
 				{
-					$errors[] = array(
-						'column_name' => $this->headers[$col_num],
-						'row_number' => $row_num,
-						'message' => 'Value ('.$value.') too long (maximum length of '.$column->get_size().')',
-					);
+					$col_errors[] = 'Value ('.$value.') too long (maximum length of '.$column->get_size().')';
+//					$errors[] = array(
+//						'column_name' => $this->headers[$col_num],
+//						'field_name' => $column->get_name(),
+//						'row_number' => $row_num,
+//						'message' => 'Value ('.$value.') too long (maximum length of '.$column->get_size().')',
+//					);
 				}
 				// Invalid foreign key value
 				if (!empty($value) && $column->is_foreign_key())
 				{
 					$err = $this->validate_foreign_key($column, $col_num, $row_num, $value);
-					if ($err) $errors[] = $err;
+					//if ($err) $errors[] = $err;
+					if ($err) $col_errors[] = $err;
+				}
+
+				if (count($col_errors) > 0)
+				{
+					// Construct error details array
+					$errors[] = array(
+						'column_name' => $this->headers[$col_num],
+						'column_number' => $col_num,
+						'field_name' => $column->get_name(),
+						'row_number' => $row_num,
+						'messages' => $col_errors,
+					);
 				}
 			}
 		}
@@ -261,11 +279,14 @@ class Webdb_File_CSV
 				'title' => 'Opens in a new tab or window',
 			);
 			$link = HTML::anchor($uri, Webdb_Text::titlecase($foreign_table->get_name()), $a_params);
-			return array(
-				'column_name' => $this->headers[$col_num],
-				'row_number' => $row_num,
-				'message' => 'Value ('.$value.') not found in '.$link,
-			);
+//			return array(
+//				'column_number' => $col_num,
+//				'column_name' => $this->headers[$col_num],
+//				'field_name' => $column->get_name(),
+//				'row_number' => $row_num,
+//				'message' => 'Value ('.$value.') not found in '.$link,
+//			);
+			return 'Value ('.$value.') not found in '.$link;
 		}
 		return FALSE;
 	}

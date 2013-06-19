@@ -78,19 +78,30 @@
 				Please correct and import again.
 			</p>
 			<p>
-				The column numbers <em>do not</em> include the header row.
+				The row numbers <em>do not</em> include the header row,
+				and the column numbers start from one.
 			</p>
 			<p>
 				<input type="submit" name="match_fields" value="&larr; Return to field matching"/>
 				<a href="<?php echo $import_url ?>">Start import again</a>
 			</p>
 			<table>
-				<thead><tr><th>Row</th><th>Column</th><th></th></tr></thead>
+				<thead>
+					<tr>
+						<th rowspan="2">Row</th>
+						<th colspan="2">Columns</th>
+						<th rowspan="2">Error</th>
+					</tr>
+					<tr>
+						<th>Database Column</th><th>Uploaded File Column</th>
+					</tr>
+				</thead>
 			<?php foreach ($errors as $error): ?>
 				<tr>
 					<td><?php echo $error['row_number'] ?></td>
-					<td><?php echo $error['column_name'] ?></td>
-					<td><?php echo $error['message'] ?></td>
+					<td><?php echo WebDB_Text::titlecase($error['field_name']) ?></td>
+					<td><?php echo 'Column #'.($error['column_number']+1).': '.$error['column_name'] ?></td>
+					<td><?php echo join('<br />', $error['messages']) ?></td>
 				</tr>
 			<?php endforeach ?>
 			</table>
