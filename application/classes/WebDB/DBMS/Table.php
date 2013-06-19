@@ -907,7 +907,7 @@ class WebDB_DBMS_Table
 			/*
 			 * Booleans
 			*/
-			if ($column->get_type() == 'int' && $column->get_size() == 1)
+			if ($column->is_boolean())
 			{
 				if (($value == NULL || $value == '') && !$column->is_required())
 				{
