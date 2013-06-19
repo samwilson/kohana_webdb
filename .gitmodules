@@ -13,6 +13,9 @@
 [submodule "modules/auth"]
 	path = modules/auth
 	url = https://github.com/kohana/auth.git
-[submodule "modules/kadldap"]
-	path = modules/kadldap
-	url = https://github.com/samwilson/kohana_kadldap.git
+[submodule "modules/tasks-cache"]
+	path = modules/tasks-cache
+	url = https://github.com/kohana-minion/tasks-cache.git
+[submodule "modules/minion"]
+	path = modules/minion
+	url = https://github.com/kohana/minion.git

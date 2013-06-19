@@ -265,7 +265,18 @@ class Webdb_DBMS_Column
 	{
 		return $this->_isUnique;
 	}
-	
+
+	/**
+	 * Whether or not this column is a tinyint of length 1 (i.e MySQL's idea of
+	 * a boolean).
+	 * 
+	 * @return boolean
+	 */
+	public function is_boolean()
+	{
+		return ($this->get_type()=='tinyint') AND ($this->get_size()==1);
+	}
+
 	/**
 	 * Whether or not this column is a foreign key.
 	 *

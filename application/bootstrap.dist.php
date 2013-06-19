@@ -91,12 +91,14 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	'cache'      => MODPATH.'cache',
-	'database'   => MODPATH.'database',
-	'pagination' => MODPATH.'pagination',
-	//'kadldap'    => MODPATH.'kadldap',
-	'auth'       => MODPATH.'auth',
+	'auth'        => MODPATH.'auth',
+	'cache'       => MODPATH.'cache',
+	'database'    => MODPATH.'database',
+	'pagination'  => MODPATH.'pagination',
+	'minion'      => MODPATH.'minion',
+	'tasks-cache' => MODPATH.'tasks-cache',
 ));
+
 
 /**
  * Routing.
