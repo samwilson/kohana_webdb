@@ -41,7 +41,8 @@ table .pagination strong { color:black }
 table .submit { text-align:right }
 table th.sorted { background-color:#FFA }
 table th.sorted img { float:right; margin-top:2px }
-
+table td.decimal { text-align:right }
+table td.boolean { text-align:center }
 
 
 /******************************************************************************/

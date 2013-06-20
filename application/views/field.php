@@ -1,7 +1,12 @@
 <?php
 
+$type = $column->get_type();
+if (in_array($type, array('bigint', 'mediumint', 'int', 'smallint', 'tinyint')))
+{
+	$type = 'int';
+}
 $editable = $edit ? 'edit' : 'view';
-$field_view_name = $column->get_type().'_'.$editable;
+$field_view_name = $type.'_'.$editable;
 
 $view_file = Kohana::find_file('views/fields', $field_view_name);
 

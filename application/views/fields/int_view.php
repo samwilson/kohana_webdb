@@ -7,7 +7,7 @@
 	?>
 
 <?php elseif ($column->get_size() == 1): ?>
-	<?php if ($value==1) echo 'Yes'; elseif ($value==0) echo 'No'; else echo ''; ?>
+	<?php if ($value==='1') echo 'Yes'; elseif ($value==='0') echo 'No'; else echo ''; ?>
 
 <?php else: ?>
 	<?php echo $value ?>

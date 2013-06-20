@@ -52,7 +52,7 @@
 			<?php endif // if ($the_table->get_pk_column()) ?>
 			
 					<?php foreach ($the_table->get_columns() as $column): ?>
-			<td class="<?php echo $column->get_type() ?>">
+			<td class="<?php echo $column->get_type(); if ($column->is_boolean()) echo ' boolean'; ?>">
 				<?php $edit = FALSE;
 				$form_field_name = '';
 				echo View::factory('field')

@@ -3,20 +3,31 @@
 /**
  * ID column
  */
-if ($column->isPrimaryKey()):
+if ($column->isPrimaryKey())
+{
 	$params = array('readonly'=>TRUE, 'id'=>$form_field_name, 'size'=>$column->get_size());
 	echo Form::input($form_field_name, $value, $params);
 
+}
 /**
  * Booleans
  */
-elseif ($column->get_size() == 1):
-	echo Form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
-
+elseif ($column->is_boolean())
+{
+	if ($column->is_required())
+	{
+		echo Form::checkbox($form_field_name, NULL, $value==1, array('id'=>$form_field_name));
+	}
+	else
+	{
+		echo Form::select($form_field_name, array(''=>'', '1'=>'Yes', '0'=>'No'));
+	}
+}
 /**
  * Foreign keys
  */
-elseif($column->is_foreign_key()):
+elseif($column->is_foreign_key())
+{
 	$referenced_table = $column->get_referenced_table();
 
 	$foreign_count = $referenced_table->count_records();
@@ -91,13 +102,17 @@ if ($value) {
 
 
 <?php
+}
 /**
  * Everything else
  */
-else: ?>
-	<?php echo Form::input($form_field_name, $value,  array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()))) ?>
+else
+{
+	$attrs = array('id'=>$form_field_name, 'size'=>min(35, $column->get_size()));
+	echo Form::input($form_field_name, $value, $attrs);
 
-<?php endif /* end ifs choosing type of input. */ ?>
+} // end ifs choosing type of input.
+?>
 
 
 
