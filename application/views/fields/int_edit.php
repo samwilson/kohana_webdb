@@ -33,6 +33,7 @@ elseif($column->is_foreign_key())
 	$foreign_count = $referenced_table->count_records();
 	if ($foreign_count < $table->get_pagination(FALSE)->items_per_page):
 		$options = array();
+		if ( ! $column->is_required()) $options[] = '';
 		foreach ($referenced_table->get_rows(TRUE, FALSE) as $foreign_row) {
 			$options[$foreign_row['id']] = $foreign_row['webdb_title'];
 		}
