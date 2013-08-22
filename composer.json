@@ -17,7 +17,7 @@
 		"source": "https://github.com/samwilson/kohana_webdb"
 	},
 	"require": {
-		"php": ">=5.3",
+		"php": ">=5.3"
 	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"
