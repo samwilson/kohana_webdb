@@ -340,7 +340,7 @@ class Webdb_DBMS_Column
 		if (preg_match($varchar_pattern, $type_string, $matches))
 		{
 			$this->_type = $matches[1];
-			$this->_size = $matches[2];
+			$this->_size = (int) $matches[2];
 		} elseif (preg_match($decimal_pattern, $type_string, $matches))
 		{
 			$this->_type = 'decimal';
@@ -354,7 +354,7 @@ class Webdb_DBMS_Column
 		} elseif (preg_match($integer_pattern, $type_string, $matches))
 		{
 			$this->_type = $matches[1];
-			$this->_size = $matches[2];
+			$this->_size = (int) $matches[2];
 		} elseif (preg_match($enum_pattern, $type_string, $matches))
 		{
 			$this->_type = $matches[1];
