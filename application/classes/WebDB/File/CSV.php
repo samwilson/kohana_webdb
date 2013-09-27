@@ -162,8 +162,9 @@ class Webdb_File_CSV
 				$col_errors = array();
 				$db_column_name = $heads[$col_num];
 				$column = $table->get_column($db_column_name);
-				// Required, but empty
-				if ($column->is_required() AND empty($value)) {
+				// Required, has no default, and is empty
+				if ($column->is_required() AND !$column->has_default() AND empty($value))
+				{
 					$col_errors[] = 'Required but empty';
 				}
 				// Already exists
