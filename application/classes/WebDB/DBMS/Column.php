@@ -227,6 +227,16 @@ class Webdb_DBMS_Column
 	}
 
 	/**
+	 * Does this column have a default value?
+	 *
+	 * @return boolean
+	 */
+	public function has_default()
+	{
+		return $this->get_default() != NULL;
+	}
+
+	/**
 	 * Get this column's size.
 	 *
 	 * @return integer The size of this column.
