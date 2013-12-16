@@ -23,4 +23,19 @@ $(function() {
 		}
 	});
 
+	// Filters
+	var $addFilter = $("<a>Add new filter</a>");
+	$("table.filters tr.submit th:first").prepend($addFilter);
+	$addFilter.click(function() {
+		var filterCount =  $(this).parents("table").find("tr.filter").size();
+		$lastrow = $(this).parents("table").find("tr.filter:last");
+		$newrow = $lastrow.clone();
+		$newrow.find("select, input").each(function() {
+			var newName = $(this).attr("name").replace(/\[[0-9]+\]/, "["+filterCount+"]")
+			$(this).attr("name", newName);
+		});
+		$newrow.find("td:first").html("&hellip;and");
+		$lastrow.after($newrow);
+	});
+
 });

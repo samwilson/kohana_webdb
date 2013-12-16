@@ -2,7 +2,7 @@
 	"name": "samwilson/kohana_webdb",
 	"description": "A database user-interface system (à la phpMyAdmin, but without the administrative capabilities, and suitable for non-technical users) built on the Kohana framework.",
 	"homepage": "https://github.com/samwilson/kohana_webdb",
-	"license": "Simplified BSD",
+	"license": "BSD-2-Clause",
 	"keywords": ["kohana", "webdb", "mysql", "databases"],
 	"authors": [
 		{
@@ -21,5 +21,11 @@
 	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"
-	}
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/samwilson/"
+		}
+	]
 }

@@ -140,19 +140,19 @@
 				</ol>
 				<?php endif ?>
 
-				<?php if (count($messages) > 0): ?>
-					<?php // Thanks to http://en.wikipedia.org/wiki/Template:Ambox ?>
+				<?php if (isset($messages) AND count($messages) > 0): ?>
+				<?php // Thanks to http://en.wikipedia.org/wiki/Template:Ambox ?>
 				<ul class="messages">
-						<?php foreach ($messages as $message):
-							$status = $message['status'];
-							$icon_url = URL::site("resources/img/icon_$status.png");
-							?>
+					<?php foreach ($messages as $message):
+						$status = $message['status'];
+						$icon_url = URL::site("resources/img/icon_$status.png");
+						?>
 					<li class="<?php echo $status ?> message"
 						style="background-image: url('<?php echo $icon_url ?>');
 						background-repeat:no-repeat; background-position: left center">
-								<?php echo $message['message'] ?>
+						<?php echo $message['message'] ?>
 					</li>
-						<?php endforeach ?>
+					<?php endforeach ?>
 				</ul>
 				<?php endif ?>
 
