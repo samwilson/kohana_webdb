@@ -17,7 +17,13 @@
 		"source": "https://github.com/samwilson/kohana_webdb"
 	},
 	"require": {
-		"php": ">=5.3"
+		"kohana/core": "3.3.*",
+		"kohana/auth": "3.3.*",
+		"kohana/cache": "3.3.*",
+		"kohana/database": "3.3.*",
+		"shadowhand/pagination": "dev-composer",
+		"kohana/minion": "3.3.*",
+		"kohana/tasks-cache": "3.3.*"
 	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"

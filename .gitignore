@@ -6,3 +6,5 @@ application/bootstrap.php
 .htaccess
 nbproject/private
 *.tgz
+vendor
+modules
