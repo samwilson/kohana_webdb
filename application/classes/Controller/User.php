@@ -17,13 +17,15 @@ class Controller_User extends Controller_Base
 			{
 				try
 				{
-					$this->dbms->refresh_cache();
+					$dbms = new WebDB_DBMS;
+					$dbms->refresh_cache();
 					$this->add_flash_message('You are now logged in.', 'info');
 					Kohana::$log->add(Kohana_Log::INFO, $this->view->username.' logged in.');
-				} catch (Exception $e)
+				}
+				catch (Exception $e)
 				{
-					$msg = 'Unable to log in as '.$this->view->username.'. '.$e->getMessage();
-					Kohana::$log->add(Kohana_Log::INFO, $msg);
+					$msg = 'Unable to log in as :username.';
+					throw HTTP_Exception::factory(500, $msg, array(':username'=>$this->view->username), $e);
 				}
 				$this->redirect($this->view->return_to);
 			} else
