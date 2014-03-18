@@ -2,8 +2,8 @@ application/cache/*
 application/config/*
 !application/config/*.dist.php
 application/logs/*
-application/bootstrap.php
 .htaccess
+config.php
 nbproject/private
 *.tgz
 vendor

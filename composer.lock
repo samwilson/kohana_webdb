@@ -1,0 +1,506 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "18a0f533624fd9115132de0c0b71f282",
+    "packages": [
+        {
+            "name": "adldap/adldap",
+            "version": "v4.0-stable",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ztec/adLDAP.git",
+                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ztec/adLDAP/zipball/43bca164cde8f5a98e054e1aea53406aa3b805cc",
+                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "suggest": {
+                "ext-ldap": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "adLDAP": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Hyland",
+                    "email": "adldap@richardhyland.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "adLDAP, low-level library to query Active directory",
+            "homepage": "http://adldap.sourceforge.net",
+            "keywords": [
+                "active directory",
+                "ldap",
+                "windows"
+            ],
+            "time": "2013-08-29 14:08:57"
+        },
+        {
+            "name": "composer/installers",
+            "version": "v1.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/installers.git",
+                "reference": "4127333b03e8b4c08d081958548aae5419d1a2fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/installers/zipball/4127333b03e8b4c08d081958548aae5419d1a2fa",
+                "reference": "4127333b03e8b4c08d081958548aae5419d1a2fa",
+                "shasum": ""
+            },
+            "replace": {
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*@dev",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "composer-installer",
+            "extra": {
+                "class": "Composer\\Installers\\Installer",
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Composer\\Installers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "http://composer.github.com/installers/",
+            "keywords": [
+                "Craft",
+                "Hurad",
+                "MODX Evo",
+                "OXID",
+                "WolfCMS",
+                "agl",
+                "annotatecms",
+                "cakephp",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "drupal",
+                "elgg",
+                "fuelphp",
+                "installer",
+                "joomla",
+                "kohana",
+                "laravel",
+                "lithium",
+                "magento",
+                "mako",
+                "mediawiki",
+                "modulework",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "shopware",
+                "silverstripe",
+                "symfony",
+                "typo3",
+                "wordpress",
+                "zend",
+                "zikula"
+            ],
+            "time": "2014-02-24 04:21:34"
+        },
+        {
+            "name": "kohana-minion/tasks-cache",
+            "version": "3.3.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/tasks-cache.git",
+                "reference": "a6d4eed59539728f8a8b9ca74c07b08e9d89c290"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/tasks-cache/zipball/a6d4eed59539728f8a8b9ca74c07b08e9d89c290",
+                "reference": "a6d4eed59539728f8a8b9ca74c07b08e9d89c290",
+                "shasum": ""
+            },
+            "require": {
+                "kohana/cache": "v3.3.1",
+                "kohana/minion": "v3.3.1"
+            },
+            "type": "library",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Button",
+                    "email": "matthew@sigswitch.com"
+                }
+            ],
+            "description": "Cache tasks for the Kohana-Minion CLI framework.",
+            "support": {
+                "source": "https://github.com/samwilson/tasks-cache/tree/3.3"
+            },
+            "time": "2014-01-28 05:48:34"
+        },
+        {
+            "name": "kohana/auth",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kohana/auth.git",
+                "reference": "4ebae51874fe1be24b64d14b4d9691d3dbf6d043"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kohana/auth/zipball/4ebae51874fe1be24b64d14b4d9691d3dbf6d043",
+                "reference": "4ebae51874fe1be24b64d14b4d9691d3dbf6d043",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "type": "kohana-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.3/develop": "3.3.x-dev",
+                    "dev-3.4/develop": "3.4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kohana Team",
+                    "email": "team@kohanaframework.org",
+                    "homepage": "http://kohanaframework.org/team",
+                    "role": "developer"
+                }
+            ],
+            "description": "The official Kohana auth module",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "Authentication",
+                "framework",
+                "kohana"
+            ],
+            "time": "2013-08-26 02:03:17"
+        },
+        {
+            "name": "kohana/cache",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kohana/cache.git",
+                "reference": "dd846582f50526964426a8a5106248acc0b63cfa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kohana/cache/zipball/dd846582f50526964426a8a5106248acc0b63cfa",
+                "reference": "dd846582f50526964426a8a5106248acc0b63cfa",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "type": "kohana-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.3/develop": "3.3.x-dev",
+                    "dev-3.4/develop": "3.4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kohana Team",
+                    "email": "team@kohanaframework.org",
+                    "homepage": "http://kohanaframework.org/team",
+                    "role": "developer"
+                }
+            ],
+            "description": "The official Kohana cache management module",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "cache",
+                "framework",
+                "kohana"
+            ],
+            "time": "2013-08-26 02:05:24"
+        },
+        {
+            "name": "kohana/core",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kohana/core.git",
+                "reference": "06c8242ce73abce2a633944cb7b259f9ba861ef1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kohana/core/zipball/06c8242ce73abce2a633944cb7b259f9ba861ef1",
+                "reference": "06c8242ce73abce2a633944cb7b259f9ba861ef1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "ext-http": "*",
+                "ext-mcrypt": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.3/develop": "3.3.x-dev",
+                    "dev-3.4/develop": "3.4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kohana Team",
+                    "email": "team@kohanaframework.org",
+                    "homepage": "http://kohanaframework.org/team",
+                    "role": "developer"
+                }
+            ],
+            "description": "Core system classes for the Kohana application framework",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "framework",
+                "kohana"
+            ],
+            "time": "2013-09-01 06:49:40"
+        },
+        {
+            "name": "kohana/database",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kohana/database.git",
+                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kohana/database/zipball/3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
+                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-mysql": "*",
+                "ext-pdo": "*"
+            },
+            "type": "kohana-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.3/develop": "3.3.x-dev",
+                    "dev-3.4/develop": "3.4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kohana Team",
+                    "email": "team@kohanaframework.org",
+                    "homepage": "http://kohanaframework.org/team",
+                    "role": "developer"
+                }
+            ],
+            "description": "The official Kohana module for database interactions, building queries, and prepared statements",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "database",
+                "framework",
+                "kohana"
+            ],
+            "time": "2013-08-26 02:07:34"
+        },
+        {
+            "name": "kohana/minion",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kohana/minion.git",
+                "reference": "cfa623256287ff664bc72372caad02fe2f8a145b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kohana/minion/zipball/cfa623256287ff664bc72372caad02fe2f8a145b",
+                "reference": "cfa623256287ff664bc72372caad02fe2f8a145b",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "type": "kohana-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.3/develop": "3.3.x-dev",
+                    "dev-3.4/develop": "3.4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kohana Team",
+                    "email": "team@kohanaframework.org",
+                    "homepage": "http://kohanaframework.org/team",
+                    "role": "developer"
+                }
+            ],
+            "description": "The official kohana module for running tasks via the CLI",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "framework",
+                "kohana",
+                "task"
+            ],
+            "time": "2013-08-26 02:09:55"
+        },
+        {
+            "name": "samwilson/kohana_kadldap",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_kadldap.git",
+                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_kadldap/zipball/f6741a16c47cac7c06f378b92cfd25ade655d8b0",
+                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0",
+                "shasum": ""
+            },
+            "require": {
+                "adldap/adldap": "v4.0-stable"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Kohana wrapper module for adLDAP.",
+            "time": "2013-09-04 07:28:09"
+        },
+        {
+            "name": "shadowhand/pagination",
+            "version": "dev-composer",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/pagination.git",
+                "reference": "5c27ff966a039374ea2ab2dbf741c3ecb94f3aa0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/pagination/zipball/5c27ff966a039374ea2ab2dbf741c3ecb94f3aa0",
+                "reference": "5c27ff966a039374ea2ab2dbf741c3ecb94f3aa0",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "type": "kohana-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.2/develop": "3.2.x-dev",
+                    "dev-3.3/develop": "3.3.x-dev"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Woody Gilk (shadowhand)",
+                    "email": "woody@wingsc.com",
+                    "homepage": "http://wingsc.com/",
+                    "role": "developer"
+                }
+            ],
+            "description": "A Kohana module for pagination.",
+            "homepage": "http://kohanaframework.org",
+            "keywords": [
+                "kohana",
+                "pagination"
+            ],
+            "support": {
+                "forum": "http://forum.kohanaframework.org",
+                "irc": "irc://irc.freenode.net/kohana",
+                "source": "https://github.com/shadowhand/pagination"
+            },
+            "time": "2013-09-05 00:16:23"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "shadowhand/pagination": 20,
+        "kohana-minion/tasks-cache": 20
+    },
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}

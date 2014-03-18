@@ -23,17 +23,16 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 
 1. Download and uncompress in a web-accessible location.
 
-2. Copy `application/bootstrap.dist.php` to `application/bootstrap.php` and edit
-   the basic configuration therein.
+2. Copy `config.dist.php` to `config.php` and edit the constants therein.
 
-3. Copy the configuration files. The minimum is usually just `database.php`,
-   but any others can also be copied and customized.
+3. Copy any required module configuration files from `modules/*/config` into
+   `application/config` and change whatever's required.
 
 4. Set up database information and an authentication source:
-   * Set username and password to NULL in `application/config/database.php`,
-     and Auth driver to `'db'` in `application/config/auth.php`;
-   * **Or** set all credentials in `application/config/database.php` and elect
-     to use a different Auth driver (such as ORM or file) in
+   * Set username and password to `NULL` in `application/config/database.php`,
+     and Auth driver to `'DB'` in `application/config/auth.php`;
+   * **OR** set all credentials in `application/config/database.php` and elect
+     to use a different Auth driver (such as ORM, LDAP, or file) in
      `application/config/auth.php`.
 
    If you do the latter, you will also need to set up whatever else is required

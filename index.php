@@ -1,112 +1,196 @@
 <?php
 
-/**
- * The directory in which your application specific resources are located.
- * The application directory must contain the bootstrap.php file.
- *
- * @see  http://kohanaframework.org/guide/about.install#application
- */
-$application = 'application';
+if ( ! file_exists('config.php'))
+{
+	echo 'Configuration file not found. Please copy config.dist.php to config.php and edit the values therein.';
+	exit(1);
+}
+require 'config.php';
 
-/**
- * The directory in which your modules are located.
- *
- * @see  http://kohanaframework.org/guide/about.install#modules
- */
-$modules = 'modules';
-
-/**
- * The directory in which the Kohana resources are located. The system
- * directory must contain the classes/kohana.php file.
- *
- * @see  http://kohanaframework.org/guide/about.install#system
- */
-$system = 'system';
-
-/**
- * The default extension of resource files. If you change this, all resources
- * must be renamed to use the new extension.
- *
- * @see  http://kohanaframework.org/guide/about.install#ext
- */
 define('EXT', '.php');
+define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
-/**
- * Set the PHP error reporting level. If you set this in php.ini, you remove this.
- * @see  http://php.net/error_reporting
- *
- * When developing your application, it is highly recommended to enable notices
- * and strict warnings. Enable them by using: E_ALL | E_STRICT
- *
- * In a production environment, it is safe to ignore notices and strict warnings.
- * Disable them by using: E_ALL ^ E_NOTICE
- *
- * When using a legacy application with PHP >= 5.3, it is recommended to disable
- * deprecated notices. Disable with: E_ALL & ~E_DEPRECATED
+/*
+ * Path to application data
  */
-error_reporting(E_ALL | E_STRICT);
-
-/**
- * End of standard configuration! Changing any of the code below should only be
- * attempted by those with a working knowledge of Kohana internals.
- *
- * @see  http://kohanaframework.org/guide/using.configuration
- */
-// Set the full path to the docroot
-define('DOCROOT', realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR);
-
-// Make the application relative to the docroot, for symlink'd index.php
-if ( ! is_dir($application) AND is_dir(DOCROOT.$application))
-	$application = DOCROOT.$application;
-
-// Make the modules relative to the docroot, for symlink'd index.php
-if ( ! is_dir($modules) AND is_dir(DOCROOT.$modules))
-	$modules = DOCROOT.$modules;
-
-// Make the system relative to the docroot, for symlink'd index.php
-if ( ! is_dir($system) AND is_dir(DOCROOT.$system))
-	$system = DOCROOT.$system;
-
-// Define the absolute paths for configured directories
-define('APPPATH', realpath($application).DIRECTORY_SEPARATOR);
-define('MODPATH', realpath($modules).DIRECTORY_SEPARATOR);
-define('SYSPATH', realpath($system).DIRECTORY_SEPARATOR);
-
-// Clean up the configuration vars
-unset($application, $modules, $system);
-
-/**
- * Define the start time of the application, used for profiling.
- */
-if ( ! defined('KOHANA_START_TIME'))
+if ( ! defined('APPPATH'))
 {
-	define('KOHANA_START_TIME', microtime(TRUE));
+	define('APPPATH', DOCROOT.'application'.DIRECTORY_SEPARATOR);
+}
+if ( ! is_dir(APPPATH))
+{
+	// Create directory, after the precedent of Kohana_Core::init();
+	mkdir(APPPATH, 0755, TRUE) OR die('Unable to make directory '.APPPATH);
+	chmod(APPPATH, 0755);
+}
+
+define('MODPATH', DOCROOT.'modules'.DIRECTORY_SEPARATOR);
+define('SYSPATH', DOCROOT.'vendor'.DIRECTORY_SEPARATOR.'kohana'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR);
+if ( ! defined('KOHANA_BASE_URL')) define('KOHANA_BASE_URL', '/ormic/');
+if (substr(KOHANA_BASE_URL, -1) != '/') 
+{
+	echo 'KOHANA_BASE_URL must have trailing slash';
+	exit(1);
+}
+if ( ! defined('KOHANA_ENVIRONMENT')) define('KOHANA_ENVIRONMENT', 'production');
+if ( ! defined('KOHANA_COOKIE_SALT') OR KOHANA_COOKIE_SALT=='')
+{
+	echo 'Please define KOHANA_COOKIE_SALT in config.php';
+	exit(1);
+}
+
+/*
+ * Set locale and language
+ */
+if (!defined('KOHANA_LANG')) define('KOHANA_LANG', 'en-au');
+if (!defined('KOHANA_LOCALE')) define('KOHANA_LOCALE', 'en_US.utf-8');
+setlocale(LC_ALL, KOHANA_LOCALE);
+
+/*
+ * Load and configure Kohana Core
+ */
+if (!defined('KOHANA_START_TIME')) define('KOHANA_START_TIME', microtime(TRUE));
+if (!defined('KOHANA_START_MEMORY')) define('KOHANA_START_MEMORY', memory_get_usage());
+require SYSPATH . 'classes/Kohana/Core'.EXT;
+require SYSPATH . 'classes/Kohana'.EXT;
+require DOCROOT . 'vendor/autoload.php';
+spl_autoload_register(array('Kohana', 'auto_load'));
+ini_set('unserialize_callback_func', 'spl_autoload_call');
+I18n::lang(KOHANA_LANG);
+Kohana::$environment = constant('Kohana::'.strtoupper(KOHANA_ENVIRONMENT));
+
+/*
+ * Try to create log directory.
+ */
+$cache_dir = APPPATH.'cache';
+if ( ! file_exists($cache_dir))
+{
+	// Create directory, after the precedent of Kohana_Core::init();
+	mkdir($cache_dir, 0755, TRUE) OR die('Unable to make directory '.$cache_dir);
+	chmod($cache_dir, 0755);
 }
 
 /**
- * Define the memory usage at the start of the application, used for profiling.
+ * Shutdown for CLI, can be removed when http://dev.kohanaframework.org/issues/4537 is resolved.
  */
-if ( ! defined('KOHANA_START_MEMORY'))
+if (PHP_SAPI == 'cli')
 {
-	define('KOHANA_START_MEMORY', memory_get_usage());
+	register_shutdown_function(function()
+	{
+		if (Kohana::$errors AND $error = error_get_last() AND in_array($error['type'], Kohana::$shutdown_errors))
+		{
+			exit(1);
+		}
+		
+	});
 }
 
-// Bootstrap the application
-require APPPATH.'bootstrap'.EXT;
+/*
+ * Kohana initialisation.
+ */
+Kohana::init(array(
+	'base_url' => KOHANA_BASE_URL,
+	'index_file' => FALSE,
+	'cache_dir' => $cache_dir,
+	'profile' => Kohana::$environment != Kohana::PRODUCTION,
+	'errors' => Kohana::$environment != Kohana::PRODUCTION,
+	'caching' => Kohana::$environment == Kohana::PRODUCTION,
+));
 
-if (PHP_SAPI == 'cli') // Try and load minion
+/*
+ * Try to create log directory.
+ */
+$log_dir = APPPATH.'logs';
+if (!file_exists($log_dir))
+{
+	// Create directory, after the precedent of Kohana_Core::init();
+	mkdir($log_dir, 0755, TRUE);
+	chmod($log_dir, 0755);
+}
+Kohana::$log->attach(new Log_File($log_dir));
+unset($log_dir);
+
+/*
+ * 
+ */
+Kohana::$config->attach(new Config_File);
+
+Cookie::$salt = KOHANA_COOKIE_SALT;
+
+/*
+ * Load all required modules.
+ */
+Kohana::modules(array(
+	'auth'        => MODPATH.'auth',
+	'cache'       => MODPATH.'cache',
+	'database'    => MODPATH.'database',
+	'pagination'  => MODPATH.'pagination',
+	'minion'      => MODPATH.'minion',
+	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
+	'kadldap'      => MODPATH.'kohana_kadldap',
+));
+
+/**
+ * Routes.
+ */
+Route::set('login', 'login')->defaults(array(
+	'controller' => 'User',
+	'action' => 'login',
+));
+Route::set('logout', 'logout')->defaults(array(
+	'controller' => 'User',
+	'action' => 'logout',
+));
+Route::set('profile', 'profile')->defaults(array(
+	'controller'=>'User',
+	'action' => 'profile',
+));
+Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
+	->defaults(array(
+		'controller' => 'WebDB',
+		'action' => 'index',
+		'dbname' => NULL,
+		'tablename' => NULL,
+		'id' => NULL
+));
+
+/**
+ * Site title is defined after config and modules have had a chance at at.
+ */
+if (!defined('SITE_TITLE')) define('SITE_TITLE', 'WebDB');
+
+/**
+ * Execute the request.
+ */
+if (PHP_SAPI == 'cli')
 {
 	/**
-	 * Execute the Minion task if this is a CLI request.
+	 * Include the Unit Test module and leave the rest to PHPunit.
+	 */
+	if (substr(basename($_SERVER['PHP_SELF']), 0, 7) == 'phpunit')
+	{
+		// Disable output buffering
+		if (($ob_len = ob_get_length()) !== FALSE)
+		{
+			// flush_end on an empty buffer causes headers to be sent. Only flush if needed.
+			if ($ob_len > 0) ob_end_flush();
+			else ob_end_clean();
+		}
+		Kohana::modules(Kohana::modules() + array('unittest' => MODPATH.'unittest'));
+		//Database::$default = 'testing';
+		return; // Execution will be continued by phpunit
+	}
+
+	/*
+	 * Execute minion if this is a command line request.
 	 */
 	set_exception_handler(array('Minion_Exception', 'handler'));
 	Minion_Task::factory(Minion_CLI::options())->execute();
 }
 else
 {
-	/**
-	 * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
-	 * If no source is specified, the URI will be automatically detected.
+	/*
+	 * Otherwise, execute the main request.
 	 */
 	echo Request::factory(TRUE, array(), FALSE)
 		->execute()

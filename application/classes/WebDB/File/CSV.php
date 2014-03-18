@@ -186,6 +186,11 @@ class Webdb_File_CSV
 					$err = $this->validate_foreign_key($column, $col_num, $row_num, $value);
 					if ($err) $col_errors[] = $err;
 				}
+				// Dates
+				if ($column->get_type()=='date' && !empty($value) && preg_match('/\n{4}-\n{2}-\n{2}/', $value)!==1)
+				{
+					$col_errors[] = 'Value ('.$value.') not in date format';
+				}
 
 				if (count($col_errors) > 0)
 				{

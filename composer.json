@@ -1,5 +1,6 @@
 {
 	"name": "samwilson/kohana_webdb",
+	"type": "project",
 	"description": "A database user-interface system (à la phpMyAdmin, but without the administrative capabilities, and suitable for non-technical users) built on the Kohana framework.",
 	"homepage": "https://github.com/samwilson/kohana_webdb",
 	"license": "BSD-2-Clause",
@@ -23,7 +24,8 @@
 		"kohana/database": "3.3.*",
 		"shadowhand/pagination": "dev-composer",
 		"kohana/minion": "3.3.*",
-		"kohana/tasks-cache": "3.3.*"
+		"kohana-minion/tasks-cache": "@dev",
+		"samwilson/kohana_kadldap": "*"
 	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"
@@ -31,7 +33,11 @@
 	"repositories": [
 		{
 			"type": "vcs",
-			"url": "https://github.com/samwilson/"
+			"url": "https://github.com/samwilson/pagination.git"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/samwilson/tasks-cache.git"
 		}
 	]
 }
