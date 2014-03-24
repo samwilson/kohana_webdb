@@ -13,7 +13,7 @@ records; and edit form fields are all matched to their underlying data types to
 make it as easy as possible to enter data.  Many other features make WebDB a
 (hopefully) useful prototyping or bare-bones data base interface.
 
-* **Latest Version:** 4.2.1 (2013-12-16)
+* **Latest Version:** 4.2.2 (2014-03-24)
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
 * **Established:** March 2008
