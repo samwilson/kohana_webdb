@@ -120,15 +120,24 @@ Cookie::$salt = KOHANA_COOKIE_SALT;
 /*
  * Load all required modules.
  */
-Kohana::modules(array(
+$required_modules = array(
 	'auth'        => MODPATH.'auth',
 	'cache'       => MODPATH.'cache',
 	'database'    => MODPATH.'database',
 	'pagination'  => MODPATH.'pagination',
 	'minion'      => MODPATH.'minion',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
-	'kadldap'      => MODPATH.'kohana_kadldap',
-));
+	'kadldap'     => MODPATH.'kohana_kadldap',
+);
+foreach ($modules as $mod)
+{
+	if (is_dir($mod))
+	{
+		$required_modules[basename ($mod)] = $mod;
+	}
+}
+Kohana::modules($required_modules);
+unset($modules, $required_modules);
 
 /**
  * Routes.

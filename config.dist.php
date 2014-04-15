@@ -7,3 +7,6 @@ define('KOHANA_LANG', 'en');
 define('KOHANA_ENVIRONMENT', 'production');
 #define('KOHANA_LOCALE', 'en_US.utf-8')
 
+$modules = array(
+	//__DIR__.'/vendor/samwilson/kohana_webdb_erd',
+);

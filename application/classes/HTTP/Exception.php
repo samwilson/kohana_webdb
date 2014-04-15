@@ -21,6 +21,10 @@ class HTTP_Exception extends Kohana_HTTP_Exception {
 		$page = View::factory('template');
 		$page->controller = 'error';
 		$page->action = 'error';
+		$page->table = '';
+		$page->tables = array();
+		$page->database = '';
+		$page->databases = array();
 		$page->content = $view->render();
 
 		// Response

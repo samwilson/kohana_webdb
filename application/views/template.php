@@ -67,21 +67,20 @@
 						WebDB_Text::titlecase($table->get_name())
 					);
 				} ?>
-            </h1>
+			</h1>
 
 			<?php if (count($databases) > 0): ?>
-            <ol class="databases tabnav">
-					<?php foreach ($databases as $db): ?>
-						<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
-                <li class="<?php echo $selected ?>">
-							<?php echo HTML::anchor("index/$db", WebDB_Text::titlecase($db),
-							array('class'=>$selected)) ?>
-                </li>
-					<?php endforeach ?>
-            </ol>
+			<ol class="databases tabnav">
+			<?php foreach ($databases as $db): ?>
+				<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
+				<li class="<?php echo $selected ?>">
+					<?php echo HTML::anchor("index/$db", WebDB_Text::titlecase($db), array('class'=>$selected)) ?>
+				</li>
+			<?php endforeach ?>
+			</ol>
 			<?php endif ?>
 
-        </div>
+		</div>
 
 		<div class="not-head-foot">
 
@@ -100,10 +99,10 @@
 						foreach ($group as $tab)
 						{
 							$selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '';
-							$title = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
+							$t = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
 							echo '<li>'.HTML::anchor(
 								'index/'.$database->get_name().'/'.$tab->get_name(),
-								WebDB_Text::titlecase($title),
+								WebDB_Text::titlecase($t),
 								array('class'=>$selected)
 								).'</li>';
 						}
@@ -117,11 +116,11 @@
 				<?php if ($table): ?>
 				<div class="title">
 					<h1><?php echo HTML::anchor(
-							'index/'.$database->get_name().'/'.$table->get_name(),
-							WebDB_Text::titlecase($table->get_name())
-							) ?>
+						'index/'.$database->get_name().'/'.$table->get_name(),
+						WebDB_Text::titlecase($table->get_name())
+						) ?>
 					</h1>
-						<?php if ($table->get_comment()) echo '<p>'.$table->get_comment().'</p>' ?>
+					<?php if ($table->get_comment()) echo '<p>'.$table->get_comment().'</p>' ?>
 				</div>
 				<?php endif ?>
 
