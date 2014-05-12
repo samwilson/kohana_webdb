@@ -73,7 +73,11 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 
 /******************************************************************************/
 /* Sidebar */
-.tables { float:left; width: 240px; list-style-type:none; margin:0; padding:0 }
+.sidebar { float:left; width:240px }
+.db-tools { background-color:#EFEFF5; border:1px solid #EFEFF5 }
+.db-tools .tool { padding:0.2em; display:inline-block; border:#CCD }
+.db-tools .tool:hover { background-color:white }
+.tables { list-style-type:none; margin:0; padding:0 }
 .tables ol { list-style-type:none; margin:0; padding:0 }
 .tables .section-head  { display:block; margin: 3px 0px 0px 0px; padding-left:0.3em;
                 border-bottom: 3px double #ccd }

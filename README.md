@@ -51,8 +51,8 @@ integers.
 WebDB has a number of different options for user authentication and
 authorisation. Credentials can be supplied from the Database configuration
 file, user input, or elsewhere (such as an LDAP server) — and are generally a
-combination of these. How they are combined, and what the options are for
-further refining users' permissions, are detailed below.
+combination of these. How they are combined, and the options for further
+refining users' permissions, are detailed below.
 
 * If valid connection details are provided in `application/config/database.php`
   then these will be used to connect to the database.  The user will at this
@@ -84,6 +84,19 @@ further refining users' permissions, are detailed below.
 * An **import** feature allows data in CSV format to be brought into a database,
   undergoing required sanity-checking and transformation (for e.g. foreign keys)
   on the way.
+
+## Modules
+
+Modules for WebDB are just normal Kohana modules. There is also nacent support for
+*plugging in* to the main WebDB codebase, so modules can interact with it in
+more complex ways.
+
+Modules can be installed with Composer (search for
+['kohana' on Packagist](https://packagist.org/search/?q=kohana)).
+
+There is currently only one WebDB-specific module:
+
+* Entity Relationship Diagrams: https://packagist.org/packages/samwilson/kohana_webdb_erd
 
 ## Simplified BSD License
 

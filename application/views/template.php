@@ -84,32 +84,38 @@
 
 		<div class="not-head-foot">
 
-			<?php if (count($tables) > 0): ?>
-			<ol class="tables">
-					<?php
-					ksort($tables);
-					foreach ($tables as $name=>$group)
-					{
-						if (count($group)<1) continue;
-						echo '<li class=".ui-state-default"><em class="section-head">'
-							.'<span class="ui-icon ui-icon-triangle-1-e"></span>'
-							.WebDB_Text::titlecase($name)
-							.'</em><ol>';
-						ksort($group);
-						foreach ($group as $tab)
+			<div class="sidebar">
+				<div class="db-tools">
+				<?php Plugins::call('views.template.db-tools', $database, $table) ?>
+				</div>
+
+				<?php if (count($tables) > 0): ?>
+				<ol class="tables">
+						<?php
+						ksort($tables);
+						foreach ($tables as $name=>$group)
 						{
-							$selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '';
-							$t = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
-							echo '<li>'.HTML::anchor(
-								'index/'.$database->get_name().'/'.$tab->get_name(),
-								WebDB_Text::titlecase($t),
-								array('class'=>$selected)
-								).'</li>';
-						}
-						echo '</ol></li>';
-					} ?>
-			</ol>
-			<?php endif ?>
+							if (count($group)<1) continue;
+							echo '<li class=".ui-state-default"><em class="section-head">'
+								.'<span class="ui-icon ui-icon-triangle-1-e"></span>'
+								.WebDB_Text::titlecase($name)
+								.'</em><ol>';
+							ksort($group);
+							foreach ($group as $tab)
+							{
+								$selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '';
+								$t = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
+								echo '<li>'.HTML::anchor(
+									'index/'.$database->get_name().'/'.$tab->get_name(),
+									WebDB_Text::titlecase($t),
+									array('class'=>$selected)
+									).'</li>';
+							}
+							echo '</ol></li>';
+						} ?>
+				</ol>
+				<?php endif ?>
+			</div>
 
 			<div class="content">
 

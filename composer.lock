@@ -53,16 +53,16 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.0.12",
+            "version": "v1.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "4127333b03e8b4c08d081958548aae5419d1a2fa"
+                "reference": "26d37e307f9aa6e2e81806a6525666f8ab5ba0ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/4127333b03e8b4c08d081958548aae5419d1a2fa",
-                "reference": "4127333b03e8b4c08d081958548aae5419d1a2fa",
+                "url": "https://api.github.com/repos/composer/installers/zipball/26d37e307f9aa6e2e81806a6525666f8ab5ba0ff",
+                "reference": "26d37e307f9aa6e2e81806a6525666f8ab5ba0ff",
                 "shasum": ""
             },
             "replace": {
@@ -133,7 +133,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-02-24 04:21:34"
+            "time": "2014-04-09 16:12:43"
         },
         {
             "name": "kohana-minion/tasks-cache",
@@ -171,7 +171,7 @@
         },
         {
             "name": "kohana/auth",
-            "version": "v3.3.1",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/auth.git",
@@ -265,16 +265,16 @@
         },
         {
             "name": "kohana/core",
-            "version": "v3.3.1",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/core.git",
-                "reference": "06c8242ce73abce2a633944cb7b259f9ba861ef1"
+                "reference": "3025781e57cecea871f326f03a8daed9a826eda4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kohana/core/zipball/06c8242ce73abce2a633944cb7b259f9ba861ef1",
-                "reference": "06c8242ce73abce2a633944cb7b259f9ba861ef1",
+                "url": "https://api.github.com/repos/kohana/core/zipball/3025781e57cecea871f326f03a8daed9a826eda4",
+                "reference": "3025781e57cecea871f326f03a8daed9a826eda4",
                 "shasum": ""
             },
             "require": {
@@ -310,11 +310,11 @@
                 "framework",
                 "kohana"
             ],
-            "time": "2013-09-01 06:49:40"
+            "time": "2014-03-05 17:43:27"
         },
         {
             "name": "kohana/database",
-            "version": "v3.3.1",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/database.git",
