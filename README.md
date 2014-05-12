@@ -21,7 +21,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 
 ## Quick Start
 
-1. Download and uncompress in a web-accessible location.
+1. Download and uncompress in a web-accessible location. Or use Composer.
 
 2. Copy `config.dist.php` to `config.php` and edit the constants therein.
 
