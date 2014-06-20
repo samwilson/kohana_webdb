@@ -103,6 +103,10 @@ class Webdb_DBMS
 					$this->_database_names[] = $db_name;
 				}
 			}
+			// Plugins
+			Plugins::call('classes.webdb.dbms.list-dbs', $this->_database_names);
+
+			// Cache
 			Kohana::$log->add(Kohana_Log::DEBUG, "Caching DB names under $cache_key.");
 			$cache->set($cache_key, $this->_database_names);
 		}

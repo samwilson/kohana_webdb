@@ -26,7 +26,7 @@ if ( ! is_dir(APPPATH))
 
 define('MODPATH', DOCROOT.'modules'.DIRECTORY_SEPARATOR);
 define('SYSPATH', DOCROOT.'vendor'.DIRECTORY_SEPARATOR.'kohana'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR);
-if ( ! defined('KOHANA_BASE_URL')) define('KOHANA_BASE_URL', '/ormic/');
+if ( ! defined('KOHANA_BASE_URL')) define('KOHANA_BASE_URL', '/kohana_webdb/');
 if (substr(KOHANA_BASE_URL, -1) != '/') 
 {
 	echo 'KOHANA_BASE_URL must have trailing slash';
@@ -127,7 +127,6 @@ $required_modules = array(
 	'pagination'  => MODPATH.'pagination',
 	'minion'      => MODPATH.'minion',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
-	'kadldap'     => MODPATH.'kohana_kadldap',
 );
 foreach ($modules as $mod)
 {

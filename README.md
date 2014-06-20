@@ -11,8 +11,9 @@ the *data* (and not the schema).  For example: field names are properly
 capitalised and formatted; foreign keys are presented as links to their referenced
 records; and edit form fields are all matched to their underlying data types to
 make it as easy as possible to enter data.  Many other features make WebDB a
-(hopefully) useful prototyping or bare-bones data base interface.
+(hopefully) useful prototyping or bare-bones database interface.
 
+* **Download:** https://github.com/samwilson/kohana_webdb/archive/master.zip
 * **Latest Version:** 4.3.0 (2014-05-12)
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
@@ -21,16 +22,18 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 
 ## Quick Start
 
-1. Download and uncompress in a web-accessible location. Or use Composer.
+1. Download and uncompress in a web-accessible location.
 
-2. Copy `config.dist.php` to `config.php` and edit the constants therein.
+2. Run `composer install`.
 
-3. Copy any required module configuration files from `modules/*/config` into
-   `application/config` and change whatever's required.
+3. Copy `config.dist.php` to `config.php` and edit the constants therein.
 
-4. Set up database information and an authentication source:
-   * Set username and password to `NULL` in `application/config/database.php`,
-     and Auth driver to `'DB'` in `application/config/auth.php`;
+4. Copy any required module configuration files from `modules/*/config` into
+   `application/config` and change whatever's required. At a minimum this will
+   be just `auth.php`.
+
+5. Set up database information and an authentication source:
+   * Set Auth driver to `'DB'` in `application/config/auth.php`;
    * **OR** set all credentials in `application/config/database.php` and elect
      to use a different Auth driver (such as ORM, LDAP, or file) in
      `application/config/auth.php`.
@@ -38,11 +41,11 @@ make it as easy as possible to enter data.  Many other features make WebDB a
    If you do the latter, you will also need to set up whatever else is required
    for your chosen Auth driver.
 
-5. That's it! You can now log in.
+6. That's it! You can now log in.
 
 ## Schema Structure and Nomenclature
 
-For its records be edited or viewed, tables need to have single-column primary
+For their records be edited or viewed, tables need to have single-column primary
 keys, with values that can be included in URLs. For example, autoincrementing
 integers.
 

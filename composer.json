@@ -24,8 +24,7 @@
 		"kohana/database": "3.3.*",
 		"shadowhand/pagination": "dev-composer",
 		"kohana/minion": "3.3.*",
-		"kohana-minion/tasks-cache": "@dev",
-		"samwilson/kohana_kadldap": "*"
+		"kohana-minion/tasks-cache": "@dev"
 	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"

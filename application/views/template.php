@@ -41,6 +41,7 @@
 
 		<div class="header">
 			<p class="auth">
+				<?php Plugins::call('views.template.user-menu') ?>
 				<?php if (Auth::instance()->logged_in()): ?>
 					Logged in as <?php echo Auth::instance()->get_user() ?>.
 					<a href="<?php
