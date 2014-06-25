@@ -1,22 +1,69 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "b1ab62929a754927311f2a7b2c4fc469",
+    "hash": "8c8b7268678c23aed1ef002014348b60",
     "packages": [
         {
-            "name": "composer/installers",
-            "version": "v1.0.14",
+            "name": "adldap/adldap",
+            "version": "v4.0-stable",
             "source": {
                 "type": "git",
-                "url": "https://github.com/composer/installers.git",
-                "reference": "8281faa96186b18db9d53e8dbeb2d549c66d9cdc"
+                "url": "https://github.com/ztec/adLDAP.git",
+                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/8281faa96186b18db9d53e8dbeb2d549c66d9cdc",
-                "reference": "8281faa96186b18db9d53e8dbeb2d549c66d9cdc",
+                "url": "https://api.github.com/repos/ztec/adLDAP/zipball/43bca164cde8f5a98e054e1aea53406aa3b805cc",
+                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "suggest": {
+                "ext-ldap": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "adLDAP": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Hyland",
+                    "email": "adldap@richardhyland.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "adLDAP, low-level library to query Active directory",
+            "homepage": "http://adldap.sourceforge.net",
+            "keywords": [
+                "active directory",
+                "ldap",
+                "windows"
+            ],
+            "time": "2013-08-29 14:08:57"
+        },
+        {
+            "name": "composer/installers",
+            "version": "v1.0.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/installers.git",
+                "reference": "8e6a72a78f6cfd537fde3350720dfdc9ae3c5621"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/installers/zipball/8e6a72a78f6cfd537fde3350720dfdc9ae3c5621",
+                "reference": "8e6a72a78f6cfd537fde3350720dfdc9ae3c5621",
                 "shasum": ""
             },
             "replace": {
@@ -92,7 +139,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-06-18 15:29:19"
+            "time": "2014-06-23 16:25:28"
         },
         {
             "name": "kohana-minion/tasks-cache",
@@ -370,6 +417,65 @@
             "time": "2013-08-26 02:09:55"
         },
         {
+            "name": "samwilson/kohana_dbauth",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_dbauth.git",
+                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_dbauth/zipball/63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
+                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
+                "shasum": ""
+            },
+            "require": {
+                "kohana/auth": "*",
+                "kohana/database": "*"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A driver for the Kohana Auth module, to authenticate as a database user.",
+            "time": "2014-06-25 06:54:08"
+        },
+        {
+            "name": "samwilson/kohana_kadldap",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_kadldap.git",
+                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_kadldap/zipball/f6741a16c47cac7c06f378b92cfd25ade655d8b0",
+                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0",
+                "shasum": ""
+            },
+            "require": {
+                "adldap/adldap": "v4.0-stable"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Kohana wrapper module for adLDAP.",
+            "time": "2013-09-04 07:28:09"
+        },
+        {
             "name": "shadowhand/pagination",
             "version": "dev-composer",
             "source": {
@@ -429,7 +535,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "shadowhand/pagination": 20,
-        "kohana-minion/tasks-cache": 20
+        "kohana-minion/tasks-cache": 20,
+        "samwilson/kohana_dbauth": 20
     },
     "platform": [
 

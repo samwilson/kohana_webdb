@@ -127,6 +127,8 @@ $required_modules = array(
 	'pagination'  => MODPATH.'pagination',
 	'minion'      => MODPATH.'minion',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
+	'dbauth'      => MODPATH.'kohana_dbauth',
+	'kadldap'     => MODPATH.'kohana_kadldap',
 );
 foreach ($modules as $mod)
 {
