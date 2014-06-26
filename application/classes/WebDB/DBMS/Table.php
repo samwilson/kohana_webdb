@@ -106,9 +106,10 @@ class WebDB_DBMS_Table {
 	{
 		$valid_columm = in_array($column, array_keys($this->_columns));
 		$valid_operator = in_array($operator, array_keys($this->_operators));
-		$valid_value = (strpos($operator, 'empty') !== false)
-			OR (strpos($operator, 'empty') === false AND ! empty($value));
-		if ($valid_columm AND $valid_operator AND $valid_value) {
+		$value_required = strpos($operator, 'empty') === FALSE;
+		$valid_value = (( ! $value_required) OR ($value_required AND ! empty($value)));
+		if ($valid_columm AND $valid_operator AND $valid_value)
+		{
 			$this->_filters[] = array(
 				'column'    => $column,
 				'operator'  => $operator,
