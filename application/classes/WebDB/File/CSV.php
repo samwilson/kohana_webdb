@@ -34,7 +34,7 @@ class Webdb_File_CSV
 	{
 		if (Arr::get($_FILES, 'file', FALSE))
 		{
-			$this->_get_from_FILES();
+			$this->_get_from_files();
 		}
 		
 		if ($hash)
@@ -48,7 +48,7 @@ class Webdb_File_CSV
 		}
 	}
 
-	private function _get_from_FILES()
+	private function _get_from_files()
 	{
 		$validation = Validation::factory($_FILES, 'uploads');
 		$validation
@@ -62,7 +62,7 @@ class Webdb_File_CSV
 		{
 			foreach ($validation->errors() as $err)
 			{
-				switch($err[0])
+				switch ($err[0])
 				{
 					case 'Upload::not_empty':
 						throw new Kohana_Exception('You did not choose a file to upload!');
@@ -79,7 +79,7 @@ class Webdb_File_CSV
 	private function _load_data()
 	{
 		$file_path = sys_get_temp_dir().DIRECTORY_SEPARATOR.$this->hash;
-		if (!file_exists($file_path))
+		if ( ! file_exists($file_path))
 		{
 			throw new Kohana_Exception("No import was found with the identifier &lsquo;$this->hash&rsquo;");
 		}
@@ -163,7 +163,7 @@ class Webdb_File_CSV
 				$db_column_name = $heads[$col_num];
 				$column = $table->get_column($db_column_name);
 				// Required, has no default, and is empty
-				if ($column->is_required() AND !$column->has_default() AND empty($value))
+				if ($column->is_required() AND ! $column->has_default() AND empty($value))
 				{
 					$col_errors[] = 'Required but empty';
 				}
@@ -175,19 +175,21 @@ class Webdb_File_CSV
 				// Too long (if the column has a size and the value is greater than this)
 				if ( ! $column->is_foreign_key() AND ! $column->is_boolean()
 					AND $column->get_size() > 0
-					AND strlen($value) > $column->get_size()
-					)
+					AND strlen($value) > $column->get_size())
 				{
 					$col_errors[] = 'Value ('.$value.') too long (maximum length of '.$column->get_size().')';
 				}
 				// Invalid foreign key value
-				if (!empty($value) && $column->is_foreign_key())
+				if ( ! empty($value) AND $column->is_foreign_key())
 				{
 					$err = $this->validate_foreign_key($column, $col_num, $row_num, $value);
-					if ($err) $col_errors[] = $err;
+					if ($err)
+					{
+						$col_errors[] = $err;
+					}
 				}
 				// Dates
-				if ($column->get_type()=='date' && !empty($value) && preg_match('/\d{4}-\d{2}-\d{2}/', $value)!==1)
+				if ($column->get_type()=='date' AND ! empty($value) AND preg_match('/\d{4}-\d{2}-\d{2}/', $value)!==1)
 				{
 					$col_errors[] = 'Value ('.$value.') not in date format';
 				}
@@ -211,7 +213,7 @@ class Webdb_File_CSV
 	/**
 	 * Assume all data is now valid, and only FK values remain to be translated.
 	 * 
-	 * @param WebDB_Table
+	 * @param WebDB_Table $table The table into which to import data.
 	 * @param array $column_map array of DB names to import names.
 	 * @return integer The number of rows imported.
 	 */

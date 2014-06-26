@@ -19,7 +19,7 @@ class Webdb_Arr extends Arr
 	 * @return string The LCP.
 	 */
 	public static function lcp($str1, $str2)
-    {
+	{
 		$prefix = "";
 		for ($l=0; $l<=min(strlen($str1), strlen($str2)); $l++)
 		{
@@ -33,7 +33,7 @@ class Webdb_Arr extends Arr
 			}
 		}
 		return $prefix;
-    }
+	}
 
 	/**
 	 * Find all LCPs (over a certain length) in an array.
@@ -61,52 +61,49 @@ class Webdb_Arr extends Arr
 				$str2 = $arr[$str2_idx];
 
 				$lcp = Webdb_Arr::lcp($str1, $str2);
-				//echo "<li>$str1, $str2 -- $lcp";
 
 				// $prev is the length of the LCP of: (str1, and the element before str1 if there is one).
-                $prev = 0; 
-                if (isset($arr[$str1_idx - 1])) {
-                    $prev_lcp = Webdb_Arr::lcp($str1, $arr[$str1_idx - 1]);
-                    $prev = strlen($prev_lcp);
-                }
+				$prev = 0; 
+				if (isset($arr[$str1_idx - 1])) {
+					$prev_lcp = Webdb_Arr::lcp($str1, $arr[$str1_idx - 1]);
+					$prev = strlen($prev_lcp);
+				}
 
 				// $next is the length of the LCP of: (str1, and the element after str1 if there is one).
-                $next = 0;
-                if (isset($arr[$str1_idx + 1])) {
-                    $next_lcp = Webdb_Arr::lcp($str1, $arr[$str1_idx + 1]);
-                    $next = strlen($next_lcp);
-                }
+				$next = 0;
+				if (isset($arr[$str1_idx + 1])) {
+					$next_lcp = Webdb_Arr::lcp($str1, $arr[$str1_idx + 1]);
+					$next = strlen($next_lcp);
+				}
 
-                // 'is_other' and 'is_self' are with respect to str1 and str2.
-                $is_long_enough = strlen($lcp) > $min_length;
-                $is_self = $lcp == $str1;
-                $has_common_neighbours = $prev > $min_length || $next > $min_length;
-                $is_superstring_of_prev = $prev > $min_length && strpos($lcp, $prev_lcp)!==FALSE;
-                $is_superstring_of_next = $next > $min_length && strpos($lcp, $next_lcp)!==FALSE;
-                $not_in_result = !in_array($lcp, $out);
-                $is_superstring_of_existing = FALSE;
+				// 'is_other' and 'is_self' are with respect to str1 and str2.
+				$is_long_enough = strlen($lcp) > $min_length;
+				$is_self = $lcp == $str1;
+				$has_common_neighbours = $prev > $min_length OR $next > $min_length;
+				$is_superstring_of_prev = $prev > $min_length AND strpos($lcp, $prev_lcp)!==FALSE;
+				$is_superstring_of_next = $next > $min_length AND strpos($lcp, $next_lcp)!==FALSE;
+				$not_in_result = ! in_array($lcp, $out);
+				$is_superstring_of_existing = FALSE;
 				foreach ($out as $i)
 				{
-                    if (strpos($lcp, $i)!==FALSE && strlen($lcp) > $min_length)
+					if (strpos($lcp, $i)!==FALSE AND strlen($lcp) > $min_length)
 					{
-                        $is_superstring_of_existing = TRUE;
-                        continue;
-                    }
-                }
+						$is_superstring_of_existing = TRUE;
+						continue;
+					}
+				}
 				$ends_in_underscore = substr($lcp, -1) == '_';
 
 				// Put it all together.
-                if ($is_long_enough && $not_in_result && !$is_superstring_of_existing && $ends_in_underscore
-					&& ((!$is_self && $has_common_neighbours && !$is_superstring_of_prev && $is_superstring_of_next)
-						|| ($is_self && !$has_common_neighbours && !$is_superstring_of_prev && !$is_superstring_of_next)
-						|| (!$is_self && $has_common_neighbours && $is_superstring_of_prev && $is_superstring_of_next))
-					)
+				if ($is_long_enough AND $not_in_result AND ! $is_superstring_of_existing AND $ends_in_underscore
+					AND (( ! $is_self AND $has_common_neighbours AND ! $is_superstring_of_prev AND $is_superstring_of_next)
+					OR ($is_self AND ! $has_common_neighbours AND ! $is_superstring_of_prev AND ! $is_superstring_of_next)
+					OR ( ! $is_self AND $has_common_neighbours AND $is_superstring_of_prev AND $is_superstring_of_next)))
 				{
-                    $out[] = $lcp;
+					$out[] = $lcp;
 				}
 			}
 		}
-		//exit(Kohana::debug($arr).Kohana::debug($out));
 		return $out;
 	}
 

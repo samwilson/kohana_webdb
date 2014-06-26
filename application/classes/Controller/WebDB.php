@@ -58,7 +58,7 @@ class Controller_WebDB extends Controller_Base
 			$this->_set_table();
 		} catch (Database_Exception $e)
 		{
-			if (!Auth::instance()->logged_in())
+			if ( ! Auth::instance()->logged_in())
 			{
 				$this->add_flash_message('Unable to connect.  Please log in.');
 				$this->redirect('login');
@@ -81,18 +81,12 @@ class Controller_WebDB extends Controller_Base
 		{
 			$this->add_template_message($e->getMessage(), 'notice');
 		}
-		if (!$this->database)
+		if ( ! $this->database)
 		{
 			$message = (count($this->dbms->list_dbs())>0)
 				? 'Please select a database from the tabs above.'	
 				: 'No databases are available.';
 			$this->add_template_message($message, 'info');
-			// If only one DB, redirect to that one.
-			$dbs = $this->dbms->list_dbs();
-			if (count($dbs)==1)
-			{
-				//$this->request->redirect('index/'.$dbs[0]);
-			}
 		}
 		$this->template->set_global('database', $this->database);
 		return TRUE;
@@ -110,13 +104,13 @@ class Controller_WebDB extends Controller_Base
 			{
 				$this->add_template_message($e->getMessage(), 'notice');
 			}
-			if (!$this->table && count($this->database->get_tables()) > 0)
+			if ( ! $this->table AND count($this->database->get_tables()) > 0)
 			{
 				$this->add_template_message(
 					'Please select a table from the menu to the left.',
 					'info'
 				);
-			} elseif (!$this->table && count($this->database->get_tables()) == 0)
+			} elseif ( ! $this->table AND count($this->database->get_tables()) == 0)
 			{
 				$this->add_template_message(
 					'You do not have permission to view any tables in this database.',
@@ -124,11 +118,6 @@ class Controller_WebDB extends Controller_Base
 				);
 			}
 		} 
-//		else
-//		{
-//			$this->table = FALSE;
-//			$this->template->tables = array();
-//		}
 		$this->template->set_global('table', $this->table);
 	}
 
@@ -154,7 +143,7 @@ class Controller_WebDB extends Controller_Base
 		$json_data = array();
 		foreach ($this->table->get_rows(TRUE, FALSE) as $row)
 		{
-			$row['label'] = $row['webdb_title']; //$this->table->get_title($row['id']);
+			$row['label'] = $row['webdb_title'];
 			$json_data[] = $row;
 		}
 		exit(json_encode($json_data));
@@ -162,7 +151,7 @@ class Controller_WebDB extends Controller_Base
 
 	public function action_edit()
 	{
-		if (!$this->table) {
+		if ( ! $this->table) {
 			$this->template->content = null;
 			return;
 		}
@@ -179,14 +168,14 @@ class Controller_WebDB extends Controller_Base
 			// Assume unset (i.e. unsent) checkboxes are unchecked.
 			foreach ($this->table->get_columns() as $column_name=>$column)
 			{
-				if ($column->is_boolean() AND !isset($row[$column_name]))
+				if ($column->is_boolean() AND ! isset($row[$column_name]))
 				{
 					$row[$column_name] = 0;
 				}
 			}
 			// Save row
 			$id = $this->table->save_row($row);
-			if (!empty($id)) {
+			if ( ! empty($id)) {
 				$this->add_flash_message('Record saved.', 'info');
 				$url = 'edit/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
 				$this->redirect($url);
@@ -202,7 +191,7 @@ class Controller_WebDB extends Controller_Base
 			$this->view->row = $this->table->get_row($id);
 		} else
 		{
-			if (!$this->table->can('insert'))
+			if ( ! $this->table->can('insert'))
 			{
 				$this->add_template_message('You do not have permission to add a new record to this table.');
 				$this->template->content = null;
@@ -227,76 +216,11 @@ class Controller_WebDB extends Controller_Base
 	{
 		$this->response->headers('Content-Encoding', 'UTF-8');
 		$this->response->headers('Content-type', 'text/csv; charset=UTF-8');
-		//$this->response->headers(''Content-Dispositionattachment; filename=Customers_Export.csv');
 		$filename = $this->table->export();
 		$this->response->body("\xEF\xBB\xBF".file_get_contents($filename));
-		//$this-> "\xEF\xBB\xBF"; // UTF-8 BOM
 		$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
 		$this->response->send_file(TRUE, $download_name);
 		return;
-
-//		$id = $this->request->param('id', FALSE);
-//		$export_name = ($id) ? $id : uniqid();
-//		$this->view->export_name = $export_name;
-//		$this->view->progress = 0;
-//		if ($id)
-//		{
-//			$this->table->add_GET_filters();
-//
-//			// Get temp file ready
-//			$export_dir = Kohana::$cache_dir.DIRECTORY_SEPARATOR.'exports';
-//			@mkdir($export_dir);
-//			$filename = $export_dir.DIRECTORY_SEPARATOR.$export_name.'.csv';
-//
-//			// Send file if requested
-//			if (isset($_GET['download']))
-//			{
-//				$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
-//				$this->response->send_file($filename, $download_name);
-//			}
-//
-//			// Set up file
-//			$new = !file_exists($filename);
-//			$file = fopen($filename, 'a');
-//			if ($new)
-//			{
-//				// Add the column headers to the file.
-//				$column_names = array_keys($this->table->get_columns());
-//				$headers = Webdb_Text::titlecase($column_names);
-//				fputcsv($file, $headers);
-//			}
-//
-//			// Write data to the file
-//			$pagination = $this->table->get_pagination();
-//			$pagination->items_per_page = 500;
-//			$rows = $this->table->get_rows();
-//			foreach ($rows as $row)
-//			{
-//				$line = array(); // The line to write to CSV.
-//				foreach ($this->table->get_columns() as $column) {
-//					$edit = FALSE;
-//					$form_field_name = '';
-//					$field = View::factory('field')
-//						->bind('column', $column)
-//						->bind('row', $row)
-//						->bind('edit', $edit)
-//						->bind('form_field_name', $form_field_name)
-//						->render();
-//					$line[] = trim(strip_tags(trim($field)));
-//				}
-//				fputcsv($file, $line);
-//			}
-//
-//			// Progress
-//			$this->view->progress = round(($pagination->current_page / $pagination->total_pages) * 100);
-//			$result = array(
-//				'progress' => $this->view->progress,
-//				'next_page' => $pagination->next_page,
-//			);
-//			exit(json_encode($result));
-//
-//		} // if ($id)
-
 	} // public function action_export()
 
 	/**
@@ -328,7 +252,7 @@ class Controller_WebDB extends Controller_Base
 	{
 
 		// First make sure the user is allowed to import data into this table.
-		if (!$this->table->can('insert'))
+		if ( ! $this->table->can('insert'))
 		{
 			$this->template->content = '';
 			$this->add_template_message('You do not have permission to import data into this table.');
@@ -355,7 +279,7 @@ class Controller_WebDB extends Controller_Base
 			$this->add_template_message($e->getMessage());
 			return;
 		}
-		if ($this->view->file->loaded() && !$this->request->param('id'))
+		if ($this->view->file->loaded() AND ! $this->request->param('id'))
 		{
 			$url_params['id'] = $this->view->file->hash;
 			$this->redirect(Route::url('default', $url_params, TRUE));
@@ -370,7 +294,7 @@ class Controller_WebDB extends Controller_Base
 		}
 
 		// Stage 3: Previewing
-		if ($this->view->file->loaded() && isset($_POST['preview']))
+		if ($this->view->file->loaded() AND isset($_POST['preview']))
 		{
 			$this->view->stage = $this->view->stages[2];
 			$this->view->import_url = Route::url('default', $url_params);
@@ -379,7 +303,7 @@ class Controller_WebDB extends Controller_Base
 		}
 
 		// Stage 4: Import
-		if ($this->view->file->loaded() && isset($_POST['import']))
+		if ($this->view->file->loaded() AND isset($_POST['import']))
 		{
 			$this->view->stage = $this->view->stages[3];
 			$result = $this->view->file->import_data($this->table, unserialize($_POST['columns']));
@@ -388,17 +312,11 @@ class Controller_WebDB extends Controller_Base
 
 	}
 
-	/**
-	 *
-	 * @param <type> $dbname
-	 * @param <type> $tablename
-	 * @return void
-	 */
 	public function action_index()
 	{
 		$this->view->columns = array();
 		$this->view->filters = array();
-		if (!$this->table) {
+		if ( ! $this->table) {
 			$this->template->content = null;
 			return;
 		}
@@ -410,7 +328,7 @@ class Controller_WebDB extends Controller_Base
 			$this->view->columns[$col->get_name()] = WebDB_Text::titlecase($col->get_name());
 		}
 
-		$this->table->add_GET_filters();
+		$this->table->add_get_filters();
 		$this->view->filters = $this->table->get_filters();
 
 		// Add new filter

@@ -8,7 +8,7 @@ class Database_Query_Builder_Select extends Kohana_Database_Query_Builder_Select
 	public function outfile($filename = NULL)
 	{
 		$this->_type = Database::UPDATE;
-		if (!empty($filename))
+		if ( ! empty($filename))
 		{
 			$this->_outfile = (string) $filename;
 		}

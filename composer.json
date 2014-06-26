@@ -28,6 +28,9 @@
 		"samwilson/kohana_kadldap": "*",
 		"samwilson/kohana_dbauth": "dev-master"
 	},
+	"require-dev": {
+		"kohana/coding-standards": "*"
+	},
 	"suggest": {
 		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"
 	},

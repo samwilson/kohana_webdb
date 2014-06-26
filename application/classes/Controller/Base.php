@@ -85,7 +85,7 @@ abstract class Controller_Base extends Controller_Template
 			foreach ($_GET as $key=>$val)
 			{
 				// Merge non-empty variables only.
-				if ((empty($val) && isset($_SESSION['qs'][$key])) || (!in_array($key, $to_save)))
+				if ((empty($val) AND isset($_SESSION['qs'][$key])) OR ( ! in_array($key, $to_save)))
 				{
 					unset($_SESSION['qs'][$key]);
 					continue;
@@ -96,23 +96,22 @@ abstract class Controller_Base extends Controller_Template
 		}
 
 		// Load query string variables, unless they're already present.
-		if (isset($_SESSION['qs']) && count($_SESSION['qs'])>0)
+		if (isset($_SESSION['qs']) AND count($_SESSION['qs'])>0)
 		{
 			$has_new = FALSE; // Whether there's anything in SESSION that's not in GET
 			foreach ($_SESSION['qs'] as $key=>$val)
 			{
-				if (!isset($_GET[$key]) && in_array($key, $to_save))
+				if ( ! isset($_GET[$key]) AND in_array($key, $to_save))
 				{
 					$_GET[$key] = $val;
 					$has_new = TRUE;
 				}
 			}
 			// Don't redirect for POST requests.
-			if ($has_new && $_SERVER['REQUEST_METHOD']=='GET')
+			if ($has_new AND $_SERVER['REQUEST_METHOD']=='GET')
 			{
 				$query = URL::query($_SESSION['qs']);
 				$_SESSION['qs'] = array();
-				//$uri = URL::base(FALSE, TRUE).$this->request->uri().$query;
 				$uri = $this->request->uri().$query;
 				$this->redirect($uri);
 			}

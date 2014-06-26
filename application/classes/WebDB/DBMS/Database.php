@@ -32,7 +32,7 @@ class WebDB_DBMS_Database
 	/**
 	 * Create a new Webdb_DBMS_Database object
 	 *
-	 * @param Database The database driver.
+	 * @param Database $dbms The database driver.
 	 * @param string $dbname The database's name.
 	 * @return void
 	 */
@@ -85,7 +85,7 @@ class WebDB_DBMS_Database
 		$cache = Cache::instance();
 		$cache_key = 'tables'.$this->get_name().$this->_dbms->username();
 		$this->_table_names = $cache->get($cache_key);
-		if (!is_array($this->_table_names))
+		if ( ! is_array($this->_table_names))
 		{
 			$this->_table_names = $this->_db->list_tables($like);
 			$cache->set($cache_key, $this->_table_names);
@@ -111,7 +111,7 @@ class WebDB_DBMS_Database
 		{
 			$this->get_table($tablename);
 		}
-		if (!$grouped) return $this->_tables;
+		if ( ! $grouped) return $this->_tables;
 
 		// Group tables together by common prefixes.
 		$prefixes = WebDB_Arr::get_prefix_groups(array_keys($this->_tables));
@@ -131,11 +131,6 @@ class WebDB_DBMS_Database
 				}
 			}
 		}
-		//asort($groups);
-		//foreach ($groups as $group)
-		//{
-		//	asort($group);
-		//}
 		return $groups;
 	}
 
@@ -158,7 +153,7 @@ class WebDB_DBMS_Database
 	 */
 	public function get_table($tablename = FALSE)
 	{
-		if (!$tablename)
+		if ( ! $tablename)
 		{
 			$tablename = Request::current()->param('tablename', FALSE);
 			if ($tablename)
@@ -169,11 +164,11 @@ class WebDB_DBMS_Database
 				return FALSE;
 			}
 		}
-		if (!in_array($tablename, $this->list_tables()))
+		if ( ! in_array($tablename, $this->list_tables()))
 		{
 			throw new Exception("The table '$tablename' could not be found.");
 		}
-		if (!isset($this->_tables[$tablename]))
+		if ( ! isset($this->_tables[$tablename]))
 		{
 			$table = new WebDB_DBMS_Table($this, $tablename);
 			if ($table->can('select'))

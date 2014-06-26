@@ -40,9 +40,9 @@ class Plugins {
 
 			// Copy all args to a new array
 			$param_arr = array();
-			foreach ($args as $k => &$a)
+			foreach ($args as $k => & $a)
 			{
-				$param_arr[$k] = &$a;
+				$param_arr[$k] = & $a;
 			}
 
 			// Attempty to call the plugin

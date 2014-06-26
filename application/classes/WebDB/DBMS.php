@@ -57,7 +57,7 @@ class Webdb_DBMS
 	 */
 	public function connect()
 	{
-		if (!isset($this->_connection))
+		if ( ! isset($this->_connection))
 		{
 			try {
 				$hostname = $this->_config['connection']['hostname'];
@@ -82,7 +82,7 @@ class Webdb_DBMS
 	{
 		$token = Profiler::start('WebDB', __METHOD__);
 
-		if (!$this->_connection) return array();
+		if ( ! $this->_connection) return array();
 		
 		// Check cache
 		$cache = Cache::instance();
@@ -90,7 +90,7 @@ class Webdb_DBMS
 		$this->_database_names = $cache->get($cache_key);
 		
 		// If not cached, query DB
-		if (!is_array($this->_database_names) || $refresh_cache)
+		if ( ! is_array($this->_database_names) OR $refresh_cache)
 		{
 			$this->_database_names = array();
 			$query = mysql_query("SHOW DATABASES", $this->_connection);
@@ -124,7 +124,7 @@ class Webdb_DBMS
 	 */
 	public function refresh_cache()
 	{
-		if (!$this->_connection)
+		if ( ! $this->_connection)
 		{
 			$this->connect();
 		}
@@ -184,7 +184,7 @@ class Webdb_DBMS
 	 */
 	public function get_database($dbname = FALSE)
 	{
-		if (!$dbname)
+		if ( ! $dbname)
 		{
 			$dbname = Request::current()->param('dbname', FALSE);
 			if ($dbname)
@@ -195,7 +195,7 @@ class Webdb_DBMS
 				return false;
 			}
 		}
-		if (!in_array($dbname, $this->list_dbs()))
+		if ( ! in_array($dbname, $this->list_dbs()))
 		{
 			throw new Exception("The database '$dbname' could not be found.");
 		}
@@ -228,30 +228,30 @@ class Webdb_DBMS
 		$config = Kohana::$config->load('webdb');
 
 		// See if WebDB permissions are being used.
-		if (!isset($config->permissions) || empty($config->permissions['table']))
+		if ( ! isset($config->permissions) OR empty($config->permissions['table']))
 		{
 			return $default_permissions;
 		}
 
 		// Fully-qualify the database name.
 		$db_name = '';
-		if (!empty($config->permissions['database'])) 
+		if ( ! empty($config->permissions['database'])) 
 		{
 			$db_name = $config->permissions['database'].'.';
 		}
 
 		// For individual permissions tables per database, see if the
 		// permissions table exists in the current database.
-		if (empty($db_name) && !empty($config->permissions['table'])) {
+		if (empty($db_name) AND ! empty($config->permissions['table'])) {
 			if ($current_db = $this->get_database()) {
-				if (!in_array($config->permissions['table'], $current_db->list_tables())) {
+				if ( ! in_array($config->permissions['table'], $current_db->list_tables())) {
 					return $default_permissions;
 				}
 			}
 		}
 
 		// Finally, fetch the permissions rows.
-		$query = new Database_Query_Builder_Select();
+		$query = new Database_Query_Builder_Select;
 		$query->from($db_name.$config->permissions['table']);
 		$query->where('identifier', 'IN', array(Auth::instance()->get_user(), '*'));
 		$rows = $query->execute($this->_db)->as_array();

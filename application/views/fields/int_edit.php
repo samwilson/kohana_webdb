@@ -3,7 +3,7 @@
 /**
  * ID column
  */
-if ($column->isPrimaryKey())
+if ($column->is_primary_key())
 {
 	$params = array('readonly'=>TRUE, 'id'=>$form_field_name, 'size'=>$column->get_size());
 	echo Form::input($form_field_name, $value, $params);

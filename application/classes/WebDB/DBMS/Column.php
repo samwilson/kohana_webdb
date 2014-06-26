@@ -31,19 +31,19 @@ class Webdb_DBMS_Column
 	 * @var boolean Whether or not this column is required, i.e. is NULL = not
 	 * required = false; and NOT NULL = required = true.
 	 */
-	private $_required = FALSE;
+	private $_is_required = FALSE;
 
 	/** @var boolean Whether or not this column is the Primary Key. */
-	private $_isPK = FALSE;
+	private $_is_primary_key = FALSE;
 	
 	/** @var boolean Whether or not this column is a Unique Key. */
-	private $_isUnique = FALSE;
+	private $_is_unique = FALSE;
 
 	/** @var mixed The default value for this column. */
 	private $_default;
 
 	/** @var boolean Whether or not this column is auto-incrementing. */
-	private $_isAutoIncrement = FALSE;
+	private $_is_auto_increment = FALSE;
 
 	/**
 	 * @var string A comma-separated list of the privileges that the database
@@ -84,17 +84,17 @@ class Webdb_DBMS_Column
 		// Primary key
 		if (strtoupper($info['key']) == 'PRI')
 		{
-			$this->_isPK = true;
+			$this->_is_primary_key = true;
 			if ($info['extra'] == 'auto_increment')
 			{
-				$this->_isAutoIncrement = true;
+				$this->_is_auto_increment = true;
 			}
 		}
 
 		// Unique key
 		if (strtoupper($info['key']) == 'UNI')
 		{
-			$this->_isUnique = true;
+			$this->_is_unique = true;
 		}
 		
 		// Comment
@@ -106,14 +106,14 @@ class Webdb_DBMS_Column
 		// NULL?
 		if ($info['null'] == 'NO')
 		{
-			$this->_required = TRUE;
+			$this->_is_required = TRUE;
 		}
 
 		// Is this a foreign key?
 		if (in_array($this->_name, $table->get_foreign_key_names()))
 		{
-			$referencedTables = $table->get_referenced_tables();
-			$this->_references = $referencedTables[$this->_name];
+			$referenced_tables = $table->get_referenced_tables();
+			$this->_references = $referenced_tables[$this->_name];
 		}
 
 		// DB user privileges
@@ -123,7 +123,7 @@ class Webdb_DBMS_Column
 
 	public function can($perm)
 	{
-		return $this->_db_user_can($perm) && $this->_app_user_can($perm);
+		return $this->_db_user_can($perm) AND $this->_app_user_can($perm);
 	}
 
 	/**
@@ -139,12 +139,12 @@ class Webdb_DBMS_Column
 	{
 		foreach ($this->_table->get_permissions() as $perm) {
 			$columns = explode(',', $perm['column_names']);
-			$can_column = $perm['column_names']=='*' || in_array($this->_name, $columns);
-			$can_permission = $perm['permission']=='*' || stripos($perm['permission'], $priv_type)!==FALSE;
+			$can_column = $perm['column_names']=='*' OR in_array($this->_name, $columns);
+			$can_permission = $perm['permission']=='*' OR stripos($perm['permission'], $priv_type)!==FALSE;
 			$can_identifier = $perm['identifier']=='*'
-				|| $perm['identifier']==Auth::instance()->get_user()
-				|| Auth::instance()->logged_in($perm['identifier']);
-			if ($can_column && $can_permission && $can_identifier) {
+				OR $perm['identifier']==Auth::instance()->get_user()
+				OR Auth::instance()->logged_in($perm['identifier']);
+			if ($can_column AND $can_permission AND $can_identifier) {
 				return TRUE;
 			}
 		}
@@ -155,13 +155,13 @@ class Webdb_DBMS_Column
 	 * Find out whether the database user (as opposed to the application user)
 	 * has any of the given privileges on this column.
 	 *
-	 * @param $privilege string The comma-delimited list of privileges to check.
+	 * @param string $privilege The comma-delimited list of privileges to check.
 	 * @return boolean
 	 */
 	public function _db_user_can($privilege)
 	{
 		$db_privs = array('select','update','insert','delete');
-		if (!in_array($privilege, $db_privs)) {
+		if ( ! in_array($privilege, $db_privs)) {
 			return FALSE;
 		}
 		$has_priv = false;
@@ -253,7 +253,7 @@ class Webdb_DBMS_Column
 	 */
 	public function is_required()
 	{
-		return $this->_required;
+		return $this->_is_required;
 	}
 
 	/**
@@ -261,9 +261,9 @@ class Webdb_DBMS_Column
 	 *
 	 * @return boolean True if this is the PK, false otherwise.
 	 */
-	public function isPrimaryKey()
+	public function is_primary_key()
 	{
-		return $this->_isPK;
+		return $this->_is_primary_key;
 	}
 
 	/**
@@ -273,7 +273,7 @@ class Webdb_DBMS_Column
 	 */
 	public function is_unique_key()
 	{
-		return $this->_isUnique;
+		return $this->_is_unique;
 	}
 
 	/**
@@ -294,7 +294,7 @@ class Webdb_DBMS_Column
 	 */
 	public function is_foreign_key()
 	{
-		return !empty($this->_references);
+		return ! empty($this->_references);
 	}
 
 	/**
@@ -305,18 +305,8 @@ class Webdb_DBMS_Column
 	 */
 	public function get_referenced_table()
 	{
-		//exit(kohana::debug($this->_table));
 		return $this->_table->get_database()->get_table($this->_references);
 	}
-
-	/**
-	 * @return string|false The name of the referenced table or false if this is
-	 * not a foreign key.
-	 */
-	/*public function get_referenced_table_name()
-	{
-		return $this->_references;
-	}*/
 
 	/**
 	 * Get the table that this column belongs to.
@@ -334,8 +324,6 @@ class Webdb_DBMS_Column
 	 */
 	public function parse_type($type_string)
 	{
-		//echo '<pre>Start: '.kohana::dump($type_string).'</pre>';
-		//exit();
 		if (preg_match('/unsigned/', $type_string))
 		{
 			$this->_unsigned = true;
@@ -354,13 +342,9 @@ class Webdb_DBMS_Column
 		} elseif (preg_match($decimal_pattern, $type_string, $matches))
 		{
 			$this->_type = 'decimal';
-			//$colData['precision'] = $matches[1];
-			//$colData['scale'] = $matches[2];
 		} elseif (preg_match($float_pattern, $type_string, $matches))
 		{
 			$this->_type = 'float';
-			//$colData['precision'] = $matches[1];
-			//$colData['scale'] = $matches[2];
 		} elseif (preg_match($integer_pattern, $type_string, $matches))
 		{
 			$this->_type = $matches[1];
@@ -378,11 +362,11 @@ class Webdb_DBMS_Column
 
 	public function __toString()
 	{
-		$pk = ($this->_isPK) ? ' PK' : '';
-		$auto = ($this->_isAutoIncrement) ? ' AI' : '';
+		$pk = ($this->_is_primary_key) ? ' PK' : '';
+		$auto = ($this->_is_auto_increment) ? ' AI' : '';
 		if ($this->_references)
 		{
-			$ref = ' References '.$this->_references . '.';
+			$ref = ' References '.$this->_references.'.';
 		} else
 		{
 			$ref = '';
@@ -396,7 +380,7 @@ class Webdb_DBMS_Column
 	 *
 	 * @return DOMElement The XML 'column' node.
 	 */
-	public function toXml()
+	public function to_xml()
 	{
 		// Set up
 		$dom = new DOMDocument('1.0', 'UTF-8');
@@ -425,7 +409,7 @@ class Webdb_DBMS_Column
 
 		// primarykey
 		$primarykey = $dom->createElement('primarykey');
-		$primarykey->appendChild($dom->createTextNode($this->isPrimaryKey()));
+		$primarykey->appendChild($dom->createTextNode($this->is_primary_key()));
 		$table->appendChild($primarykey);
 
 		// type
