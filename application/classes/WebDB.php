@@ -8,6 +8,6 @@ class WebDB {
 	 * @link http://semver.org/ Official website
 	 * @const
 	 */
-	const VERSION = '4.4.0';
+	const VERSION = '4.4.1';
 
 }
