@@ -26,13 +26,11 @@
 		"kohana/minion": "3.3.*",
 		"kohana-minion/tasks-cache": "@dev",
 		"samwilson/kohana_kadldap": "*",
-		"samwilson/kohana_dbauth": "dev-master"
+		"samwilson/kohana_dbauth": "dev-master",
+		"samwilson/kohana_webdb_erd": "*"
 	},
 	"require-dev": {
 		"kohana/coding-standards": "*"
-	},
-	"suggest": {
-		"samwilson/kohana_webdb_erd": "Entity Relationship Diagrams"
 	},
 	"repositories": [
 		{

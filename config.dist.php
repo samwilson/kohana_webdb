@@ -8,5 +8,5 @@ define('KOHANA_ENVIRONMENT', 'production');
 #define('KOHANA_LOCALE', 'en_US.utf-8')
 
 $modules = array(
-	//__DIR__.'/vendor/samwilson/kohana_webdb_erd',
+	#__DIR__.'/modules/kohana_webdb_erd',
 );
