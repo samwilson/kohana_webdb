@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "77ae34964a1bf63adf3cc47765356f1c",
+    "hash": "86fdc3e1974de2eb10104d05c1849e88",
     "packages": [
         {
             "name": "adldap/adldap",
@@ -476,6 +476,48 @@
             "time": "2013-09-04 07:28:09"
         },
         {
+            "name": "samwilson/kohana_webdb_erd",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_webdb_erd.git",
+                "reference": "2f6efa5083d73b5ddd88ac76d15a636ef9216665"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_webdb_erd/zipball/2f6efa5083d73b5ddd88ac76d15a636ef9216665",
+                "reference": "2f6efa5083d73b5ddd88ac76d15a636ef9216665",
+                "shasum": ""
+            },
+            "require": {
+                "samwilson/kohana_webdb": "*"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Simplified BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "developer"
+                }
+            ],
+            "description": "A module for WebDB, for producing Graphviz-rendered Entity Relationship Diagrams",
+            "homepage": "https://github.com/samwilson/kohana_webdb_erd",
+            "keywords": [
+                "diagrams",
+                "erd",
+                "graphviz",
+                "kohana",
+                "mysql",
+                "webdb"
+            ],
+            "time": "2013-08-21 07:06:55"
+        },
+        {
             "name": "shadowhand/pagination",
             "version": "dev-composer",
             "source": {
@@ -524,6 +566,60 @@
                 "source": "https://github.com/shadowhand/pagination"
             },
             "time": "2013-09-05 00:16:23"
+        },
+        {
+            "name": "zeelot/kohana-media",
+            "version": "dev-1.3/develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Zeelot/kohana-media.git",
+                "reference": "2f657c028d6c875017fd37d6b8d1fa3d2e3fe35e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Zeelot/kohana-media/zipball/2f657c028d6c875017fd37d6b8d1fa3d2e3fe35e",
+                "reference": "2f657c028d6c875017fd37d6b8d1fa3d2e3fe35e",
+                "shasum": ""
+            },
+            "require": {
+                "kohana/core": ">=3.3",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.3/develop": "1.3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Lorenzo Pisani",
+                    "email": "zeelot3k@gmail.com",
+                    "homepage": "http://zeelot3k.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/Zeelot/kohana-media/graphs/contributors",
+                    "role": "contributor"
+                }
+            ],
+            "description": "Using the Kohana cascading file system to serve media assets",
+            "homepage": "https://github.com/Zeelot/kohana-media",
+            "keywords": [
+                "assets",
+                "caching",
+                "cfs",
+                "files",
+                "framework",
+                "kohana",
+                "media"
+            ],
+            "time": "2014-04-26 16:15:53"
         }
     ],
     "packages-dev": [
@@ -652,6 +748,7 @@
     "stability-flags": {
         "shadowhand/pagination": 20,
         "kohana-minion/tasks-cache": 20,
+        "zeelot/kohana-media": 20,
         "samwilson/kohana_dbauth": 20
     },
     "platform": [

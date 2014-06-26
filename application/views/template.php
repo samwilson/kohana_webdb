@@ -15,25 +15,15 @@
 			WebDB<?php if ($database) echo ': '.WebDB_Text::titlecase($database->get_name());
 			if ($table) echo ' &raquo; '.WebDB_Text::titlecase($table->get_name());
 			if ($action) echo ' &raquo; '.WebDB_Text::titlecase($action) ?>
-
 		</title>
 
-		<?php echo HTML::style('resources/css/jquery-ui.css', array('media'=>'screen')) ?>
-
-		<?php echo HTML::style('resources/css/all.css', array('media'=>'all')) ?>
-
-		<?php echo HTML::style('resources/css/screen.css', array('media'=>'screen')) ?>
-
-		<?php echo HTML::script('resources/js/jquery.js') ?>
-
-		<?php echo HTML::script('resources/js/jquery-ui.js') ?>
-
-		<?php echo HTML::script('resources/js/jquery-maskedinput.js') ?>
-
-		<?php echo HTML::script('resources/js/jquery-ui-autocomplete-autoSelect.js') ?>
-
-		<?php echo HTML::script('resources/js/scripts.js') ?>
-
+		<link rel="stylesheet" href="<?=Media::url('css/jquery-ui.css') ?>">
+		<link rel="stylesheet" href="<?=Media::url('css/screen.css') ?>" media="screen">
+		<script type="text/javascript" src="<?=Media::url('js/jquery.js')?>"></script>
+		<script type="text/javascript" src="<?=Media::url('js/jquery-ui.js')?>"></script>
+		<script type="text/javascript" src="<?=Media::url('js/jquery-maskedinput.js')?>"></script>
+		<script type="text/javascript" src="<?=Media::url('js/jquery-ui-autocomplete-autoSelect.js')?>"></script>
+		<script type="text/javascript" src="<?=Media::url('js/scripts.js')?>"></script>
 	</head>
 
 
@@ -151,7 +141,7 @@
 				<ul class="messages">
 					<?php foreach ($messages as $message):
 						$status = $message['status'];
-						$icon_url = URL::site("resources/img/icon_$status.png");
+						$icon_url = Media::url("img/icon_$status.png");
 						?>
 					<li class="<?php echo $status ?> message"
 						style="background-image: url('<?php echo $icon_url ?>');

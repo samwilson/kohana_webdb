@@ -25,6 +25,7 @@
 		"shadowhand/pagination": "dev-composer",
 		"kohana/minion": "3.3.*",
 		"kohana-minion/tasks-cache": "@dev",
+		"zeelot/kohana-media": "1.3.*@dev",
 		"samwilson/kohana_kadldap": "*",
 		"samwilson/kohana_dbauth": "dev-master",
 		"samwilson/kohana_webdb_erd": "*"
