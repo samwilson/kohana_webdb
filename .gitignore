@@ -2,6 +2,7 @@ application/cache/*
 application/config/*
 !application/config/*.dist.php
 !application/config/media.php
+!application/config/menu
 application/logs/*
 .htaccess
 config.php

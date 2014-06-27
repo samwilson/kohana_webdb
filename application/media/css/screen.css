@@ -62,7 +62,9 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
          font-size:smaller; border-color:#ccd }
 .header h1 { margin:0 }
 .header { border-bottom-width:0 }
-.header .auth { float:right; margin:0.3em 0.8em 0 0 }
+.header .user-menu { float:right; margin:0.3em 0.8em 0 0 }
+.header .user-menu ul { list-style-type:none }
+.header .user-menu ul li { display:inline-block; margin-left:0.8em }
 .header a { color: black }
 .header .databases { font-size:larger }
 .footer { border-width:1px 0 0 0; padding-bottom:2em; text-align:center; clear:both; list-style-type:none }
@@ -136,7 +138,6 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 /* Login action */
 .login .header { border-bottom:1px solid #CCC }
 .login .tables,
-.login .auth { display:none }
 .login .content { margin:0 }
 .login .title { text-align:center }
 .login table { margin:1em auto 6em auto; border:0 }

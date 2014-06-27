@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "86fdc3e1974de2eb10104d05c1849e88",
+    "hash": "0bf4862c4f98e6a749337b8b0c5ab704",
     "packages": [
         {
             "name": "adldap/adldap",
@@ -51,6 +51,53 @@
                 "windows"
             ],
             "time": "2013-08-29 14:08:57"
+        },
+        {
+            "name": "anroots/menu",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anroots/kohana-menu.git",
+                "reference": "d233c11d977bde48eabb6b7795003b909778fa8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anroots/kohana-menu/zipball/d233c11d977bde48eabb6b7795003b909778fa8c",
+                "reference": "d233c11d977bde48eabb6b7795003b909778fa8c",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*",
+                "php": ">=5.4.0"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ando Roots",
+                    "email": "ando@sqroot.eu",
+                    "homepage": "http://sqroot.eu",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Bastian Bräu",
+                    "email": "mail@bftmedia.de",
+                    "homepage": "http://bftmedia.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Kohana module to help with building HTML navigation menus",
+            "homepage": "https://github.com/anroots/kohana-menu",
+            "keywords": [
+                "kohana",
+                "kohana module",
+                "menu",
+                "navigation"
+            ],
+            "time": "2013-06-24 10:27:20"
         },
         {
             "name": "composer/installers",

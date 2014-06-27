@@ -132,12 +132,11 @@ class Webdb_DBMS
 	}
 
 	/**
-	 * Get password from config or Auth, or set the current user's password.
+	 * Get password from config or Auth.
 	 *
-	 * @param string $password New password for the current user.
-	 * @return void|string Nothing if setting; the username if getting.
+	 * @return void
 	 */
-	public function password($new_password = FALSE)
+	public function password()
 	{
 		$token = Profiler::start('WebDB', __METHOD__);
 		if (empty($this->_config['connection']['password']))
@@ -145,14 +144,6 @@ class Webdb_DBMS
 			$auth = Auth::instance();
 			$password = $auth->password($auth->get_user());
 			$this->_config['connection']['password'] = $password;
-		}
-		if ($new_password)
-		{
-			$this->connect();
-			$pass = mysql_real_escape_string($new_password, $this->_connection);
-			$sql = "SET PASSWORD = PASSWORD('".$pass."')";
-			mysql_query($sql, $this->_connection); // c.f. $this->list_dbs()
-			$this->_config['connection']['password'] = $new_password;
 		}
 		return $this->_config['connection']['password'];
 		Profiler::stop($token);

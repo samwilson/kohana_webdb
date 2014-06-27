@@ -126,6 +126,7 @@ $required_modules = array(
 	'database'    => MODPATH.'database',
 	'pagination'  => MODPATH.'pagination',
 	'minion'      => MODPATH.'minion',
+	'menu'        => MODPATH.'menu',
 	'media'       => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
 	'dbauth'      => MODPATH.'kohana_dbauth',

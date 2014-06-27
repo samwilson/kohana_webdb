@@ -30,18 +30,7 @@
 	<body class="<?php echo $controller.' '.$action ?>">
 
 		<div class="header">
-			<p class="auth">
-				<?php Plugins::call('views.template.user-menu') ?>
-				<?php if (Auth::instance()->logged_in()): ?>
-					Logged in as <?php echo Auth::instance()->get_user() ?>.
-					<a href="<?php
-					echo $url = Route::url('profile', array('username'=>Auth::instance()->get_user()))
-					?>" title="Change your password">[Password]</a>
-					<?php echo HTML::anchor('logout','[Log out]') ?>
-				<?php else: ?>
-					<?php echo HTML::anchor('login?return_to='.urlencode(URL::base(Request::current())),'[Log in]') ?>
-				<?php endif ?>
-			</p>
+			<div class="user-menu"><?=Menu::factory('user')?></div>
 			<h1>
 				<?php echo HTML::anchor('', 'WebDB') ?>
 				<?php if ($database)

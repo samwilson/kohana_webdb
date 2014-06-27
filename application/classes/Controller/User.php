@@ -51,23 +51,4 @@ class Controller_User extends Controller_Base
 		$this->redirect(Route::url('login', array(), TRUE));
 	}
 
-	public function action_profile()
-	{
-		$username = $this->request->param('username');
-		if (isset($_POST['password']))
-		{
-			if ($_POST['password'] != $_POST['password_verification'])
-			{
-				$this->add_template_message('The passwords that you entered do not match.');
-			} else {
-				$dbms = new Webdb_DBMS;
-				$dbms->password($_POST['password']);
-				Auth::instance()->logout();
-				Session::instance()->destroy();
-				$this->add_flash_message('Your password has been changed. Please log in again.', 'info');
-				$this->redirect(Route::url('login', array(), TRUE));
-			}
-		}
-	}
-
 }
