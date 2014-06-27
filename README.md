@@ -97,13 +97,14 @@ more complex ways.
 Modules can be installed with Composer (search for
 ['kohana' on Packagist](https://packagist.org/search/?q=kohana)).
 
-There is currently only one WebDB-specific module:
+There are currently two WebDB-specific modules:
 
+* Support for the DBAuth module: https://packagist.org/packages/samwilson/kohana_webdb_dbauth
 * Entity Relationship Diagrams: https://packagist.org/packages/samwilson/kohana_webdb_erd
 
 ## Simplified BSD License
 
-Copyright &copy; 2010, Sam Wilson.  All rights reserved.
+Copyright &copy; 2014, Sam Wilson.  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
