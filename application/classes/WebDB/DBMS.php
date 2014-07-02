@@ -72,8 +72,8 @@ class Webdb_DBMS
 	}
 
 	/**
-	 * Get a list of all databases visible to the current database user.  The
-	 * 'information_schema' is omitted.  DB names are cached.
+	 * Get a list of all databases visible to the current database user.
+	 * DB names are cached.
 	 * 
 	 * @param boolean $refresh_cache Don't use the cache, but rebuild it.
 	 * @return array[string] List of all available databases.
@@ -83,12 +83,12 @@ class Webdb_DBMS
 		$token = Profiler::start('WebDB', __METHOD__);
 
 		if ( ! $this->_connection) return array();
-		
+
 		// Check cache
 		$cache = Cache::instance();
 		$cache_key = 'database_names_'.Auth::instance()->get_user();
 		$this->_database_names = $cache->get($cache_key);
-		
+
 		// If not cached, query DB
 		if ( ! is_array($this->_database_names) OR $refresh_cache)
 		{
@@ -96,12 +96,7 @@ class Webdb_DBMS
 			$query = mysql_query("SHOW DATABASES", $this->_connection);
 			while ($row = mysql_fetch_row($query))
 			{
-				$db_name = $row[0];
-				// Exclude information_schema
-				if (strtoupper($db_name) != 'INFORMATION_SCHEMA')
-				{
-					$this->_database_names[] = $db_name;
-				}
+				$this->_database_names[] = $row[0];
 			}
 			// Plugins
 			Plugins::call('classes.webdb.dbms.list-dbs', $this->_database_names);
