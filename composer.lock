@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0bf4862c4f98e6a749337b8b0c5ab704",
+    "hash": "1c4c93fc148234041b9190b854ec5c7c",
     "packages": [
         {
             "name": "adldap/adldap",
@@ -465,7 +465,7 @@
         },
         {
             "name": "samwilson/kohana_dbauth",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/samwilson/kohana_dbauth.git",
@@ -491,7 +491,7 @@
                     "name": "Sam Wilson",
                     "email": "sam@samwilson.id.au",
                     "homepage": "http://samwilson.id.au",
-                    "role": "Developer"
+                    "role": "developer"
                 }
             ],
             "description": "A driver for the Kohana Auth module, to authenticate as a database user.",
@@ -521,6 +521,47 @@
             ],
             "description": "Kohana wrapper module for adLDAP.",
             "time": "2013-09-04 07:28:09"
+        },
+        {
+            "name": "samwilson/kohana_webdb_dbauth",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_webdb_dbauth.git",
+                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_webdb_dbauth/zipball/ba142952fca87e9d597385fc78b69703f0d00bcb",
+                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb",
+                "shasum": ""
+            },
+            "require": {
+                "samwilson/kohana_dbauth": "*"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Simplified BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "developer"
+                }
+            ],
+            "description": "A module to integrate the DBAuth module into WebDB.",
+            "homepage": "https://github.com/samwilson/kohana_webdb_dbauth",
+            "keywords": [
+                "auth",
+                "authorization",
+                "db",
+                "kohana",
+                "webdb"
+            ],
+            "time": "2014-07-03 03:27:34"
         },
         {
             "name": "samwilson/kohana_webdb_erd",
@@ -795,8 +836,7 @@
     "stability-flags": {
         "shadowhand/pagination": 20,
         "kohana-minion/tasks-cache": 20,
-        "zeelot/kohana-media": 20,
-        "samwilson/kohana_dbauth": 20
+        "zeelot/kohana-media": 20
     },
     "platform": [
 
