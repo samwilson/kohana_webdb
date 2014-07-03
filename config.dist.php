@@ -9,4 +9,5 @@ define('KOHANA_ENVIRONMENT', 'production');
 
 $modules = array(
 	#__DIR__.'/modules/kohana_webdb_erd',
+	#__DIR__.'/modules/kohana_webdb_dbauth',
 );
