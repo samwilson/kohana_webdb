@@ -129,8 +129,6 @@ $required_modules = array(
 	'menu'        => MODPATH.'menu',
 	'media'       => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
-	'dbauth'      => MODPATH.'kohana_dbauth',
-	'kadldap'     => MODPATH.'kohana_kadldap',
 );
 foreach ($modules as $mod)
 {
