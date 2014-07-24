@@ -118,6 +118,13 @@ class Webdb_File_CSV
 		return $this->hash !== FALSE;
 	}
 
+	/**
+	 * Take a mapping of DB column name to CSV column name, and convert it to
+	 * a mapping of CSV column number to DB column name.
+	 *
+	 * @param array $column_map
+	 * @return array Keys are CSV indexes, values are DB column names
+	 */
 	private function remap($column_map)
 	{
 		$heads = array();
@@ -231,14 +238,17 @@ class Webdb_File_CSV
 					continue;
 				}
 				$db_column_name = $headers[$col_num];
+
+				// Get actual foreign key value
 				$column = $table->get_column($db_column_name);
-				if ($column->is_foreign_key())
+				if ( ! empty($value) AND $column->is_foreign_key())
 				{
 					$foreign_row = $this->get_fk_rows($column->get_referenced_table(), $value)->current();
 					$pk = $column->get_referenced_table()->get_pk_column()->get_name();
 					$value = $foreign_row[$pk];
 				}
-				
+
+				// All other values are used as they are
 				$row[$db_column_name] = $value;
 			}
 			$table->save_row($row);

@@ -262,7 +262,9 @@ class Controller_WebDB extends Controller_Base
 		// Set up the progress bar.
 		$this->view->stages = array('choose_file', 'match_fields', 'preview', 'complete_import');
 
-		// Stage 1: Uploading
+		/*
+		 * Stage 1 of 4: Uploading
+		 */
 		$url_params = array(
 			'action' => 'import',
 			'dbname' => $this->database->get_name(),
@@ -285,7 +287,9 @@ class Controller_WebDB extends Controller_Base
 			$this->redirect(Route::url('default', $url_params, TRUE));
 		}
 
-		// Stage 2: Matching fields
+		/*
+		 * Stage 2 of 4: Matching fields
+		 */
 		if ($this->view->file->loaded())
 		{
 			$this->view->stage = $this->view->stages[1];
@@ -293,16 +297,38 @@ class Controller_WebDB extends Controller_Base
 			$this->view->form_action = Route::url('default', $params);
 		}
 
-		// Stage 3: Previewing
+		/*
+		 * Stage 3 of 4: Previewing
+		 */
 		if ($this->view->file->loaded() AND isset($_POST['preview']))
 		{
 			$this->view->stage = $this->view->stages[2];
 			$this->view->import_url = Route::url('default', $url_params);
 			$this->view->columns = serialize($_POST['columns']);
-			$this->view->errors = $this->view->file->match_fields($this->table, $_POST['columns']);
+			$this->view->errors = array();
+			// Make sure all required columns are selected
+			foreach ($this->table->get_columns() as $col)
+			{
+				if ($col->is_required() AND empty($_POST['columns'][$col->get_name()]))
+				{
+					$this->view->errors[] = array(
+						'column_name' => '',
+						'column_number' => '',
+						'field_name' => $col->get_name(),
+						'row_number' => 'N/A',
+						'messages' => array('Column required, but not found in CSV'),
+					);
+				}
+			}
+			if (empty($this->view->errors))
+			{
+				$this->view->errors = $this->view->file->match_fields($this->table, $_POST['columns']);
+			}
 		}
 
-		// Stage 4: Import
+		/*
+		 * Stage 4 of 4: Import
+		 */
 		if ($this->view->file->loaded() AND isset($_POST['import']))
 		{
 			$this->view->stage = $this->view->stages[3];

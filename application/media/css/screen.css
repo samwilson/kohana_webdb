@@ -162,6 +162,7 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 .import .stages,
 .import table { margin-left:1em; padding:0 }
 .import table .notes { display:none }
+.import .required { color:#a94442 }
 
 
 

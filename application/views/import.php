@@ -52,7 +52,12 @@
 			<tbody>
 				<?php foreach ($table->get_columns() as $column): ?>
 				<tr>
-					<td><?php echo Webdb_Text::titlecase($column->get_name()) ?></td>
+					<td>
+						<?php echo Webdb_Text::titlecase($column->get_name()) ?>
+						<?php if ($column->is_required()): ?>
+						<span class="required">(required)</span>
+						<?php endif ?>
+					</td>
 					<td>
 						<?php $options = array(''=>'') + $file->headers;
 						$options = array_combine(array_map('strtolower', $options), $options);
@@ -100,7 +105,11 @@
 				<tr>
 					<td><?php echo $error['row_number'] ?></td>
 					<td><?php echo WebDB_Text::titlecase($error['field_name']) ?></td>
-					<td><?php echo 'Column #'.($error['column_number']+1).': '.$error['column_name'] ?></td>
+					<td>
+						<?php if (!empty($error['column_name'])): ?>
+						Column #<?=($error['column_number']+1)?>: <?=$error['column_name']?>
+						<?php endif ?>
+					</td>
 					<td><?php echo join('<br />', $error['messages']) ?></td>
 				</tr>
 			<?php endforeach ?>

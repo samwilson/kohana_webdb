@@ -14,7 +14,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 (hopefully) useful prototyping or bare-bones database interface.
 
 * **Download:** https://github.com/samwilson/kohana_webdb/archive/master.zip
-* **Latest Version:** 4.4.1 (2014-06-26)
+* **Latest Version:** 4.4.2 (2014-07-24)
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
 * **Established:** March 2008

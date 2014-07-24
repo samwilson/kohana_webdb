@@ -233,7 +233,7 @@ class Webdb_DBMS_Column
 	 */
 	public function has_default()
 	{
-		return $this->get_default() != NULL;
+		return $this->get_default() != NULL OR $this->_is_auto_increment; 
 	}
 
 	/**
@@ -253,7 +253,7 @@ class Webdb_DBMS_Column
 	 */
 	public function is_required()
 	{
-		return $this->_is_required;
+		return $this->_is_required AND ! $this->has_default();
 	}
 
 	/**
