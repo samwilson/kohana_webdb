@@ -14,7 +14,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 (hopefully) useful prototyping or bare-bones database interface.
 
 * **Download:** https://github.com/samwilson/kohana_webdb/archive/master.zip
-* **Latest Version:** 4.4.2 (2014-07-24)
+* **Latest Version:** 5.0.0 (2014-08-13)
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
 * **Established:** March 2008
@@ -99,8 +99,8 @@ Modules can be installed with Composer (search for
 
 There are currently two WebDB-specific modules:
 
-* Support for the DBAuth module: https://packagist.org/packages/samwilson/kohana_webdb_dbauth
-* Entity Relationship Diagrams: https://packagist.org/packages/samwilson/kohana_webdb_erd
+* [DBAuth module integration](https://packagist.org/packages/samwilson/kohana_webdb_dbauth)
+* [Entity Relationship Diagrams](https://packagist.org/packages/samwilson/kohana_webdb_erd)
 
 ## Simplified BSD License
 

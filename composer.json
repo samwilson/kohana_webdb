@@ -29,7 +29,7 @@
 		"anroots/menu":"3.*",
 		"samwilson/kohana_kadldap": "*",
 		"samwilson/kohana_webdb_dbauth": "*",
-		"samwilson/kohana_webdb_erd": "*"
+		"samwilson/kohana_webdb_erd": "2.*"
 	},
 	"require-dev": {
 		"kohana/coding-standards": "*"

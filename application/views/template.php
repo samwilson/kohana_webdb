@@ -30,7 +30,7 @@
 	<body class="<?php echo $controller.' '.$action ?>">
 
 		<div class="header">
-			<div class="user-menu"><?=Menu::factory('user')?></div>
+			<div class="menu menu-user"><?=Menu::factory('user')?></div>
 			<h1>
 				<?php echo HTML::anchor('', 'WebDB') ?>
 				<?php if ($database)
@@ -65,8 +65,8 @@
 		<div class="not-head-foot">
 
 			<div class="sidebar">
-				<div class="db-tools">
-				<?php Plugins::call('views.template.db-tools', $database, $table) ?>
+				<div class="menu menu-database">
+				<?= Menu::factory('database') ?>
 				</div>
 
 				<?php if (count($tables) > 0): ?>
@@ -153,7 +153,7 @@
 
 		<ol class="footer">
 			<li>Thank you for using
-				<a href="http://github.com/samwilson/kohana_webdb" title="WebDB homepage on Github">WebDB</a>.
+				<a href="http://github.com/samwilson/kohana_webdb" title="WebDB homepage on Github">WebDB <?= WebDB::VERSION ?></a>.
 				Please report any bugs or feature requests through the
 				<a href="http://github.com/samwilson/kohana_webdb/issues" title="Github issue tracker">issue tracker</a>.
 			</li>

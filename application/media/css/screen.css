@@ -62,9 +62,9 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
          font-size:smaller; border-color:#ccd }
 .header h1 { margin:0 }
 .header { border-bottom-width:0 }
-.header .user-menu { float:right; margin:0.3em 0.8em 0 0 }
-.header .user-menu ul { list-style-type:none }
-.header .user-menu ul li { display:inline-block; margin-left:0.8em }
+.header .menu-user { float:right; margin:0.3em 0.8em 0 0 }
+.header .menu-user ul { list-style-type:none }
+.header .menu-user ul li { display:inline-block; margin-left:0.8em }
 .header a { color: black }
 .header .databases { font-size:larger }
 .footer { border-width:1px 0 0 0; padding-bottom:2em; text-align:center; clear:both; list-style-type:none }
@@ -76,9 +76,11 @@ ul.ui-autocomplete li a { width:95%; display:block; margin:auto }
 /******************************************************************************/
 /* Sidebar */
 .sidebar { float:left; width:240px }
-.db-tools { background-color:#EFEFF5; border:1px solid #EFEFF5 }
-.db-tools .tool { padding:0.2em; display:inline-block; border:#CCD }
-.db-tools .tool:hover { background-color:white }
+.menu-database { background-color:#EFEFF5; border:1px solid #EFEFF5; line-height:85% }
+.menu-database ul { padding:0 }
+.menu-database li { display:inline-block }
+.menu-database li a { padding:0.2em; margin:0.1em; display:inline-block; border:1px solid #CCD }
+.menu-database li a:hover { background-color:white }
 .tables { list-style-type:none; margin:0; padding:0 }
 .tables ol { list-style-type:none; margin:0; padding:0 }
 .tables .section-head  { display:block; margin: 3px 0px 0px 0px; padding-left:0.3em;
