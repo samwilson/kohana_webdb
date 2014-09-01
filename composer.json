@@ -28,8 +28,7 @@
 		"zeelot/kohana-media": "1.3.*@dev",
 		"anroots/menu":"3.*",
 		"samwilson/kohana_kadldap": "*",
-		"samwilson/kohana_webdb_dbauth": "*",
-		"samwilson/kohana_webdb_erd": "2.*"
+		"hautelook/phpass": "dev-master"
 	},
 	"require-dev": {
 		"kohana/coding-standards": "*"

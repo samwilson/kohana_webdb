@@ -1,5 +1,5 @@
 
-<?php $num_cols = 3 ?>
+<?php $num_cols = 2 ?>
 
 <script type="text/javascript">
 	$(function() {
@@ -99,7 +99,7 @@ if (isset($row[$table->get_pk_column()->get_name()]) && count($related_tables) >
 			</h3>
 			<div>
 				<p class="new-record">
-				<?php $url = 'edit/'.$database->get_name().'/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row[$table->get_pk_column()->get_name()];
+				<?php $url = 'edit/'.$foreign_table->get_name().'?'.$foreign_column.'='.$row[$table->get_pk_column()->get_name()];
 				echo HTML::anchor($url, 'Add a new record here.') ?>
 				</p>
 				<?php echo View::factory('datatable', array('the_table' => $foreign_table))->render() ?>

@@ -1,4 +1,7 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  *
  * @package  WebDB
@@ -7,8 +10,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_DBMS_Column
-{
+class Webdb_Column {
 
 	/**
 	 * @var Webdb_DBMS_Table The table to which this column belongs.
@@ -35,7 +37,7 @@ class Webdb_DBMS_Column
 
 	/** @var boolean Whether or not this column is the Primary Key. */
 	private $_is_primary_key = FALSE;
-	
+
 	/** @var boolean Whether or not this column is a Unique Key. */
 	private $_is_unique = FALSE;
 
@@ -65,7 +67,7 @@ class Webdb_DBMS_Column
 	 *
 	 * @param <type> $info
 	 */
-	public function __construct(Webdb_DBMS_Table $table, $info)
+	public function __construct(Webdb_Table $table, $info)
 	{
 		$info = array_combine(array_map('strtolower', array_keys($info)), array_values($info));
 
@@ -96,7 +98,7 @@ class Webdb_DBMS_Column
 		{
 			$this->_is_unique = true;
 		}
-		
+
 		// Comment
 		$this->_comment = $info['comment'];
 
@@ -118,7 +120,6 @@ class Webdb_DBMS_Column
 
 		// DB user privileges
 		$this->_db_user_privileges = $info['privileges'];
-
 	}
 
 	public function can($perm)
@@ -135,16 +136,26 @@ class Webdb_DBMS_Column
 	 *
 	 * @return boolean
 	 */
-	private function _app_user_can($priv_type)
+	private function _app_user_can($privilege)
 	{
-		foreach ($this->_table->get_permissions() as $perm) {
+
+		$app_privs = array('select', 'update', 'insert', 'delete', 'import');
+		if ( ! in_array($privilege, $app_privs))
+		{
+			return FALSE;
+		}
+		foreach ($this->_table->get_permissions() as $perm)
+		{
+			//echo Debug::vars($perm, $privilege);
 			$columns = explode(',', $perm['column_names']);
-			$can_column = $perm['column_names']=='*' OR in_array($this->_name, $columns);
-			$can_permission = $perm['permission']=='*' OR stripos($perm['permission'], $priv_type)!==FALSE;
-			$can_identifier = $perm['identifier']=='*'
-				OR $perm['identifier']==Auth::instance()->get_user()
-				OR Auth::instance()->logged_in($perm['identifier']);
-			if ($can_column AND $can_permission AND $can_identifier) {
+			$can_column = ($perm['column_names'] == '*' OR in_array($this->_name, $columns));
+			$can_permission = ($perm['permission'] == '*' OR $perm['permission'] == $privilege);
+//			$can_identifier = $perm['identifier']=='*'
+//				OR $perm['identifier']==Auth::instance()->get_user()
+//				OR Auth::instance()->logged_in($perm['identifier']);
+			//echo Debug::vars($can_column, $can_permission, $privilege);
+			if ($can_column AND $can_permission)
+			{
 				return TRUE;
 			}
 		}
@@ -160,8 +171,9 @@ class Webdb_DBMS_Column
 	 */
 	public function _db_user_can($privilege)
 	{
-		$db_privs = array('select','update','insert','delete');
-		if ( ! in_array($privilege, $db_privs)) {
+		$db_privs = array('select', 'update', 'insert', 'delete');
+		if ( ! in_array($privilege, $db_privs))
+		{
 			return FALSE;
 		}
 		$has_priv = false;
@@ -233,7 +245,7 @@ class Webdb_DBMS_Column
 	 */
 	public function has_default()
 	{
-		return $this->get_default() != NULL OR $this->_is_auto_increment; 
+		return $this->get_default() != NULL OR $this->_is_auto_increment;
 	}
 
 	/**
@@ -284,7 +296,7 @@ class Webdb_DBMS_Column
 	 */
 	public function is_boolean()
 	{
-		return ($this->get_type()=='tinyint') AND ($this->get_size()==1);
+		return ($this->get_type() == 'tinyint') AND ( $this->get_size() == 1);
 	}
 
 	/**
@@ -331,7 +343,7 @@ class Webdb_DBMS_Column
 
 		$varchar_pattern = '/^((?:var)?char)\((\d+)\)/';
 		$decimal_pattern = '/^decimal\((\d+),(\d+)\)/';
-		$float_pattern   = '/^float\((\d+),(\d+)\)/';
+		$float_pattern = '/^float\((\d+),(\d+)\)/';
 		$integer_pattern = '/^((?:big|medium|small|tiny)?int)\(?(\d+)\)?/';
 		$enum_pattern = '/^(enum|set)\(\'(.*?)\'\)/';
 
@@ -352,7 +364,7 @@ class Webdb_DBMS_Column
 		} elseif (preg_match($enum_pattern, $type_string, $matches))
 		{
 			$this->_type = $matches[1];
-			$values = explode("','",$matches[2]);
+			$values = explode("','", $matches[2]);
 			$this->_options = array_combine($values, $values);
 		} else
 		{
@@ -422,4 +434,3 @@ class Webdb_DBMS_Column
 	}
 
 }
-

@@ -1,4 +1,7 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * Notes:
  *
@@ -11,14 +14,10 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class WebDB_DBMS_Database
-{
+class WebDB_Database {
 
 	/** @var Database The [Kohana_Database] object. */
 	private $_db;
-	
-	/** @var Webdb_DBMS The DBMS to which this database belongs. */
-	private $_dbms;
 
 	/** @var string The name of the database. */
 	private $_name;
@@ -36,12 +35,10 @@ class WebDB_DBMS_Database
 	 * @param string $dbname The database's name.
 	 * @return void
 	 */
-	public function __construct($dbms, $dbname)
+	public function __construct()
 	{
-		$this->_name = $dbname;
 		$this->_tables = array();
-		$this->_dbms = $dbms;
-		$this->_db = $this->_dbms->get_database_driver();
+		$this->_db = Database::instance();
 	}
 
 	/**
@@ -52,16 +49,6 @@ class WebDB_DBMS_Database
 	public function get_db()
 	{
 		return $this->_db;
-	}
-	
-	/**
-	 * Get the DBMS object to which this database belongs.
-	 * 
-	 * @return WebDB_DBMS
-	 */
-	public function get_dbms()
-	{
-		return $this->_dbms;
 	}
 
 	/**
@@ -83,7 +70,7 @@ class WebDB_DBMS_Database
 	public function list_tables($like = NULL)
 	{
 		$cache = Cache::instance();
-		$cache_key = 'tables'.$this->get_name().$this->_dbms->username();
+		$cache_key = 'tables';
 		$this->_table_names = $cache->get($cache_key);
 		if ( ! is_array($this->_table_names))
 		{
@@ -111,11 +98,12 @@ class WebDB_DBMS_Database
 		{
 			$this->get_table($tablename);
 		}
-		if ( ! $grouped) return $this->_tables;
+		if ( ! $grouped)
+			return $this->_tables;
 
 		// Group tables together by common prefixes.
 		$prefixes = WebDB_Arr::get_prefix_groups(array_keys($this->_tables));
-		$groups = array('miscellaneous'=>$this->_tables);
+		$groups = array('miscellaneous' => $this->_tables);
 		// Go through each table,
 		foreach (array_keys($this->_tables) as $table)
 		{
@@ -124,32 +112,34 @@ class WebDB_DBMS_Database
 			{
 				// and, if the table name begins with this LCP, add the table
 				// to the LCP group.
-				if (strpos($table, $lcp)===0)
+				if (strpos($table, $lcp) === 0)
 				{
 					$groups[$lcp][$table] = $this->_tables[$table];
-					unset($groups['miscellaneous'][$table]);					
+					unset($groups['miscellaneous'][$table]);
 				}
 			}
 		}
 		return $groups;
 	}
 
-	public function get_permissions()
-	{
-		$out = array();
-		foreach ($this->_dbms->get_permissions() as $perm) {
-			if ($perm['database_name']=='*' OR $perm['database_name']==$this->_name) {
-				$out[] = $perm;
-			}
-		}
-		return $out;
-	}
+//	public function get_permissions()
+//	{
+//		$out = array();
+//		foreach ($this->_dbms->get_permissions() as $perm)
+//		{
+//			if ($perm['database_name'] == '*' OR $perm['database_name'] == $this->_name)
+//			{
+//				$out[] = $perm;
+//			}
+//		}
+//		return $out;
+//	}
 
 	/**
 	 * Get a table object.
 	 *
 	 * @param string $tablename
-	 * @return Webdb_DBMS_Table
+	 * @return Webdb_Table
 	 */
 	public function get_table($tablename = FALSE)
 	{
@@ -168,9 +158,10 @@ class WebDB_DBMS_Database
 		{
 			throw new Exception("The table '$tablename' could not be found.");
 		}
+		//echo Debug::vars($tablenames);exit();
 		if ( ! isset($this->_tables[$tablename]))
 		{
-			$table = new WebDB_DBMS_Table($this, $tablename);
+			$table = new WebDB_Table($this, $tablename);
 			if ($table->can('select'))
 			{
 				$this->_tables[$tablename] = $table;
@@ -183,4 +174,3 @@ class WebDB_DBMS_Database
 	}
 
 }
-

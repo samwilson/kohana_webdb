@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1c4c93fc148234041b9190b854ec5c7c",
+    "hash": "2a79c92d877cae11bdba6d055d08675a",
     "packages": [
         {
             "name": "adldap/adldap",
@@ -101,16 +101,16 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.0.15",
+            "version": "v1.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "8e6a72a78f6cfd537fde3350720dfdc9ae3c5621"
+                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/8e6a72a78f6cfd537fde3350720dfdc9ae3c5621",
-                "reference": "8e6a72a78f6cfd537fde3350720dfdc9ae3c5621",
+                "url": "https://api.github.com/repos/composer/installers/zipball/74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
+                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
                 "shasum": ""
             },
             "replace": {
@@ -141,8 +141,7 @@
                 {
                     "name": "Kyle Robinson Young",
                     "email": "kyle@dontkry.com",
-                    "homepage": "https://github.com/shama",
-                    "role": "Developer"
+                    "homepage": "https://github.com/shama"
                 }
             ],
             "description": "A multi-framework Composer library installer",
@@ -158,6 +157,7 @@
                 "annotatecms",
                 "bitrix",
                 "cakephp",
+                "chef",
                 "codeigniter",
                 "concrete5",
                 "croogo",
@@ -177,6 +177,7 @@
                 "phpbb",
                 "piwik",
                 "ppi",
+                "puppet",
                 "roundcube",
                 "shopware",
                 "silverstripe",
@@ -186,7 +187,51 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-06-23 16:25:28"
+            "time": "2014-08-18 20:00:12"
+        },
+        {
+            "name": "hautelook/phpass",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hautelook/phpass.git",
+                "reference": "09463d13a673999f3432461e5dbde535766901da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hautelook/phpass/zipball/09463d13a673999f3432461e5dbde535766901da",
+                "reference": "09463d13a673999f3432461e5dbde535766901da",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hautelook": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Public Domain"
+            ],
+            "authors": [
+                {
+                    "name": "Solar Designer",
+                    "email": "solar@openwall.com",
+                    "homepage": "http://openwall.com/phpass/"
+                }
+            ],
+            "description": "Portable PHP password hashing framework",
+            "homepage": "http://github.com/hautelook/phpass/",
+            "keywords": [
+                "blowfish",
+                "crypt",
+                "password",
+                "security"
+            ],
+            "time": "2014-07-18 03:04:01"
         },
         {
             "name": "kohana-minion/tasks-cache",
@@ -464,40 +509,6 @@
             "time": "2013-08-26 02:09:55"
         },
         {
-            "name": "samwilson/kohana_dbauth",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/kohana_dbauth.git",
-                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_dbauth/zipball/63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
-                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
-                "shasum": ""
-            },
-            "require": {
-                "kohana/auth": "*",
-                "kohana/database": "*"
-            },
-            "type": "kohana-module",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson",
-                    "email": "sam@samwilson.id.au",
-                    "homepage": "http://samwilson.id.au",
-                    "role": "developer"
-                }
-            ],
-            "description": "A driver for the Kohana Auth module, to authenticate as a database user.",
-            "time": "2014-06-25 06:54:08"
-        },
-        {
             "name": "samwilson/kohana_kadldap",
             "version": "1.0.0",
             "source": {
@@ -521,89 +532,6 @@
             ],
             "description": "Kohana wrapper module for adLDAP.",
             "time": "2013-09-04 07:28:09"
-        },
-        {
-            "name": "samwilson/kohana_webdb_dbauth",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/kohana_webdb_dbauth.git",
-                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_webdb_dbauth/zipball/ba142952fca87e9d597385fc78b69703f0d00bcb",
-                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb",
-                "shasum": ""
-            },
-            "require": {
-                "samwilson/kohana_dbauth": "*"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Simplified BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson",
-                    "email": "sam@samwilson.id.au",
-                    "homepage": "http://samwilson.id.au",
-                    "role": "developer"
-                }
-            ],
-            "description": "A module to integrate the DBAuth module into WebDB.",
-            "homepage": "https://github.com/samwilson/kohana_webdb_dbauth",
-            "keywords": [
-                "auth",
-                "authorization",
-                "db",
-                "kohana",
-                "webdb"
-            ],
-            "time": "2014-07-03 03:27:34"
-        },
-        {
-            "name": "samwilson/kohana_webdb_erd",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/kohana_webdb_erd.git",
-                "reference": "2f6efa5083d73b5ddd88ac76d15a636ef9216665"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_webdb_erd/zipball/2f6efa5083d73b5ddd88ac76d15a636ef9216665",
-                "reference": "2f6efa5083d73b5ddd88ac76d15a636ef9216665",
-                "shasum": ""
-            },
-            "require": {
-                "samwilson/kohana_webdb": "*"
-            },
-            "type": "kohana-module",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Simplified BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson",
-                    "email": "sam@samwilson.id.au",
-                    "homepage": "http://samwilson.id.au",
-                    "role": "developer"
-                }
-            ],
-            "description": "A module for WebDB, for producing Graphviz-rendered Entity Relationship Diagrams",
-            "homepage": "https://github.com/samwilson/kohana_webdb_erd",
-            "keywords": [
-                "diagrams",
-                "erd",
-                "graphviz",
-                "kohana",
-                "mysql",
-                "webdb"
-            ],
-            "time": "2013-08-21 07:06:55"
         },
         {
             "name": "shadowhand/pagination",
@@ -755,16 +683,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "1.5.3",
+            "version": "1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "396178ada8499ec492363587f037125bf7b07fcc"
+                "reference": "4097e2c106e4a32bc234ae880e5585a19137e435"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/396178ada8499ec492363587f037125bf7b07fcc",
-                "reference": "396178ada8499ec492363587f037125bf7b07fcc",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4097e2c106e4a32bc234ae880e5585a19137e435",
+                "reference": "4097e2c106e4a32bc234ae880e5585a19137e435",
                 "shasum": ""
             },
             "require": {
@@ -826,7 +754,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-05-01 03:07:07"
+            "time": "2014-08-05 23:54:05"
         }
     ],
     "aliases": [
@@ -836,8 +764,10 @@
     "stability-flags": {
         "shadowhand/pagination": 20,
         "kohana-minion/tasks-cache": 20,
-        "zeelot/kohana-media": 20
+        "zeelot/kohana-media": 20,
+        "hautelook/phpass": 20
     },
+    "prefer-stable": false,
     "platform": [
 
     ],

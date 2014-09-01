@@ -85,14 +85,14 @@ if ($value) {
 	<li>
 		This is a cross-reference to
 		<?php 
-		$url = "index/".$database->get_name().'/'.$referenced_table->get_name();
+		$url = "index/".$referenced_table->get_name();
 		$title = WebDB_Text::titlecase($referenced_table->get_name());
 		echo html::anchor($url, $title) ?>.
 	</li>
 		<?php if(isset($row[$column->get_name().'_webdb_title'])): // Won't work for default values in new records. ?>
 	<li>
 		<?php
-		$url = "edit/".$database->get_name().'/'.$referenced_table->get_name().'/'.$value;
+		$url = "edit/".$referenced_table->get_name().'/'.$value;
 		$title = 'View '.$row[$column->get_name().'_webdb_title']; //$referenced_table->get_title($value);
 		echo HTML::anchor($url, $title) ?>
 		(<?php echo WebDB_Text::titlecase($referenced_table->get_name()) ?>

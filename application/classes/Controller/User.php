@@ -51,4 +51,9 @@ class Controller_User extends Controller_Base
 		$this->redirect(Route::url('login', array(), TRUE));
 	}
 
+	public function action_register()
+	{
+		
+	}
+
 }

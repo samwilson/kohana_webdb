@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @package  WebDB
@@ -7,21 +8,26 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class WebDB_DBMS_Table {
+class WebDB_Table {
 
 	/** @var Database The Database instance in use. */
 	private $_db;
-	/** @var WebDB_DBMS_Database The database to which this table belongs. */
+
+	/** @var WebDB_Database The database to which this table belongs. */
 	private $_database;
+
 	/** @var string The name of this table. */
 	private $_name;
+
 	/** @var string The SQL statement used to create this table. */
 	private $_defining_sql;
+
 	/**
-	 * @var array[string => Webdb_DBMS_Table] Array of tables referred to by
+	 * @var array[string => Webdb_Table] Array of tables referred to by
 	 * columns in this one.
 	 */
 	private $_referenced_tables;
+
 	/**
 	 * @var array[string => Webdb_DBMS_Column] Array of column names and
 	 * objects for all of the columns in this table.
@@ -36,18 +42,18 @@ class WebDB_DBMS_Table {
 
 	/** @var array Permitted operators. */
 	private $_operators = array(
-		'like'        => 'contains',
-		'not like'    => 'does not contain',
-		'='           => 'is',
-		'!='          => 'is not',
-		'empty'       => 'is empty',
-		'not empty'   => 'is not empty',
-		'>='          => 'is greater than or equal to',
-		'>'           => 'is greater than',
-		'<='          => 'is less than or equal to',
-		'<'           => 'is less than'
+		'like' => 'contains',
+		'not like' => 'does not contain',
+		'=' => 'is',
+		'!=' => 'is not',
+		'empty' => 'is empty',
+		'not empty' => 'is not empty',
+		'>=' => 'is greater than or equal to',
+		'>' => 'is greater than',
+		'<=' => 'is less than or equal to',
+		'<' => 'is less than'
 	);
-	
+
 	/**
 	 * @var integer|false The number of currently-filtered rows, or false if no
 	 * query has been made yet or the filters have been reset.
@@ -73,10 +79,10 @@ class WebDB_DBMS_Table {
 		if ( ! isset($this->_columns))
 		{
 			$this->_columns = array();
-			
+
 			// Check cache for columns info
 			$cache = Cache::instance();
-			$cache_key = 'columns_info'.$this->_database->get_name().$this->get_name().$this->_database->get_dbms()->username();
+			$cache_key = 'columns_info'.$this->get_name();
 			$columns_info = $cache->get($cache_key);
 
 			// If not cached, fetch and build an array of the raw info, then
@@ -92,29 +98,36 @@ class WebDB_DBMS_Table {
 				}
 				$cache->set($cache_key, $columns_info);
 			}
-			
+
 			// Create column objects
 			foreach ($columns_info as $column_info)
 			{
-				$column = new WebDB_DBMS_Column($this, $column_info);
+				$column = new WebDB_Column($this, $column_info);
 				$this->_columns[$column->get_name()] = $column;
 			}
 		}
 	}
 
+	/**
+	 * 
+	 * @param type $column
+	 * @param type $operator
+	 * @param type $value
+	 * @param type $raw
+	 */
 	public function add_filter($column, $operator, $value, $raw = FALSE)
 	{
 		$valid_columm = in_array($column, array_keys($this->_columns));
 		$valid_operator = in_array($operator, array_keys($this->_operators));
 		$value_required = strpos($operator, 'empty') === FALSE;
-		$valid_value = (( ! $value_required) OR ($value_required AND ! empty($value)));
+		$valid_value = (( ! $value_required) OR ( $value_required AND ! empty($value)));
 		if ($valid_columm AND $valid_operator AND $valid_value)
 		{
 			$this->_filters[] = array(
-				'column'    => $column,
-				'operator'  => $operator,
-				'value'     => trim($value),
-				'raw'       => $raw,
+				'column' => $column,
+				'operator' => $operator,
+				'value' => trim($value),
+				'raw' => $raw,
 			);
 		}
 	}
@@ -131,7 +144,8 @@ class WebDB_DBMS_Table {
 		$filters = Arr::get($_GET, 'filters', array());
 		if (is_array($filters))
 		{
-			foreach ($filters as $filter) {
+			foreach ($filters as $filter)
+			{
 				$column = arr::get($filter, 'column', FALSE);
 				$operator = arr::get($filter, 'operator', FALSE);
 				$value = arr::get($filter, 'value', FALSE);
@@ -144,7 +158,7 @@ class WebDB_DBMS_Table {
 	 *
 	 * @param Database_Query_Builder_Select $query
 	 */
-	public function apply_filters( & $query)
+	public function apply_filters(& $query)
 	{
 		$profiler = Profiler::start('WebDB', get_class().'::'.__METHOD__);
 		foreach ($this->_filters as $filter)
@@ -161,7 +175,7 @@ class WebDB_DBMS_Table {
 			$filter['column'] = $this->join_for($column, $query);
 
 			// LIKE or NOT LIKE
-			if ($filter['operator']=='like' OR $filter['operator']=='not like')
+			if ($filter['operator'] == 'like' OR $filter['operator'] == 'not like')
 			{
 				$filter['value'] = '%'.$filter['value'].'%';
 				$filter['column'] = DB::expr('CONVERT('.$filter['column'].', CHAR)');
@@ -187,7 +201,6 @@ class WebDB_DBMS_Table {
 			{
 				$query->where($filter['column'], $filter['operator'], $filter['value']);
 			}
-
 		} // end foreach filter
 
 		Profiler::stop($profiler);
@@ -217,7 +230,7 @@ class WebDB_DBMS_Table {
 		$fk1_title_column = $fk1_table->get_title_column();
 		$fk1_alias = 'f'.$this->alias_count;
 		$query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER')
-			  ->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
+			->on($this->_name.'.'.$column->get_name(), '=', $fk1_alias.'.id');
 		$alias = $fk1_alias.'.'.$fk1_title_column->get_name();
 		// FK is also an FK?
 		if ($fk1_title_column->is_foreign_key())
@@ -226,10 +239,10 @@ class WebDB_DBMS_Table {
 			$fk2_title_column = $fk2_table->get_title_column();
 			$fk2_alias = 'ff'.$this->alias_count;
 			$query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER')
-				  ->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
+				->on($fk1_alias.'.'.$fk1_title_column->get_name(), '=', $fk2_alias.'.id');
 			$alias = $fk2_alias.'.'.$fk2_title_column->get_name();
 		}
-		$this->alias_count++;
+		$this->alias_count ++;
 
 		Profiler::stop($token);
 		return $alias;
@@ -239,10 +252,10 @@ class WebDB_DBMS_Table {
 	 *
 	 * @param Database_Query_Builder_Select $query
 	 */
-	public function apply_ordering( & $query)
+	public function apply_ordering(& $query)
 	{
 		$this->orderby = Arr::get($_GET, 'orderby', '');
-		$this->orderdir = (Arr::get($_GET, 'orderdir')=='desc') ? 'desc' : 'asc';
+		$this->orderdir = (Arr::get($_GET, 'orderdir') == 'desc') ? 'desc' : 'asc';
 		if ( ! in_array($this->orderby, array_keys($this->get_columns())))
 		{
 			$this->orderby = $this->get_title_column()->get_name();
@@ -314,7 +327,7 @@ class WebDB_DBMS_Table {
 	 * @param boolean $with_fk_titles Whether to add FK title column aliases
 	 * @return void
 	 */
-	private function select_columns( & $query, $with_fk_titles = TRUE)
+	private function select_columns(& $query, $with_fk_titles = TRUE)
 	{
 		$token = Profiler::start('WebDB', __METHOD__);
 		foreach ($this->get_columns() as $col)
@@ -370,10 +383,10 @@ class WebDB_DBMS_Table {
 	 *
 	 * @return Webdb_DBMS_Database The database to which this table belongs.
 	 */
-	/*public function getDatabase()
-	{
-		return $this->_db;
-	}*/
+	/* public function getDatabase()
+	  {
+	  return $this->_db;
+	  } */
 
 	/**
 	 * Get this table's name.
@@ -460,7 +473,7 @@ class WebDB_DBMS_Table {
 			if ($col->is_foreign_key())
 			{
 				$fk1_alias = "e$alias_num";
-				$alias_num++;
+				$alias_num ++;
 				$fk1_table = $col->get_referenced_table();
 				$data_query->join(array($fk1_table->get_name(), $fk1_alias), 'LEFT OUTER');
 				$data_query->on($this->get_name().'.'.$col->get_name(), '=', "$fk1_alias.id");
@@ -468,7 +481,7 @@ class WebDB_DBMS_Table {
 				if ($fk1_table->get_title_column()->is_foreign_key())
 				{
 					$fk2_alias = "e$alias_num";
-					$alias_num++;
+					$alias_num ++;
 					$fk2_table = $fk1_table->get_title_column()->get_referenced_table();
 					$data_query->join(array($fk2_table->get_name(), $fk2_alias), 'LEFT OUTER');
 					$data_query->on($fk1_alias.'.'.$fk1_table->get_title_column()->get_name(), '=', "$fk2_alias.id");
@@ -479,7 +492,6 @@ class WebDB_DBMS_Table {
 				$select = $this->get_name().'.'.$col->get_name();
 			}
 			$data_query->select(DB::expr("REPLACE(IFNULL($select, ''),'\r\n', '\n')"));
-
 		}
 		$data_query->from($this->get_name());
 		$this->add_get_filters();
@@ -563,7 +575,8 @@ class WebDB_DBMS_Table {
 		// Try to get the first unique key
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->is_unique_key()) return $column;
+			if ($column->is_unique_key())
+				return $column;
 		}
 		// But if that fails, just use the second (or the first) column.
 		$column_indices = array_keys($this->_columns);
@@ -584,13 +597,13 @@ class WebDB_DBMS_Table {
 		{
 			return $this->_defining_sql;
 		}
-		
+
 		// Check cache
 		$cache = Cache::instance();
-		$cache_key = 'defining_sql'.$this->_database->get_name().$this->get_name().$this->get_database()->get_dbms()->username();
-		
+		$cache_key = 'defining_sql'.$this->get_name();
+
 		$this->_defining_sql = $cache->get($cache_key);
-		
+
 		// Retrieve from DB
 		if (empty($this->_defining_sql))
 		{
@@ -603,8 +616,7 @@ class WebDB_DBMS_Table {
 				if (isset($defining_sql->{'Create Table'}))
 				{
 					$defining_sql = $defining_sql->{'Create Table'};
-				}
-				elseif (isset($defining_sql->{'Create View'}))
+				} elseif (isset($defining_sql->{'Create View'}))
 				{
 					$defining_sql = $defining_sql->{'Create View'};
 				}
@@ -624,14 +636,23 @@ class WebDB_DBMS_Table {
 	public function get_permissions()
 	{
 		$out = array();
-		foreach ($this->_database->get_permissions() as $perm) {
-			if ($perm['table_name']=='*' OR $perm['table_name']==$this->_name) {
+		//$permTable = $this->_database->get_table('permissions'); //new WebDB_Table($this->_database, 'permissions');
+		//$permTable->add_filter('table_name', '=', $this->get_name());
+		$permissions = DB::select()
+			->from('permissions')
+			->where('table_name', '=', $this->get_name())
+			->or_where('table_name', '=', '*')
+			->execute($this->_database->get_db());
+		foreach ($permissions as $perm)
+		{
+			if ($perm['table_name'] == '*' OR $perm['table_name'] == $this->_name)
+			{
 				$out[] = $perm;
 			}
 		}
 		return $out;
 	}
-	
+
 	/**
 	 * Get this table's Primary Key column.
 	 * 
@@ -641,7 +662,8 @@ class WebDB_DBMS_Table {
 	{
 		foreach ($this->get_columns() as $column)
 		{
-			if ($column->is_primary_key()) return $column;
+			if ($column->is_primary_key())
+				return $column;
 		}
 		return FALSE;
 	}
@@ -660,7 +682,7 @@ class WebDB_DBMS_Table {
 			$defining_sql = $this->_get_defining_sql();
 			$fk_pattern = '|FOREIGN KEY \(`(.*?)`\) REFERENCES `(.*?)`|';
 			preg_match_all($fk_pattern, $defining_sql, $matches);
-			if (isset($matches[1]) AND count($matches[1])>0)
+			if (isset($matches[1]) AND count($matches[1]) > 0)
 			{
 				$this->_referenced_tables = array_combine($matches[1], $matches[2]);
 			} else
@@ -686,7 +708,7 @@ class WebDB_DBMS_Table {
 			{
 				if ($foreign_table == $this->_name)
 				{
-					$out[] = array('table'  => $table, 'column' => $foreign_column);
+					$out[] = array('table' => $table, 'column' => $foreign_column);
 				}
 			}
 		}
@@ -828,19 +850,19 @@ class WebDB_DBMS_Table {
 
 		/*
 		 * Check permissions on each column.
-		*/
-		foreach ($columns as $column_name=>$column)
+		 */
+		foreach ($columns as $column_name => $column)
 		{
 			// Ignore this column if we're not trying to save it.
 			if ( ! isset($data[$column_name]))
 			{
 				continue;
 			}
-			
+
 			$can_update = $column->can('update');
 			$can_insert = $column->can('insert');
 			if ($column_name != $pk_name
-				AND (( ! $can_update AND $has_pk) OR ( ! $can_insert AND ! $has_pk)))
+				AND ( ( ! $can_update AND $has_pk) OR ( ! $can_insert AND ! $has_pk)))
 			{
 				unset($data[$column_name]);
 			}
@@ -848,8 +870,8 @@ class WebDB_DBMS_Table {
 
 		/*
 		 * Go through all data and clean it up before saving.
-		*/
-		foreach ($data as $field=>$value)
+		 */
+		foreach ($data as $field => $value)
 		{
 
 			// Make sure this column exists in the DB.
@@ -863,7 +885,7 @@ class WebDB_DBMS_Table {
 
 			/*
 			 * Booleans
-			*/
+			 */
 			if ($column->is_boolean())
 			{
 				if (($value == NULL OR $value == '') AND ! $column->is_required())
@@ -871,9 +893,9 @@ class WebDB_DBMS_Table {
 					$data[$field] = NULL;
 				} elseif ($value === '0'
 					OR $value === 0
-					OR strcasecmp($value,'false') === 0
-					OR strcasecmp($value,'off') === 0
-					OR strcasecmp($value,'no') === 0)
+					OR strcasecmp($value, 'false') === 0
+					OR strcasecmp($value, 'off') === 0
+					OR strcasecmp($value, 'no') === 0)
 				{
 					$data[$field] = 0;
 				} else
@@ -884,36 +906,32 @@ class WebDB_DBMS_Table {
 
 			/*
 			 * Nullable empty fields should be NULL.
-			 */
-			elseif ( ! $column->is_required() AND empty($value))
+			 */ elseif ( ! $column->is_required() AND empty($value))
 			{
 				$data[$field] = NULL;
 			}
 
 			/*
 			 * Foreign keys
-			*/
-			elseif ($column->is_foreign_key() AND ($value <= 0 OR $value == ''))
+			 */ elseif ($column->is_foreign_key() AND ( $value <= 0 OR $value == ''))
 			{
 				$data[$field] = NULL;
 			}
 
 			/*
 			 * Numbers
-			*/
-			elseif ( ! is_numeric($value)
-				AND (substr($column->get_type(),0,3)=='int'
-				OR substr($column->get_type(),0,7)=='decimal'
-				OR substr($column->get_type(),0,5)=='float'))
+			 */ elseif ( ! is_numeric($value)
+				AND ( substr($column->get_type(), 0, 3) == 'int'
+				OR substr($column->get_type(), 0, 7) == 'decimal'
+				OR substr($column->get_type(), 0, 5) == 'float'))
 			{
 				$data[$field] = NULL; // Stops empty strings being turned into 0s.
 			}
 
 			/*
 			 * Dates & times
-			*/
-			elseif (($column->get_type()=='date' OR $column->get_type()=='datetime' OR $column->get_type()=='time')
-				AND $value=='')
+			 */ elseif (($column->get_type() == 'date' OR $column->get_type() == 'datetime' OR $column->get_type() == 'time')
+				AND $value == '')
 			{
 				$data[$field] = null;
 			}
@@ -925,7 +943,8 @@ class WebDB_DBMS_Table {
 			$pk_val = $data[$pk_name];
 			unset($data[$pk_name]);
 			// If there's nothing left to update, give up.
-			if (empty($data)) return false;
+			if (empty($data))
+				return false;
 			DB::update($this->get_name())
 				->set($data)
 				->where($pk_name, '=', $pk_val)
@@ -941,7 +960,7 @@ class WebDB_DBMS_Table {
 			$pk_val = $query[0]; // Database::query() returns array (insert id, row count) for INSERT queries.
 			// Insert ID does not apply to non-auto-increment PKs, so we can
 			// use whatever was POSTed (and thus just saved):
-			if ($pk_val==0) 
+			if ($pk_val == 0)
 			{
 				$pk_val = $data[$pk_name];
 			}

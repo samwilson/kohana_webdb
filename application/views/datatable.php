@@ -45,7 +45,7 @@
 				<?php
 				$pk_name = $the_table->get_pk_column()->get_name();
 				$label = ($the_table->can('update')) ? 'Edit' : 'View';
-				$url = 'edit/'.$database->get_name().'/'.$the_table->get_name().'/'.$row[$pk_name];
+				$url = 'edit/'.$the_table->get_name().'/'.$row[$pk_name];
 				echo html::anchor($url, $label);
 				?>
 			</td>

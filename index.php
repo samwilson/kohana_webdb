@@ -8,7 +8,7 @@ if ( ! file_exists('config.php'))
 require 'config.php';
 
 define('EXT', '.php');
-define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+define('DOCROOT', realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR);
 
 /*
  * Path to application data
@@ -26,14 +26,16 @@ if ( ! is_dir(APPPATH))
 
 define('MODPATH', DOCROOT.'modules'.DIRECTORY_SEPARATOR);
 define('SYSPATH', DOCROOT.'vendor'.DIRECTORY_SEPARATOR.'kohana'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR);
-if ( ! defined('KOHANA_BASE_URL')) define('KOHANA_BASE_URL', '/kohana_webdb/');
-if (substr(KOHANA_BASE_URL, -1) != '/') 
+if ( ! defined('KOHANA_BASE_URL'))
+	define('KOHANA_BASE_URL', '/kohana_webdb/');
+if (substr(KOHANA_BASE_URL, -1) != '/')
 {
 	echo 'KOHANA_BASE_URL must have trailing slash';
 	exit(1);
 }
-if ( ! defined('KOHANA_ENVIRONMENT')) define('KOHANA_ENVIRONMENT', 'production');
-if ( ! defined('KOHANA_COOKIE_SALT') OR KOHANA_COOKIE_SALT=='')
+if ( ! defined('KOHANA_ENVIRONMENT'))
+	define('KOHANA_ENVIRONMENT', 'production');
+if ( ! defined('KOHANA_COOKIE_SALT') OR KOHANA_COOKIE_SALT == '')
 {
 	echo 'Please define KOHANA_COOKIE_SALT in config.php';
 	exit(1);
@@ -42,18 +44,22 @@ if ( ! defined('KOHANA_COOKIE_SALT') OR KOHANA_COOKIE_SALT=='')
 /*
  * Set locale and language
  */
-if (!defined('KOHANA_LANG')) define('KOHANA_LANG', 'en-au');
-if (!defined('KOHANA_LOCALE')) define('KOHANA_LOCALE', 'en_US.utf-8');
+if ( ! defined('KOHANA_LANG'))
+	define('KOHANA_LANG', 'en-au');
+if ( ! defined('KOHANA_LOCALE'))
+	define('KOHANA_LOCALE', 'en_US.utf-8');
 setlocale(LC_ALL, KOHANA_LOCALE);
 
 /*
  * Load and configure Kohana Core
  */
-if (!defined('KOHANA_START_TIME')) define('KOHANA_START_TIME', microtime(TRUE));
-if (!defined('KOHANA_START_MEMORY')) define('KOHANA_START_MEMORY', memory_get_usage());
-require SYSPATH . 'classes/Kohana/Core'.EXT;
-require SYSPATH . 'classes/Kohana'.EXT;
-require DOCROOT . 'vendor/autoload.php';
+if ( ! defined('KOHANA_START_TIME'))
+	define('KOHANA_START_TIME', microtime(TRUE));
+if ( ! defined('KOHANA_START_MEMORY'))
+	define('KOHANA_START_MEMORY', memory_get_usage());
+require SYSPATH.'classes/Kohana/Core'.EXT;
+require SYSPATH.'classes/Kohana'.EXT;
+require DOCROOT.'vendor/autoload.php';
 spl_autoload_register(array('Kohana', 'auto_load'));
 ini_set('unserialize_callback_func', 'spl_autoload_call');
 I18n::lang(KOHANA_LANG);
@@ -81,7 +87,6 @@ if (PHP_SAPI == 'cli')
 		{
 			exit(1);
 		}
-		
 	});
 }
 
@@ -101,7 +106,7 @@ Kohana::init(array(
  * Try to create log directory.
  */
 $log_dir = APPPATH.'logs';
-if (!file_exists($log_dir))
+if ( ! file_exists($log_dir))
 {
 	// Create directory, after the precedent of Kohana_Core::init();
 	mkdir($log_dir, 0755, TRUE);
@@ -121,20 +126,20 @@ Cookie::$salt = KOHANA_COOKIE_SALT;
  * Load all required modules.
  */
 $required_modules = array(
-	'auth'        => MODPATH.'auth',
-	'cache'       => MODPATH.'cache',
-	'database'    => MODPATH.'database',
-	'pagination'  => MODPATH.'pagination',
-	'minion'      => MODPATH.'minion',
-	'menu'        => MODPATH.'menu',
-	'media'       => DOCROOT.'vendor/zeelot/kohana-media',
+	'auth' => MODPATH.'auth',
+	'cache' => MODPATH.'cache',
+	'database' => MODPATH.'database',
+	'pagination' => MODPATH.'pagination',
+	'minion' => MODPATH.'minion',
+	'menu' => MODPATH.'menu',
+	'media' => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
 );
 foreach ($modules as $mod)
 {
 	if (is_dir($mod))
 	{
-		$required_modules[basename ($mod)] = $mod;
+		$required_modules[basename($mod)] = $mod;
 	}
 }
 Kohana::modules($required_modules);
@@ -143,31 +148,29 @@ unset($modules, $required_modules);
 /**
  * Routes.
  */
-Route::set('login', 'login')->defaults(array(
+Route::set('user', '<action>', array(
+	'action' => '(login|logout|register)',
+))->defaults(array(
 	'controller' => 'User',
 	'action' => 'login',
 ));
-Route::set('logout', 'logout')->defaults(array(
-	'controller' => 'User',
-	'action' => 'logout',
+Route::set('admin', '<action>', array(
+	'action' => '(install|admin)',
+))->defaults(array(
+	'controller' => 'Admin',
+	'action' => 'admin',
 ));
-Route::set('profile', 'profile')->defaults(array(
-	'controller'=>'User',
-	'action' => 'profile',
+Route::set('erd', 'erd(.<action>)')->defaults(array(
+	'controller' => 'ERD',
+	'action' => 'html',
 ));
-Route::set('default', '(<action>(/<dbname>(/<tablename>(/<id>))))')
+Route::set('default', '(<action>(/<tablename>(/<id>)))')
 	->defaults(array(
 		'controller' => 'WebDB',
 		'action' => 'index',
-		'dbname' => NULL,
 		'tablename' => NULL,
 		'id' => NULL
-));
-
-/**
- * Site title is defined after config and modules have had a chance at at.
- */
-if (!defined('SITE_TITLE')) define('SITE_TITLE', 'WebDB');
+	));
 
 /**
  * Execute the request.
@@ -183,8 +186,10 @@ if (PHP_SAPI == 'cli')
 		if (($ob_len = ob_get_length()) !== FALSE)
 		{
 			// flush_end on an empty buffer causes headers to be sent. Only flush if needed.
-			if ($ob_len > 0) ob_end_flush();
-			else ob_end_clean();
+			if ($ob_len > 0)
+				ob_end_flush();
+			else
+				ob_end_clean();
 		}
 		Kohana::modules(Kohana::modules() + array('unittest' => MODPATH.'unittest'));
 		//Database::$default = 'testing';

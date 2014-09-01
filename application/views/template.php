@@ -12,7 +12,8 @@
 		<meta http-equiv="Content-Script-Type" content="text/javascript" />
 
 		<title>
-			WebDB<?php if ($database) echo ': '.WebDB_Text::titlecase($database->get_name());
+			<?= WebDB::config('site_title') ?>
+			<?php
 			if ($table) echo ' &raquo; '.WebDB_Text::titlecase($table->get_name());
 			if ($action) echo ' &raquo; '.WebDB_Text::titlecase($action) ?>
 		</title>
@@ -32,24 +33,20 @@
 		<div class="header">
 			<div class="menu menu-user"><?=Menu::factory('user')?></div>
 			<h1>
-				<?php echo HTML::anchor('', 'WebDB') ?>
-				<?php if ($database)
-				{
-					echo ' :: '.HTML::anchor(
-						'index/'.$database->get_name(),
-						WebDB_Text::titlecase($database->get_name())
-					);
-				}
+				<a href="<?=URL::site()?>">
+					<?= WebDB::config('site_title') ?>
+				</a>
+				<?php
 				if ($table)
 				{
 					echo ' &raquo; '.HTML::anchor(
-						'index/'.$database->get_name().'/'.$table->get_name(),
+						'index/'.$table->get_name(),
 						WebDB_Text::titlecase($table->get_name())
 					);
 				} ?>
 			</h1>
 
-			<?php if (count($databases) > 0): ?>
+			<?php /*if (count($databases) > 0): ?>
 			<ol class="databases tabnav">
 			<?php foreach ($databases as $db): ?>
 				<?php $selected = ($database && $db==$database->get_name()) ? 'selected' : '' ?>
@@ -58,7 +55,7 @@
 				</li>
 			<?php endforeach ?>
 			</ol>
-			<?php endif ?>
+			<?php endif*/ ?>
 
 		</div>
 
@@ -86,7 +83,7 @@
 								$selected = ($table && $tab->get_name()==$table->get_name()) ? 'selected' : '';
 								$t = ($name!='miscellaneous') ? substr($tab->get_name(), strlen($name)) : $tab->get_name();
 								echo '<li>'.HTML::anchor(
-									'index/'.$database->get_name().'/'.$tab->get_name(),
+									'index/'.$tab->get_name(),
 									WebDB_Text::titlecase($t),
 									array('class'=>$selected)
 									).'</li>';
@@ -102,7 +99,7 @@
 				<?php if ($table): ?>
 				<div class="title">
 					<h1><?php echo HTML::anchor(
-						'index/'.$database->get_name().'/'.$table->get_name(),
+						'index/'.$table->get_name(),
 						WebDB_Text::titlecase($table->get_name())
 						) ?>
 					</h1>
@@ -110,13 +107,13 @@
 				</div>
 				<?php endif ?>
 
-				<?php if ($database && $table && count($actions) > 0): ?>
+				<?php if ($table && count($actions) > 0): ?>
 				<ol class="actions small tabnav">
 						<?php foreach ($actions as $action_name=>$action_title): ?>
 							<?php $selected = ($action_name==$action) ? 'selected' : '' ?>
 					<li class="<?php echo $selected ?>">
 								<?php echo HTML::anchor(
-								"$action_name/".$database->get_name().'/'.$table->get_name().'?'.$_SERVER['QUERY_STRING'],
+								"$action_name/".$table->get_name().'?'.$_SERVER['QUERY_STRING'],
 								"$action_title",
 								array('class'=>$selected)
 								) ?>

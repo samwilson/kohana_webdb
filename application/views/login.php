@@ -18,6 +18,9 @@
 		<tfoot>
 			<tr>
 				<th>
+					<a href="<?=Route::url('user', array('action'=>'register')) ?>">
+						<?=WebDB::msg('register')?>
+					</a>
 					<?php if ($return_to) echo Form::hidden('return_to', $return_to) ?>
 					<a href="<?php echo $return_to ?>">Cancel</a>
 				</th>

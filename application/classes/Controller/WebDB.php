@@ -1,4 +1,7 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * WebDB controller, the entry point into WebDB, and from where all other things
  * are coordinated.
@@ -9,8 +12,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Controller_WebDB extends Controller_Base
-{
+class Controller_WebDB extends Controller_Base {
 
 	/**
 	 * @var WebDB_DBMS_Database The current database.
@@ -48,76 +50,52 @@ class Controller_WebDB extends Controller_Base
 	public function before()
 	{
 		parent::before();
-
-		$this->dbms = new WebDB_DBMS;
-		try
-		{
-			$this->dbms->connect();
-			$this->template->databases = $this->dbms->list_dbs();
-			$this->_set_database();
-			$this->_set_table();
-		} catch (Database_Exception $e)
-		{
-			if ( ! Auth::instance()->logged_in())
-			{
-				$this->add_flash_message('Unable to connect.  Please log in.');
-				$this->redirect('login');
-			}
-			$this->template->databases = array();
-			$this->add_template_message('Initialisation error: '.$e->getMessage());
-		}
-
-	} // _before()
+		$this->database = new WebDB_Database;
+		$this->_set_table();
+	}
 
 	/**
 	 * Set the current database name.
 	 */
-	private function _set_database()
+//	private function _set_database()
+//	{
+//		try
+//		{
+//			$this->database = $this->dbms->get_database();
+//		} catch (Exception $e)
+//		{
+//			$this->add_template_message($e->getMessage(), 'notice');
+//		}
+//		if ( ! $this->database)
+//		{
+//			$message = (count($this->dbms->list_dbs()) > 0) ? 'Please select a database from the tabs above.' : 'No databases are available.';
+//			$this->add_template_message($message, 'info');
+//		}
+//		$this->template->set_global('database', $this->database);
+//		return TRUE;
+//	}
+
+	private function _set_table()
 	{
+		$this->template->tables = $this->database->get_tables(TRUE);
 		try
 		{
-			$this->database = $this->dbms->get_database();
+			$this->table = $this->database->get_table();
 		} catch (Exception $e)
 		{
 			$this->add_template_message($e->getMessage(), 'notice');
 		}
-		if ( ! $this->database)
+		if ( ! $this->table AND count($this->database->get_tables()) > 0)
 		{
-			$message = (count($this->dbms->list_dbs())>0)
-				? 'Please select a database from the tabs above.'	
-				: 'No databases are available.';
-			$this->add_template_message($message, 'info');
+			$this->add_template_message(
+				'Please select a table from the menu to the left.', 'info'
+			);
+		} elseif ( ! $this->table AND count($this->database->get_tables()) == 0)
+		{
+			$this->add_template_message(
+				'You do not have permission to view any tables in this database.', 'notice'
+			);
 		}
-		$this->template->set_global('database', $this->database);
-		return TRUE;
-	} // _set_database()
-
-	private function _set_table()
-	{
-		if ($this->database)
-		{
-			$this->template->tables = $this->database->get_tables(TRUE);
-			try
-			{
-				$this->table = $this->database->get_table();
-			} catch (Exception $e)
-			{
-				$this->add_template_message($e->getMessage(), 'notice');
-			}
-			if ( ! $this->table AND count($this->database->get_tables()) > 0)
-			{
-				$this->add_template_message(
-					'Please select a table from the menu to the left.',
-					'info'
-				);
-			} elseif ( ! $this->table AND count($this->database->get_tables()) == 0)
-			{
-				$this->add_template_message(
-					'You do not have permission to view any tables in this database.',
-					'notice'
-				);
-			}
-		} 
 		$this->template->set_global('table', $this->table);
 	}
 
@@ -134,8 +112,7 @@ class Controller_WebDB extends Controller_Base
 		{
 			$this->table->reset_filters();
 			$this->table->add_filter($title_column_name, 'like', $_GET['term']);
-		}
-		elseif (isset($_GET[$pk_column_name]))
+		} elseif (isset($_GET[$pk_column_name]))
 		{
 			$this->table->reset_filters();
 			$this->table->add_filter($pk_column_name, '=', $_GET[$pk_column_name]);
@@ -151,7 +128,8 @@ class Controller_WebDB extends Controller_Base
 
 	public function action_edit()
 	{
-		if ( ! $this->table) {
+		if ( ! $this->table)
+		{
 			$this->template->content = null;
 			return;
 		}
@@ -160,13 +138,13 @@ class Controller_WebDB extends Controller_Base
 
 		/*
 		 * Save submitted data.
-		*/
+		 */
 		if (isset($_POST['save']))
 		{
 			// Get row (the first element of $_POST.
 			$row = array_shift($_POST['data']);
 			// Assume unset (i.e. unsent) checkboxes are unchecked.
-			foreach ($this->table->get_columns() as $column_name=>$column)
+			foreach ($this->table->get_columns() as $column_name => $column)
 			{
 				if ($column->is_boolean() AND ! isset($row[$column_name]))
 				{
@@ -175,7 +153,8 @@ class Controller_WebDB extends Controller_Base
 			}
 			// Save row
 			$id = $this->table->save_row($row);
-			if ( ! empty($id)) {
+			if ( ! empty($id))
+			{
 				$this->add_flash_message('Record saved.', 'info');
 				$url = 'edit/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
 				$this->redirect($url);
@@ -184,7 +163,7 @@ class Controller_WebDB extends Controller_Base
 
 		/*
 		 * Get data to populate edit form (or give message why not).
-		*/
+		 */
 		if ($id)
 		{
 			$this->template->actions['edit'] = "Edit";
@@ -221,7 +200,9 @@ class Controller_WebDB extends Controller_Base
 		$download_name = date('Y-m-d').'_'.$this->table->get_name().'.csv';
 		$this->response->send_file(TRUE, $download_name);
 		return;
-	} // public function action_export()
+	}
+
+// public function action_export()
 
 	/**
 	 * This action is for importing a single CSV file into a single database table.
@@ -293,7 +274,7 @@ class Controller_WebDB extends Controller_Base
 		if ($this->view->file->loaded())
 		{
 			$this->view->stage = $this->view->stages[1];
-			$params = array_merge($url_params, array('id'=>$hash));
+			$params = array_merge($url_params, array('id' => $hash));
 			$this->view->form_action = Route::url('default', $params);
 		}
 
@@ -335,14 +316,14 @@ class Controller_WebDB extends Controller_Base
 			$result = $this->view->file->import_data($this->table, unserialize($_POST['columns']));
 			$this->add_template_message('Import complete; '.$result.' rows imported.', 'info');
 		}
-
 	}
 
 	public function action_index()
 	{
 		$this->view->columns = array();
 		$this->view->filters = array();
-		if ( ! $this->table) {
+		if ( ! $this->table)
+		{
 			$this->template->content = null;
 			return;
 		}
