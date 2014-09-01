@@ -23,11 +23,17 @@ class WebDB {
 
 	static public function config($name)
 	{
-		$setting = DB::select('value')
-			->from('settings')
-			->where('name', '=', $name)
-			->execute()
-			->current();
+		try
+		{
+			$setting = DB::select('value')
+				->from('settings')
+				->where('name', '=', $name)
+				->execute()
+				->current();
+		} catch (Exception $e)
+		{
+			$setting = FALSE;
+		}
 		if ( ! $setting)
 		{
 			return Kohana::$config->load('webdb')->get($name);

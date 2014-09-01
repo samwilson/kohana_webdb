@@ -77,13 +77,14 @@ class Controller_WebDB extends Controller_Base {
 
 	private function _set_table()
 	{
-		$this->template->tables = $this->database->get_tables(TRUE);
 		try
 		{
+			$this->template->tables = $this->database->get_tables(TRUE);
 			$this->table = $this->database->get_table();
 		} catch (Exception $e)
 		{
-			$this->add_template_message($e->getMessage(), 'notice');
+			//$this->add_template_message($e->getMessage(), 'notice');
+			throw HTTP_Exception::factory(500, $e->getMessage(), NULL, $e);
 		}
 		if ( ! $this->table AND count($this->database->get_tables()) > 0)
 		{

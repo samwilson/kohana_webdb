@@ -13,8 +13,8 @@ class Controller_Admin extends Controller_Base {
 		{
 			return;
 		}
-		$tables = Database::instance()->list_tables('settings');
-		//echo Debug::vars($tables);
+		$prefix = Kohana::$config->load('database')->get('connection.prefix');
+		$tables = Database::instance()->list_tables();
 		if ( ! in_array('settings', $tables))
 		{
 			$sql = 'CREATE TABLE settings ('
@@ -26,15 +26,25 @@ class Controller_Admin extends Controller_Base {
 				.')';
 			DB::query(NULL, $sql)->execute();
 		}
-		$hasSiteTitle = DB::query(Database::SELECT, "SELECT COUNT(id) AS count FROM settings WHERE name='site_title';")
-			->execute()
-			->current();
-		if ($hasSiteTitle['count'] == 0)
+		if ( ! in_array('permissions', $tables))
 		{
-			$siteTitle = Kohana::$config->load('webdb')->get('site_title');
-			$sql = "INSERT INTO settings SET name='site_title', value='$siteTitle'";
-			DB::query(Database::INSERT, $sql)->execute();
+			$sql = 'CREATE TABLE permissions ('
+				.' `id` int(4) NOT NULL AUTO_INCREMENT,'
+				.' `table_name` varchar(65) NOT NULL,'
+				.' `column_name` varchar(65) NOT NULL,'
+				.' PRIMARY KEY (`id`),'
+				.')';
+			DB::query(NULL, $sql)->execute();
 		}
+//		$hasSiteTitle = DB::query(Database::SELECT, "SELECT COUNT(id) AS count FROM settings WHERE name='site_title';")
+//			->execute()
+//			->current();
+//		if ($hasSiteTitle['count'] == 0)
+//		{
+//			$siteTitle = Kohana::$config->load('webdb')->get('site_title');
+//			$sql = "INSERT INTO settings SET name='site_title', value='$siteTitle'";
+//			DB::query(Database::INSERT, $sql)->execute();
+//		}
 	}
 
 }

@@ -62,9 +62,6 @@
 		<div class="not-head-foot">
 
 			<div class="sidebar">
-				<div class="menu menu-database">
-				<?= Menu::factory('database') ?>
-				</div>
 
 				<?php if (count($tables) > 0): ?>
 				<ol class="tables">

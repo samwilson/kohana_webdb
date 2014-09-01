@@ -4,6 +4,8 @@
 		<small><?= $exception->getMessage() ?></small>
 	</h1>
 
+	<p>Do you need to run <a href="<?=Route::url('admin', array('action'=>'install'))?>">the installer</a>?</p>
+
 	<?php
 	if ($previous)
 	{
