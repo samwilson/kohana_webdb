@@ -9,7 +9,7 @@
  * @license  Simplified BSD License
  * @link     http://github.com/samwilson/kohana_webdb
  */
-class Webdb_File_CSV
+class Webdb_CSV
 {
 
 	public $headers;

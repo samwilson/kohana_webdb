@@ -132,6 +132,9 @@ $required_modules = array(
 	'pagination' => MODPATH.'pagination',
 	'minion' => MODPATH.'minion',
 	'menu' => MODPATH.'menu',
+	'kadldap' => MODPATH.'kohana_kadldap',
+	'dbauth' => MODPATH.'kohana_dbauth',
+	'webdb_dbauth' => MODPATH.'kohana_webdb_dbauth',
 	'media' => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
 );
@@ -154,6 +157,7 @@ Route::set('user', '<action>', array(
 	'controller' => 'User',
 	'action' => 'login',
 ));
+Route::set('upgrade', 'upgrade')->defaults(array('controller' => 'Admin', 'action' => 'install'));
 Route::set('admin', '<action>', array(
 	'action' => '(install|admin)',
 ))->defaults(array(

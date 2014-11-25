@@ -4,24 +4,24 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2a79c92d877cae11bdba6d055d08675a",
+    "hash": "52d1977eb5044b02d24b4d32dfac1859",
     "packages": [
         {
             "name": "adldap/adldap",
-            "version": "v4.0-stable",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ztec/adLDAP.git",
-                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc"
+                "url": "https://github.com/adldap/adLDAP.git",
+                "reference": "ee471d2243124dcf29efd8c079456cc56e2fa6e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ztec/adLDAP/zipball/43bca164cde8f5a98e054e1aea53406aa3b805cc",
-                "reference": "43bca164cde8f5a98e054e1aea53406aa3b805cc",
+                "url": "https://api.github.com/repos/adldap/adLDAP/zipball/ee471d2243124dcf29efd8c079456cc56e2fa6e7",
+                "reference": "ee471d2243124dcf29efd8c079456cc56e2fa6e7",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.4"
+                "php": ">=5.3.0"
             },
             "suggest": {
                 "ext-ldap": "*"
@@ -29,28 +29,36 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "adLDAP": "lib/"
+                    "": "lib/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GNU"
+                "LGPL-2.1"
             ],
             "authors": [
                 {
                     "name": "Richard Hyland",
                     "email": "adldap@richardhyland.com",
                     "role": "Developer"
+                },
+                {
+                    "name": "Scott Barnett",
+                    "email": "scott@wiggumworld.com",
+                    "role": "Developer"
                 }
             ],
-            "description": "adLDAP, low-level library to query Active directory",
+            "description": "adLDAP, PHP LDAP library for manipulating Active Directory",
             "homepage": "http://adldap.sourceforge.net",
             "keywords": [
                 "active directory",
                 "ldap",
                 "windows"
             ],
-            "time": "2013-08-29 14:08:57"
+            "support": {
+                "issues": "https://github.com/adldap/adLDAP/issues",
+                "source": "https://github.com/adldap/adLDAP"
+            },
+            "time": "2014-05-13 08:13:00"
         },
         {
             "name": "anroots/menu",
@@ -195,12 +203,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hautelook/phpass.git",
-                "reference": "09463d13a673999f3432461e5dbde535766901da"
+                "reference": "9590c12bf7c92f67f646d7bf2cf6384e7292cc41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hautelook/phpass/zipball/09463d13a673999f3432461e5dbde535766901da",
-                "reference": "09463d13a673999f3432461e5dbde535766901da",
+                "url": "https://api.github.com/repos/hautelook/phpass/zipball/9590c12bf7c92f67f646d7bf2cf6384e7292cc41",
+                "reference": "9590c12bf7c92f67f646d7bf2cf6384e7292cc41",
                 "shasum": ""
             },
             "require": {
@@ -231,7 +239,7 @@
                 "password",
                 "security"
             ],
-            "time": "2014-07-18 03:04:01"
+            "time": "2014-11-06 16:47:10"
         },
         {
             "name": "kohana-minion/tasks-cache",
@@ -509,29 +517,119 @@
             "time": "2013-08-26 02:09:55"
         },
         {
-            "name": "samwilson/kohana_kadldap",
+            "name": "samwilson/kohana_dbauth",
             "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/samwilson/kohana_kadldap.git",
-                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0"
+                "url": "https://github.com/samwilson/kohana_dbauth.git",
+                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_kadldap/zipball/f6741a16c47cac7c06f378b92cfd25ade655d8b0",
-                "reference": "f6741a16c47cac7c06f378b92cfd25ade655d8b0",
+                "url": "https://api.github.com/repos/samwilson/kohana_dbauth/zipball/63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
+                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
                 "shasum": ""
             },
             "require": {
-                "adldap/adldap": "v4.0-stable"
+                "kohana/auth": "*",
+                "kohana/database": "*"
             },
             "type": "kohana-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "Kohana wrapper module for adLDAP.",
-            "time": "2013-09-04 07:28:09"
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "developer"
+                }
+            ],
+            "description": "A driver for the Kohana Auth module, to authenticate as a database user.",
+            "time": "2014-06-25 06:54:08"
+        },
+        {
+            "name": "samwilson/kohana_kadldap",
+            "version": "2.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_kadldap.git",
+                "reference": "9e0f34e1b3a7ff1405b617f4b703e1aa0c438d56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_kadldap/zipball/9e0f34e1b3a7ff1405b617f4b703e1aa0c438d56",
+                "reference": "9e0f34e1b3a7ff1405b617f4b703e1aa0c438d56",
+                "shasum": ""
+            },
+            "require": {
+                "adldap/adldap": "dev-master",
+                "kohana/auth": "*"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Beau Dacious (nocash)",
+                    "email": "z727090@gmail.com",
+                    "homepage": "http://cxzcxz.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Module for AD/LDAP support in Kohana 3 (includes an Auth driver).",
+            "time": "2014-09-17 05:51:55"
+        },
+        {
+            "name": "samwilson/kohana_webdb_dbauth",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samwilson/kohana_webdb_dbauth.git",
+                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samwilson/kohana_webdb_dbauth/zipball/ba142952fca87e9d597385fc78b69703f0d00bcb",
+                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb",
+                "shasum": ""
+            },
+            "require": {
+                "samwilson/kohana_dbauth": "*"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Simplified BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Wilson",
+                    "email": "sam@samwilson.id.au",
+                    "homepage": "http://samwilson.id.au",
+                    "role": "developer"
+                }
+            ],
+            "description": "A module to integrate the DBAuth module into WebDB.",
+            "homepage": "https://github.com/samwilson/kohana_webdb_dbauth",
+            "keywords": [
+                "auth",
+                "authorization",
+                "db",
+                "kohana",
+                "webdb"
+            ],
+            "time": "2014-07-03 03:27:34"
         },
         {
             "name": "shadowhand/pagination",
@@ -683,16 +781,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "1.5.4",
+            "version": "1.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "4097e2c106e4a32bc234ae880e5585a19137e435"
+                "reference": "5d973e59cf58a0c847f298de84374c96b42b17b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4097e2c106e4a32bc234ae880e5585a19137e435",
-                "reference": "4097e2c106e4a32bc234ae880e5585a19137e435",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5d973e59cf58a0c847f298de84374c96b42b17b3",
+                "reference": "5d973e59cf58a0c847f298de84374c96b42b17b3",
                 "shasum": ""
             },
             "require": {
@@ -754,24 +852,19 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-08-05 23:54:05"
+            "time": "2014-09-25 03:33:46"
         }
     ],
-    "aliases": [
-
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "shadowhand/pagination": 20,
         "kohana-minion/tasks-cache": 20,
         "zeelot/kohana-media": 20,
-        "hautelook/phpass": 20
+        "hautelook/phpass": 20,
+        "adldap/adldap": 20
     },
     "prefer-stable": false,
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "platform": [],
+    "platform-dev": []
 }

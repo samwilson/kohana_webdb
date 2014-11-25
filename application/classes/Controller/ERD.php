@@ -6,6 +6,7 @@ class Controller_ERD extends Controller_Base {
 	{
 		parent::before();
 		$this->database = new WebDB_Database;
+		$this->template->actions = array();
 
 		$this->selected_tables = array();
 		foreach ($this->database->get_tables() as $table)
@@ -32,10 +33,10 @@ class Controller_ERD extends Controller_Base {
 
 	public function action_html()
 	{
+		$this->template->table = FALSE;
 		$this->view = View::factory('erd/html');
 		$this->view->database = $this->database;
 		$this->view->selected_tables = $this->selected_tables;
-
 		// Template
 //		$template = View::factory('template');
 //		$template->database = $this->database;
@@ -44,9 +45,6 @@ class Controller_ERD extends Controller_Base {
 //		$template->controller = 'ERD';
 //		$template->action = 'ERD';
 		$this->template->content = $this->view->render();
-
-		// Response
-		//$this->response->body($template->render());
 	}
 
 	public function action_dot()
@@ -56,7 +54,6 @@ class Controller_ERD extends Controller_Base {
 		$this->template->selected_tables = $this->selected_tables;
 		$this->response->headers('Content-Type', 'text/plain');
 		$this->response->body($this->template->render());
-		//$this
 	}
 
 	public function action_png()
@@ -72,7 +69,7 @@ class Controller_ERD extends Controller_Base {
 		$dot_filename = $this->cache_dir.DIRECTORY_SEPARATOR.'erd.dot';
 		$png_filename = $this->cache_dir.DIRECTORY_SEPARATOR.'erd.png';
 		file_put_contents($dot_filename, $graph);
-		$dot = Kohana::$config->load('webdb')->get('dot');
+		$dot = WebDB::config('dot');
 		$cmd = '"'.$dot.'"'.' -Tpng';
 		$cmd .= ' -o'.escapeshellarg($png_filename); //output
 		$cmd .= ' '.escapeshellarg($dot_filename); //input

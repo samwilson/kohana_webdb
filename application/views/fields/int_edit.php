@@ -47,7 +47,7 @@ elseif($column->is_foreign_key())
 	$(function() {
 		var fk_field_name = '<?php echo $fk_field_name ?>';
 		$("[name='"+fk_field_name+"']").autocomplete({
-			source: "<?php echo URL::site('autocomplete/'.$database->get_name().'/'.$referenced_table->get_name()) ?>",
+			source: "<?php echo URL::site('autocomplete/'.$referenced_table->get_name()) ?>",
 			select: function(event, ui) {
 				var fk_actual_value_field = '<?php echo $fk_actual_value_field ?>';
 				$("[name='"+fk_actual_value_field+"']").val(ui.item.id);

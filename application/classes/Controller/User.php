@@ -1,12 +1,12 @@
 <?php
 
-class Controller_User extends Controller_Base
-{
+class Controller_User extends Controller_Base {
 
 	public function action_login()
 	{
 		$this->view->username = '';
 		$this->view->return_to = Arr::get($_REQUEST, 'return_to', '');
+		$this->view->register = WebDB::config('auth') == 'WebDB';
 		if ($this->request->post('login') !== NULL)
 		{
 			Auth::instance()->logout(); // Just in case we're logged in.
@@ -17,15 +17,14 @@ class Controller_User extends Controller_Base
 			{
 				try
 				{
-					$dbms = new WebDB_DBMS;
-					$dbms->refresh_cache();
+					$user = new WebDB_User($this->view->username);
+					$user->log_in();
 					$this->add_flash_message('You are now logged in.', 'info');
 					Kohana::$log->add(Kohana_Log::INFO, $this->view->username.' logged in.');
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$msg = 'Unable to log in as :username.';
-					throw HTTP_Exception::factory(500, $msg, array(':username'=>$this->view->username), $e);
+					throw HTTP_Exception::factory(500, $msg, array(':username' => $this->view->username), $e);
 				}
 				$this->redirect($this->view->return_to);
 			} else
@@ -45,10 +44,11 @@ class Controller_User extends Controller_Base
 			Auth::instance()->logout();
 			Session::instance()->destroy();
 			$this->add_flash_message('You are now logged out.', 'info');
-		} else {
+		} else
+		{
 			$this->add_flash_message('You were not logged in.', 'notice');
 		}
-		$this->redirect(Route::url('login', array(), TRUE));
+		$this->redirect(Route::url('user', array('action'=>'login')));
 	}
 
 	public function action_register()

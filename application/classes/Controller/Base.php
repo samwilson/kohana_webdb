@@ -15,8 +15,6 @@ abstract class Controller_Base extends Controller_Template
 			$this->view = View::factory($this->request->action());
 			$this->template->content = $this->view;
 		}
-		$this->template->set_global('databases', array());
-		$this->template->set_global('database', FALSE);
 		$this->template->set_global('tables', array());
 		$this->template->set_global('table', FALSE);
 		$this->template->messages = array();

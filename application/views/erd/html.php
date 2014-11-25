@@ -1,4 +1,4 @@
-<h2>Entity Relationship Diagram for <?php echo WebDB_Text::titlecase($database->get_name()) ?></h2>
+<h2>Entity Relationship Diagram</h2>
 
 <?php $url = Route::url('erd', array('dbname'=>$database->get_name(), 'action'=>'png')).URL::query() ?>
 <p>

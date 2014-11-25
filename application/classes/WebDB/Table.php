@@ -638,8 +638,9 @@ class WebDB_Table {
 		$out = array();
 		//$permTable = $this->_database->get_table('permissions'); //new WebDB_Table($this->_database, 'permissions');
 		//$permTable->add_filter('table_name', '=', $this->get_name());
-		$permissions = DB::select()
+		$permissions = DB::select('permissions.*', array('roles.name', 'role_name'))
 			->from('permissions')
+			->join('roles')->on('role_id', '=', 'roles.id')
 			->where('table_name', '=', $this->get_name())
 			->or_where('table_name', '=', '*')
 			->execute($this->_database->get_db());

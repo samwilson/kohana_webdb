@@ -257,7 +257,7 @@ class Controller_WebDB extends Controller_Base {
 		try
 		{
 			$hash = $this->request->param('id', FALSE);
-			$this->view->file = new WebDB_File_CSV($hash);
+			$this->view->file = new WebDB_CSV($hash);
 		} catch (Kohana_Exception $e)
 		{
 			$this->add_template_message($e->getMessage());

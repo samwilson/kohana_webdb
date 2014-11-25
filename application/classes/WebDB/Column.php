@@ -139,22 +139,18 @@ class Webdb_Column {
 	private function _app_user_can($privilege)
 	{
 
-		$app_privs = array('select', 'update', 'insert', 'delete', 'import');
+		$app_privs = array('all', 'select', 'update', 'insert', 'delete', 'import');
 		if ( ! in_array($privilege, $app_privs))
 		{
 			return FALSE;
 		}
 		foreach ($this->_table->get_permissions() as $perm)
 		{
-			//echo Debug::vars($perm, $privilege);
 			$columns = explode(',', $perm['column_names']);
 			$can_column = ($perm['column_names'] == '*' OR in_array($this->_name, $columns));
-			$can_permission = ($perm['permission'] == '*' OR $perm['permission'] == $privilege);
-//			$can_identifier = $perm['identifier']=='*'
-//				OR $perm['identifier']==Auth::instance()->get_user()
-//				OR Auth::instance()->logged_in($perm['identifier']);
-			//echo Debug::vars($can_column, $can_permission, $privilege);
-			if ($can_column AND $can_permission)
+			$can_permission = ($perm['permission'] == 'all' OR $perm['permission'] == $privilege);
+			$has_role = WebDB_Auth::logged_in($perm['role_name']);
+			if ($can_column AND $can_permission AND $has_role)
 			{
 				return TRUE;
 			}
@@ -171,7 +167,7 @@ class Webdb_Column {
 	 */
 	public function _db_user_can($privilege)
 	{
-		$db_privs = array('select', 'update', 'insert', 'delete');
+		$db_privs = array('all', 'select', 'update', 'insert', 'delete');
 		if ( ! in_array($privilege, $db_privs))
 		{
 			return FALSE;
