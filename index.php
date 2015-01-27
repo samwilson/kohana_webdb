@@ -133,8 +133,6 @@ $required_modules = array(
 	'minion' => MODPATH.'minion',
 	'menu' => MODPATH.'menu',
 	'kadldap' => MODPATH.'kohana_kadldap',
-	'dbauth' => MODPATH.'kohana_dbauth',
-	'webdb_dbauth' => MODPATH.'kohana_webdb_dbauth',
 	'media' => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
 );
