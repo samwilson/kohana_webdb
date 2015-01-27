@@ -136,11 +136,14 @@ $required_modules = array(
 	'media' => DOCROOT.'vendor/zeelot/kohana-media',
 	'tasks-cache' => DOCROOT.'vendor/kohana-minion/tasks-cache',
 );
-foreach ($modules as $mod)
+if (isset($modules))
 {
-	if (is_dir($mod))
+	foreach ($modules as $mod)
 	{
-		$required_modules[basename($mod)] = $mod;
+		if (is_dir($mod))
+		{
+			$required_modules[basename($mod)] = $mod;
+		}
 	}
 }
 Kohana::modules($required_modules);
