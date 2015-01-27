@@ -101,4 +101,10 @@ class Controller_Admin extends Controller_Base {
 		$this->redirect(Route::get('default')->uri());
 	}
 
+	public function action_purge()
+	{
+		Cache::instance()->delete_all();
+		$this->add_template_message('Cache cleared.', 'info');
+		$this->template->content = '';
+	}
 }

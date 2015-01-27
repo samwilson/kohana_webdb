@@ -163,7 +163,7 @@ Route::set('user', '<action>(/<username>)', array(
 ));
 Route::set('upgrade', 'upgrade')->defaults(array('controller' => 'Admin', 'action' => 'install'));
 Route::set('admin', '<action>', array(
-	'action' => '(install|admin)',
+	'action' => '(install|admin|purge)',
 ))->defaults(array(
 	'controller' => 'Admin',
 	'action' => 'admin',
