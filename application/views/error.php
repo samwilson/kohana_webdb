@@ -9,14 +9,14 @@
 	<?php
 	if ($previous)
 	{
-		echo View::factory('kohana/error')
-				->bind('class', $class = get_class($previous))
-				->bind('code', $code = $previous->getCode())
-				->bind('message', $message = $previous->getMessage())
-				->bind('file', $file = $previous->getFile())
-				->bind('line', $line = $previous->getLine())
-				->bind('trace', $trace = $previous->getTrace())
-				->render();
+		$view = View::factory('kohana/error');
+		$view->class = get_class($previous);
+		$view->code = $previous->getCode();
+		$view->message = $previous->getMessage();
+		$view->file = $previous->getFile();
+		$view->line = $previous->getLine();
+		$view->trace = $previous->getTrace();
+		echo $view->render();
 	}
 	?>
 

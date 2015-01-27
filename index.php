@@ -129,6 +129,7 @@ $required_modules = array(
 	'auth' => MODPATH.'auth',
 	'cache' => MODPATH.'cache',
 	'database' => MODPATH.'database',
+	'mysqli' => MODPATH.'kohana-3.3-mysqli',
 	'pagination' => MODPATH.'pagination',
 	'minion' => MODPATH.'minion',
 	'menu' => MODPATH.'menu',

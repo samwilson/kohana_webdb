@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "52d1977eb5044b02d24b4d32dfac1859",
+    "hash": "6804b181eb892ab88e27b93bb71deff0",
     "packages": [
         {
             "name": "adldap/adldap",
@@ -443,27 +443,22 @@
         },
         {
             "name": "kohana/database",
-            "version": "v3.3.3.1",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/database.git",
-                "reference": "245cc86a5025bbce61dca4732008f4bf8274a2b9"
+                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kohana/database/zipball/245cc86a5025bbce61dca4732008f4bf8274a2b9",
-                "reference": "245cc86a5025bbce61dca4732008f4bf8274a2b9",
+                "url": "https://api.github.com/repos/kohana/database/zipball/3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
+                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
                 "shasum": ""
             },
             "require": {
                 "composer/installers": "~1.0",
                 "kohana/core": ">=3.3",
-                "php": ">=5.3.6"
-            },
-            "require-dev": {
-                "kohana/core": "3.3.*@dev",
-                "kohana/koharness": "*@dev",
-                "kohana/unittest": "3.3.*@dev"
+                "php": ">=5.3.3"
             },
             "suggest": {
                 "ext-mysql": "*",
@@ -474,11 +469,6 @@
                 "branch-alias": {
                     "dev-3.3/develop": "3.3.x-dev",
                     "dev-3.4/develop": "3.4.x-dev"
-                },
-                "installer-paths": {
-                    "vendor/{$vendor}/{$name}": [
-                        "type:kohana-module"
-                    ]
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -489,8 +479,8 @@
                 {
                     "name": "Kohana Team",
                     "email": "team@kohanaframework.org",
-                    "homepage": "http://kohanaframework.org/team",
-                    "role": "developer"
+                    "homepage": "http://www.kohanaframework.org",
+                    "role": "Maintainer"
                 }
             ],
             "description": "The official Kohana module for database interactions, building queries, and prepared statements",
@@ -500,7 +490,7 @@
                 "framework",
                 "kohana"
             ],
-            "time": "2014-12-11 00:02:51"
+            "time": "2013-08-26 02:07:34"
         },
         {
             "name": "kohana/minion",
@@ -550,40 +540,6 @@
             "time": "2013-08-26 02:09:55"
         },
         {
-            "name": "samwilson/kohana_dbauth",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/kohana_dbauth.git",
-                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_dbauth/zipball/63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
-                "reference": "63e3b273e39e82bb3bbffc83b10461f6ccc866b9",
-                "shasum": ""
-            },
-            "require": {
-                "kohana/auth": "*",
-                "kohana/database": "*"
-            },
-            "type": "kohana-module",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson",
-                    "email": "sam@samwilson.id.au",
-                    "homepage": "http://samwilson.id.au",
-                    "role": "developer"
-                }
-            ],
-            "description": "A driver for the Kohana Auth module, to authenticate as a database user.",
-            "time": "2014-06-25 06:54:08"
-        },
-        {
             "name": "samwilson/kohana_kadldap",
             "version": "2.0.4",
             "source": {
@@ -622,47 +578,6 @@
             ],
             "description": "Module for AD/LDAP support in Kohana 3 (includes an Auth driver).",
             "time": "2014-09-17 05:51:55"
-        },
-        {
-            "name": "samwilson/kohana_webdb_dbauth",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/kohana_webdb_dbauth.git",
-                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/kohana_webdb_dbauth/zipball/ba142952fca87e9d597385fc78b69703f0d00bcb",
-                "reference": "ba142952fca87e9d597385fc78b69703f0d00bcb",
-                "shasum": ""
-            },
-            "require": {
-                "samwilson/kohana_dbauth": "*"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Simplified BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson",
-                    "email": "sam@samwilson.id.au",
-                    "homepage": "http://samwilson.id.au",
-                    "role": "developer"
-                }
-            ],
-            "description": "A module to integrate the DBAuth module into WebDB.",
-            "homepage": "https://github.com/samwilson/kohana_webdb_dbauth",
-            "keywords": [
-                "auth",
-                "authorization",
-                "db",
-                "kohana",
-                "webdb"
-            ],
-            "time": "2014-07-03 03:27:34"
         },
         {
             "name": "shadowhand/pagination",
@@ -713,6 +628,45 @@
                 "source": "https://github.com/shadowhand/pagination"
             },
             "time": "2013-09-05 00:16:23"
+        },
+        {
+            "name": "tomlankhorst/kohana-3.3-mysqli",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tomlankhorst/kohana-3.3-mysqli.git",
+                "reference": "0ad0b406b8fd2b25ecfedf1b0f2f414af3e049f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tomlankhorst/kohana-3.3-mysqli/zipball/0ad0b406b8fd2b25ecfedf1b0f2f414af3e049f8",
+                "reference": "0ad0b406b8fd2b25ecfedf1b0f2f414af3e049f8",
+                "shasum": ""
+            },
+            "require": {
+                "kohana/database": "v3.3.1"
+            },
+            "type": "kohana-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Tom Lankhorst",
+                    "homepage": "http://tomlankhorst.nl/",
+                    "role": "developer"
+                }
+            ],
+            "description": "Kohana 3.3 MySQLi driver.",
+            "homepage": "https://github.com/tomlankhorst/kohana-3.3-mysqli",
+            "keywords": [
+                "databases",
+                "kohana",
+                "mysql",
+                "mysqli"
+            ],
+            "time": "2014-05-14 14:24:34"
         },
         {
             "name": "zeelot/kohana-media",
@@ -891,6 +845,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "tomlankhorst/kohana-3.3-mysqli": 20,
         "shadowhand/pagination": 20,
         "kohana-minion/tasks-cache": 20,
         "zeelot/kohana-media": 20,

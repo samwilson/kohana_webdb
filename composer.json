@@ -22,6 +22,7 @@
 		"kohana/auth": "3.3.*",
 		"kohana/cache": "3.3.*",
 		"kohana/database": "3.3.*",
+		"tomlankhorst/kohana-3.3-mysqli": "dev-master",
 		"shadowhand/pagination": "dev-composer",
 		"kohana/minion": "3.3.*",
 		"kohana-minion/tasks-cache": "@dev",
