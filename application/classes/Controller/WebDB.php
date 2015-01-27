@@ -142,7 +142,7 @@ class Controller_WebDB extends Controller_Base {
 		 */
 		if (isset($_POST['save']))
 		{
-			// Get row (the first element of $_POST.
+			// Get row (the first element of $_POST).
 			$row = array_shift($_POST['data']);
 			// Assume unset (i.e. unsent) checkboxes are unchecked.
 			foreach ($this->table->get_columns() as $column_name => $column)
@@ -152,13 +152,18 @@ class Controller_WebDB extends Controller_Base {
 					$row[$column_name] = 0;
 				}
 			}
+			// Make sure that the PK is set.
+			if ( ! empty($id) AND ! isset($row[$this->table->get_pk_column()->get_name()]))
+			{
+				$row[$this->table->get_pk_column()->get_name()] = $id;
+			}
 			// Save row
 			$id = $this->table->save_row($row);
 			if ( ! empty($id))
 			{
 				$this->add_flash_message('Record saved.', 'info');
-				$url = 'edit/'.$this->database->get_name().'/'.$this->table->get_name().'/'.$id;
-				$this->redirect($url);
+				$url_params = array('action' => 'edit', 'tablename' => $this->table->get_name(), 'id' => $id);
+				$this->redirect(Route::get('default')->uri($url_params));
 			}
 		}
 

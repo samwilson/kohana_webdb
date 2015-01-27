@@ -20,9 +20,7 @@
 				<th>
 
 					<?php if ($register): ?>
-					<a href="<?=Route::url('user', array('action'=>'register')) ?>">
-						<?=WebDB::msg('register')?>
-					</a>
+					<a href="<?=Route::url('user', array('action'=>'register')) ?>"><?=WebDB::msg('register')?></a>
 					<?php endif ?>
 
 					<?php if ($return_to) echo Form::hidden('return_to', $return_to) ?>

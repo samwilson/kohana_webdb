@@ -14,7 +14,7 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 (hopefully) useful prototyping or bare-bones database interface.
 
 * **Download:** https://github.com/samwilson/kohana_webdb/archive/master.zip
-* **Latest Version:** 5.0.0 (2014-08-13)
+* **Latest Version:** 6.0.0 (2015-01-23)
 * **Licence:** Simplified BSD License
 * **Homepage:** [http://github.com/samwilson/kohana_webdb](http://github.com/samwilson/kohana_webdb)
 * **Established:** March 2008
@@ -24,26 +24,22 @@ make it as easy as possible to enter data.  Many other features make WebDB a
 
 1. Download and uncompress in a web-accessible location.
 
-2. Run `composer install`.
+2. Copy `config.dist.php` to `config.php` and edit the database connection
+   credentials and other base configuration therein.
 
-3. Copy `config.dist.php` to `config.php` and edit the constants therein.
+3. Navigate to the URL at which you installed WebDB (e.g.
+   http://example.org/kohana_webdb/). You will be prompted to install the
+   application. Click 'Install'.
 
-4. Copy any required module configuration files from `modules/*/config` into
-   `application/config` and change whatever's required. At a minimum this will
-   be just `auth.php`.
-
-5. Set up database information and an authentication source:
-   * Set Auth driver to `'DB'` in `application/config/auth.php`;
-   * **OR** set all credentials in `application/config/database.php` and elect
-     to use a different Auth driver (such as ORM, LDAP, or file) in
-     `application/config/auth.php`.
-
-   If you do the latter, you will also need to set up whatever else is required
-   for your chosen Auth driver.
-
-6. That's it! You can now log in.
+4. Add custom tables to your database (via any DB administration tool, such as
+   [phpMyAdmin](http://www.phpmyadmin.net/)).
 
 ## Schema Structure and Nomenclature
+
+The base tables provided by WebDB are shown in the Entity Relationship Diagram
+below. These must not be renamed, but new columns can be added where required.
+
+![ERD](erd.png)
 
 For their records be edited or viewed, tables need to have single-column primary
 keys, with values that can be included in URLs. For example, autoincrementing
@@ -57,6 +53,8 @@ file, user input, or elsewhere (such as an LDAP server) — and are generally a
 combination of these. How they are combined, and the options for further
 refining users' permissions, are detailed below.
 
+### Authentication:
+
 * If valid connection details are provided in `application/config/database.php`
   then these will be used to connect to the database.  The user will at this
   point have all of the permissions of the database user.  Note that if the
@@ -67,8 +65,12 @@ refining users' permissions, are detailed below.
   authenticate as MySQL users.
 * If a valid MySQL user is given in the Database configuration file, and a
   driver other than DB is selected in the Auth configuration file, then users
-  can authenticate against that other driver, and if logged in will have all of
+  authenticate against that other driver, and if logged in will have all of
   the permissions of the MySQL user.
+
+### Authorisation:
+
+* 
 
 ## Other Features
 

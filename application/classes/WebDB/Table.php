@@ -640,16 +640,13 @@ class WebDB_Table {
 		//$permTable->add_filter('table_name', '=', $this->get_name());
 		$permissions = DB::select('permissions.*', array('roles.name', 'role_name'))
 			->from('permissions')
-			->join('roles')->on('role_id', '=', 'roles.id')
+			->join('roles', 'LEFT')->on('role_id', '=', 'roles.id')
 			->where('table_name', '=', $this->get_name())
 			->or_where('table_name', '=', '*')
 			->execute($this->_database->get_db());
 		foreach ($permissions as $perm)
 		{
-			if ($perm['table_name'] == '*' OR $perm['table_name'] == $this->_name)
-			{
-				$out[] = $perm;
-			}
+			$out[] = $perm;
 		}
 		return $out;
 	}
@@ -657,14 +654,16 @@ class WebDB_Table {
 	/**
 	 * Get this table's Primary Key column.
 	 * 
-	 * @return Webdb_DBMS_Column The PK column.
+	 * @return Webdb_Column The PK column.
 	 */
 	public function get_pk_column()
 	{
 		foreach ($this->get_columns() as $column)
 		{
 			if ($column->is_primary_key())
+			{
 				return $column;
+			}
 		}
 		return FALSE;
 	}

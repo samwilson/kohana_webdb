@@ -151,8 +151,8 @@ unset($modules, $required_modules);
 /**
  * Routes.
  */
-Route::set('user', '<action>', array(
-	'action' => '(login|logout|register)',
+Route::set('user', '<action>(/<username>)', array(
+	'action' => '(login|logout|register|profile)',
 ))->defaults(array(
 	'controller' => 'User',
 	'action' => 'login',

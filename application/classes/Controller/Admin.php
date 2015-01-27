@@ -35,16 +35,6 @@ class Controller_Admin extends Controller_Base {
 				.')';
 			DB::query(NULL, $sql)->execute();
 		}
-		if ( ! in_array('users', $tables))
-		{
-			$sql = 'CREATE TABLE users ('
-				.' `id` int(6) NOT NULL AUTO_INCREMENT,'
-				.' `username` varchar(65) NOT NULL,'
-				.' PRIMARY KEY (`id`),'
-				.' UNIQUE KEY `username` (`username`)'
-				.')';
-			DB::query(NULL, $sql)->execute();
-		}
 		if ( ! in_array('roles', $tables))
 		{
 			$sql = 'CREATE TABLE roles ('
@@ -71,7 +61,8 @@ class Controller_Admin extends Controller_Base {
 				.' ADD CONSTRAINT `user_roles_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE';
 			DB::query(NULL, $sql)->execute();
 		}
-		if ( ! DB::query(NULL, "SHOW INDEXES FROM `user_roles` WHERE Key_name='user_roles_role'")->execute())
+		if ( ! DB::query(NULL, "SELECT TRUE FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+				WHERE CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_NAME = 'user_roles_role'")->execute())
 		{
 			$sql = 'ALTER TABLE user_roles'
 				.' ADD CONSTRAINT `user_roles_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE';
@@ -81,11 +72,10 @@ class Controller_Admin extends Controller_Base {
 		{
 			$sql = 'CREATE TABLE permissions ('
 				.' `id` int(4) NOT NULL AUTO_INCREMENT,'
-				.' `table_name` varchar(65) NOT NULL,'
-				.' `column_name` varchar(65) NOT NULL,'
-				.' `where_clause` varchar(65) NOT NULL,'
+				.' `table_name` varchar(65) NOT NULL DEFAULT "*",'
+				.' `column_name` varchar(65) NOT NULL DEFAULT "*",'
 				.' `role_id` INT(4) NOT NULL,'
-				.' `permission` varchar(65) NOT NULL,'
+				.' `activity_name` varchar(65) NOT NULL DEFAULT "*",'
 				.' PRIMARY KEY (`id`)'
 				.')';
 			DB::query(NULL, $sql)->execute();

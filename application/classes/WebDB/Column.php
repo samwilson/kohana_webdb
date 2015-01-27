@@ -139,17 +139,16 @@ class Webdb_Column {
 	private function _app_user_can($privilege)
 	{
 
-		$app_privs = array('all', 'select', 'update', 'insert', 'delete', 'import');
+		$app_privs = array('*', 'select', 'update', 'insert', 'delete', 'import', 'bulk_update');
 		if ( ! in_array($privilege, $app_privs))
 		{
 			return FALSE;
 		}
 		foreach ($this->_table->get_permissions() as $perm)
 		{
-			$columns = explode(',', $perm['column_names']);
-			$can_column = ($perm['column_names'] == '*' OR in_array($this->_name, $columns));
-			$can_permission = ($perm['permission'] == 'all' OR $perm['permission'] == $privilege);
-			$has_role = WebDB_Auth::logged_in($perm['role_name']);
+			$can_column = ($perm['column_name'] == '*' OR $perm['column_name'] == $this->get_name());
+			$can_permission = ($perm['activity_name'] == '*' OR $perm['activity_name'] == $privilege);
+			$has_role = (is_null($perm['role_name']) OR WebDB_Auth::logged_in($perm['role_name']));
 			if ($can_column AND $can_permission AND $has_role)
 			{
 				return TRUE;

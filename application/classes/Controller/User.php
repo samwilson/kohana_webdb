@@ -48,12 +48,14 @@ class Controller_User extends Controller_Base {
 		{
 			$this->add_flash_message('You were not logged in.', 'notice');
 		}
-		$this->redirect(Route::url('user', array('action'=>'login')));
+		$this->redirect(Route::get('user')->uri(array('action'=>'login')));
 	}
 
-	public function action_register()
+	public function action_profile()
 	{
-		
+		$username = $this->request->param('username');
+		$user = new WebDB_User($username);
+		$this->view->user = $user;
 	}
 
 }

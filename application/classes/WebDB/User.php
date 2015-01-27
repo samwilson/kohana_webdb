@@ -2,11 +2,40 @@
 
 class WebDB_User {
 
+	protected $id;
 	protected $username;
 
 	public function __construct($username)
 	{
 		$this->username = $username;
+		$db = new WebDB_Database;
+		$table = $db->get_table('users');
+		$table->add_filter('username', '=', $this->username);
+		$data = $table->get_rows()->current();
+		$this->username = $data['username'];
+		$this->id = $data['id'];
+	}
+
+	public function get_id()
+	{
+		return $this->id;
+	}
+
+	public function get_username()
+	{
+		return $this->username;
+	}
+
+	public function get_roles()
+	{
+		$roles = DB::select(array('roles.name'))
+			->from('user_roles')
+			->join('users')->on('user_id', '=', 'users.id')
+			->join('roles')->on('role_id', '=', 'roles.id')
+			->where('username', '=', $this->get_username())
+			->execute()
+			->current();
+		return $roles;
 	}
 
 	public function has_role($role)

@@ -109,16 +109,16 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.0.18",
+            "version": "v1.0.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067"
+                "reference": "1bff8aa77a18f3616f468ed8000cf86a5725bac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
-                "reference": "74fb0a7a1a23696d9c8cc2fba5903f6711cdd067",
+                "url": "https://api.github.com/repos/composer/installers/zipball/1bff8aa77a18f3616f468ed8000cf86a5725bac3",
+                "reference": "1bff8aa77a18f3616f468ed8000cf86a5725bac3",
                 "shasum": ""
             },
             "replace": {
@@ -160,6 +160,8 @@
                 "Hurad",
                 "MODX Evo",
                 "OXID",
+                "SMF",
+                "Thelia",
                 "WolfCMS",
                 "agl",
                 "annotatecms",
@@ -169,9 +171,11 @@
                 "codeigniter",
                 "concrete5",
                 "croogo",
+                "dokuwiki",
                 "drupal",
                 "elgg",
                 "fuelphp",
+                "grav",
                 "installer",
                 "joomla",
                 "kohana",
@@ -195,7 +199,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-08-18 20:00:12"
+            "time": "2015-01-11 03:51:11"
         },
         {
             "name": "hautelook/phpass",
@@ -277,16 +281,16 @@
         },
         {
             "name": "kohana/auth",
-            "version": "v3.3.2",
+            "version": "v3.3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/auth.git",
-                "reference": "4ebae51874fe1be24b64d14b4d9691d3dbf6d043"
+                "reference": "5e5cf4d039c8aa9629e9e3bfa067c0f9b04ac39a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kohana/auth/zipball/4ebae51874fe1be24b64d14b4d9691d3dbf6d043",
-                "reference": "4ebae51874fe1be24b64d14b4d9691d3dbf6d043",
+                "url": "https://api.github.com/repos/kohana/auth/zipball/5e5cf4d039c8aa9629e9e3bfa067c0f9b04ac39a",
+                "reference": "5e5cf4d039c8aa9629e9e3bfa067c0f9b04ac39a",
                 "shasum": ""
             },
             "require": {
@@ -294,11 +298,21 @@
                 "kohana/core": ">=3.3",
                 "php": ">=5.3.3"
             },
+            "require-dev": {
+                "kohana/core": "3.3.*@dev",
+                "kohana/koharness": "*@dev",
+                "kohana/unittest": "3.3.*@dev"
+            },
             "type": "kohana-module",
             "extra": {
                 "branch-alias": {
                     "dev-3.3/develop": "3.3.x-dev",
                     "dev-3.4/develop": "3.4.x-dev"
+                },
+                "installer-paths": {
+                    "vendor/{$vendor}/{$name}": [
+                        "type:kohana-module"
+                    ]
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -320,7 +334,7 @@
                 "framework",
                 "kohana"
             ],
-            "time": "2013-08-26 02:03:17"
+            "time": "2014-12-10 22:57:05"
         },
         {
             "name": "kohana/cache",
@@ -371,20 +385,24 @@
         },
         {
             "name": "kohana/core",
-            "version": "v3.3.2",
+            "version": "v3.3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/core.git",
-                "reference": "3025781e57cecea871f326f03a8daed9a826eda4"
+                "reference": "fa66e193b56cbf4bc36aa16caec31feccf31e92a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kohana/core/zipball/3025781e57cecea871f326f03a8daed9a826eda4",
-                "reference": "3025781e57cecea871f326f03a8daed9a826eda4",
+                "url": "https://api.github.com/repos/kohana/core/zipball/fa66e193b56cbf4bc36aa16caec31feccf31e92a",
+                "reference": "fa66e193b56cbf4bc36aa16caec31feccf31e92a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "kohana/koharness": "*@dev",
+                "kohana/unittest": "3.3.*@dev"
             },
             "suggest": {
                 "ext-curl": "*",
@@ -393,6 +411,11 @@
             },
             "type": "library",
             "extra": {
+                "installer-paths": {
+                    "vendor/{$vendor}/{$name}": [
+                        "type:kohana-module"
+                    ]
+                },
                 "branch-alias": {
                     "dev-3.3/develop": "3.3.x-dev",
                     "dev-3.4/develop": "3.4.x-dev"
@@ -416,26 +439,31 @@
                 "framework",
                 "kohana"
             ],
-            "time": "2014-03-05 17:43:27"
+            "time": "2014-12-11 02:17:12"
         },
         {
             "name": "kohana/database",
-            "version": "v3.3.2",
+            "version": "v3.3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kohana/database.git",
-                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8"
+                "reference": "245cc86a5025bbce61dca4732008f4bf8274a2b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kohana/database/zipball/3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
-                "reference": "3d7a7cdf00aabf25b6eed46f4ea45917adaecbc8",
+                "url": "https://api.github.com/repos/kohana/database/zipball/245cc86a5025bbce61dca4732008f4bf8274a2b9",
+                "reference": "245cc86a5025bbce61dca4732008f4bf8274a2b9",
                 "shasum": ""
             },
             "require": {
                 "composer/installers": "~1.0",
                 "kohana/core": ">=3.3",
-                "php": ">=5.3.3"
+                "php": ">=5.3.6"
+            },
+            "require-dev": {
+                "kohana/core": "3.3.*@dev",
+                "kohana/koharness": "*@dev",
+                "kohana/unittest": "3.3.*@dev"
             },
             "suggest": {
                 "ext-mysql": "*",
@@ -446,6 +474,11 @@
                 "branch-alias": {
                     "dev-3.3/develop": "3.3.x-dev",
                     "dev-3.4/develop": "3.4.x-dev"
+                },
+                "installer-paths": {
+                    "vendor/{$vendor}/{$name}": [
+                        "type:kohana-module"
+                    ]
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -467,7 +500,7 @@
                 "framework",
                 "kohana"
             ],
-            "time": "2013-08-26 02:07:34"
+            "time": "2014-12-11 00:02:51"
         },
         {
             "name": "kohana/minion",
@@ -781,16 +814,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "1.5.5",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "5d973e59cf58a0c847f298de84374c96b42b17b3"
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5d973e59cf58a0c847f298de84374c96b42b17b3",
-                "reference": "5d973e59cf58a0c847f298de84374c96b42b17b3",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6f3e42d311b882b25b4d409d23a289f4d3b803d5",
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5",
                 "shasum": ""
             },
             "require": {
@@ -852,7 +885,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2014-09-25 03:33:46"
+            "time": "2014-12-04 22:32:15"
         }
     ],
     "aliases": [],
@@ -865,6 +898,7 @@
         "adldap/adldap": 20
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": [],
     "platform-dev": []
 }

@@ -2,10 +2,17 @@
 
 $items = array();
 
+$items[] = array(
+	'url' => 'erd',
+	'title' => 'ERD',
+);
+
 if (Auth::instance()->logged_in())
 {
+	$user = new WebDB_User(Auth::instance()->get_user());
 	$items[] = array(
-		'title' => 'Logged in as '.Auth::instance()->get_user(),
+		'url' => Route::get('default')->uri(array('action' => 'edit', 'tablename' => 'users', 'id'=>$user->get_id())),
+		'title' => 'Logged in as '.$user->get_username(),
 	);
 	$items[] = array(
 		'url' => 'logout',

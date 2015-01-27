@@ -35,15 +35,9 @@ class Controller_ERD extends Controller_Base {
 	{
 		$this->template->table = FALSE;
 		$this->view = View::factory('erd/html');
+		$this->template->action = 'ERD';
 		$this->view->database = $this->database;
 		$this->view->selected_tables = $this->selected_tables;
-		// Template
-//		$template = View::factory('template');
-//		$template->database = $this->database;
-//		$template->tables = $this->database->get_tables(TRUE);
-//		$template->table = '';
-//		$template->controller = 'ERD';
-//		$template->action = 'ERD';
 		$this->template->content = $this->view->render();
 	}
 

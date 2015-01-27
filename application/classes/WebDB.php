@@ -8,7 +8,7 @@ class WebDB {
 	 * @link http://semver.org/ Official website
 	 * @const
 	 */
-	const VERSION = '5.0.0';
+	const VERSION = '6.0.0';
 
 	/**
 	 * Get a localized message.
