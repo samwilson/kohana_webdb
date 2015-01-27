@@ -9,17 +9,23 @@
 			<tr>
 				<th><?php echo Form::label('username','Username:')?></th>
 				<td><?php echo Form::input('username', $username, array('id'=>'focus-me')) ?></td>
+				<td>
+					<?php if (WebDB::config('auth') == 'LDAP'): ?>
+						<?= WebDB::config('ldap_account_suffix') ?>
+					<?php endif ?>
+				</td>
 			</tr>
 			<tr>
 				<th><?php echo Form::label('password','Password:')?></th>
 				<td><?php echo Form::password('password') ?></td>
+				<td></td>
 			</tr>
 		</tbody>
 		<tfoot>
 			<tr>
 				<th>
 
-					<?php if ($register): ?>
+					<?php if (WebDB::config('auth') == 'WebDB'): ?>
 					<a href="<?=Route::url('user', array('action'=>'register')) ?>"><?=WebDB::msg('register')?></a>
 					<?php endif ?>
 
@@ -29,6 +35,7 @@
 				<th>
 					<input type="submit" name="login" value="Log in" />
 				</th>
+				<td></td>
 			</tr>
 		</tfoot>
 	</table>

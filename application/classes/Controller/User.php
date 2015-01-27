@@ -6,12 +6,11 @@ class Controller_User extends Controller_Base {
 	{
 		$this->view->username = '';
 		$this->view->return_to = Arr::get($_REQUEST, 'return_to', '');
-		$this->view->register = WebDB::config('auth') == 'WebDB';
 		if ($this->request->post('login') !== NULL)
 		{
 			Auth::instance()->logout(); // Just in case we're logged in.
 			$this->view->username = trim($this->request->post('username'));
-			$password = trim($this->request->post('password'));
+			$password = $this->request->post('password');
 			Auth::instance()->login($this->view->username, $password);
 			if (Auth::instance()->logged_in())
 			{

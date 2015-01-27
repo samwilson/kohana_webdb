@@ -8,7 +8,7 @@ class WebDB {
 	 * @link http://semver.org/ Official website
 	 * @const
 	 */
-	const VERSION = '6.0.0';
+	const VERSION = '6.1.0';
 
 	/**
 	 * Get a localized message.
@@ -16,12 +16,12 @@ class WebDB {
 	 * @param string $str The message name.
 	 * @return string
 	 */
-	public function msg($str)
+	public static function msg($str)
 	{
 		return __(Kohana::message('webdb', $str));
 	}
 
-	static public function config($name)
+	public static function config($name)
 	{
 		try
 		{
