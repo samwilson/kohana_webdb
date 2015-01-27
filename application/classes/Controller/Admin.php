@@ -95,6 +95,8 @@ class Controller_Admin extends Controller_Base {
 //			$sql = "INSERT INTO settings SET name='site_title', value='$siteTitle'";
 //			DB::query(Database::INSERT, $sql)->execute();
 //		}
+
+		Cache::instance()->delete_all();
 		$this->add_flash_message('Installation or upgrade has completed sucessfully.', 'info');
 		$this->redirect(Route::get('default')->uri());
 	}
