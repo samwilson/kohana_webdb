@@ -150,6 +150,8 @@ if (isset($modules))
 Kohana::modules($required_modules);
 unset($modules, $required_modules);
 
+Cache::$default = 'file';
+
 /**
  * Routes.
  */
