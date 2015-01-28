@@ -8,12 +8,15 @@ class WebDB_User {
 	public function __construct($username)
 	{
 		$this->username = $username;
-		$db = new WebDB_Database;
-		$table = $db->get_table('users');
-		$table->add_filter('username', '=', $this->username);
-		$data = $table->get_rows()->current();
-		$this->username = $data['username'];
-		$this->id = $data['id'];
+		$data = DB::select('id')
+			->from('users')
+			->where('username', 'LIKE', $username)
+			->execute()
+			->current();
+		if ($data)
+		{
+			$this->id = $data['id'];
+		}
 	}
 
 	public function get_id()
