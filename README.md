@@ -90,20 +90,6 @@ refining users' permissions, are detailed below.
   undergoing required sanity-checking and transformation (for e.g. foreign keys)
   on the way.
 
-## Modules
-
-Modules for WebDB are just normal Kohana modules. There is also nacent support for
-*plugging in* to the main WebDB codebase, so modules can interact with it in
-more complex ways.
-
-Modules can be installed with Composer (search for
-['kohana' on Packagist](https://packagist.org/search/?q=kohana)).
-
-There are currently two WebDB-specific modules:
-
-* [DBAuth module integration](https://packagist.org/packages/samwilson/kohana_webdb_dbauth)
-* [Entity Relationship Diagrams](https://packagist.org/packages/samwilson/kohana_webdb_erd)
-
 ## Simplified BSD License
 
 Copyright &copy; 2014, Sam Wilson.  All rights reserved.

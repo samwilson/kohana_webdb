@@ -86,15 +86,16 @@ class Controller_Admin extends Controller_Base {
 				.' ADD CONSTRAINT `permissions_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE';
 			DB::query(NULL, $sql)->execute();
 		}
-//		$hasSiteTitle = DB::query(Database::SELECT, "SELECT COUNT(id) AS count FROM settings WHERE name='site_title';")
-//			->execute()
-//			->current();
-//		if ($hasSiteTitle['count'] == 0)
-//		{
-//			$siteTitle = Kohana::$config->load('webdb')->get('site_title');
-//			$sql = "INSERT INTO settings SET name='site_title', value='$siteTitle'";
-//			DB::query(Database::INSERT, $sql)->execute();
-//		}
+		// Make sure we've got a role called '*' (i.e. "all roles").
+		$sql = "SELECT COUNT(id) AS count FROM roles WHERE name='*';";
+		$hasAsteriskRole = DB::query(Database::SELECT, $sql)
+			->execute()
+			->current();
+		if ($hasAsteriskRole['count'] == 0)
+		{
+			$sql = "INSERT INTO roles SET name='*'";
+			DB::query(Database::INSERT, $sql)->execute();
+		}
 
 		Cache::instance()->delete_all();
 		$this->add_flash_message('Installation or upgrade has completed sucessfully.', 'info');

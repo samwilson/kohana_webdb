@@ -148,7 +148,7 @@ class Webdb_Column {
 		{
 			$can_column = ($perm['column_name'] == '*' OR $perm['column_name'] == $this->get_name());
 			$can_permission = ($perm['activity_name'] == '*' OR $perm['activity_name'] == $privilege);
-			$has_role = (is_null($perm['role_name']) OR WebDB_Auth::logged_in($perm['role_name']));
+			$has_role = ($perm['role_name'] == '*' OR WebDB_Auth::logged_in($perm['role_name']));
 			if ($can_column AND $can_permission AND $has_role)
 			{
 				return TRUE;
